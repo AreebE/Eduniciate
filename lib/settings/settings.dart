@@ -29,20 +29,20 @@ class _SettingsState extends State<Settings> {
       child: ListView.builder(
         scrollDirection: Axis.vertical,
         itemBuilder: (context, index) {
-          print(index);
+          // print(index);
           if ((index + 1) % 3 == 0) {
             switch (((index + 1) / 3).round()) {
               case 3:
                 return Calendar(colorScheme);
               case 2:
                 return WorkHours(colorScheme);
-              case 1:
+              case 6:
                 return FamilyContactDisplay(colorScheme);
               case 4:
                 return Language(colorScheme);
-              case 5:
+              case 1:
                 return ColorSetter(colorScheme);
-              case 6:
+              case 5:
                 return TermsOfService(colorScheme);
             }
           }

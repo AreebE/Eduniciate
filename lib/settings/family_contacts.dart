@@ -1,8 +1,7 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:edunciate/color_scheme.dart';
 import 'package:edunciate/font_standards.dart';
-import 'package:edunciate/settings/family_contact_item.dart';
+import 'package:edunciate/settings/items/family_contact_item.dart';
 import 'package:edunciate/settings/res/sizes.dart';
 import 'package:edunciate/settings/res/strings.dart';
 
@@ -23,6 +22,7 @@ class _FamilyContactDisplayState extends State<FamilyContactDisplay> {
     FamilyContact("Second", "Tester", Relationship.dad, "(555) 531 - \n2412"),
     FamilyContact(
         "Third", "Rater", Relationship.guardian, "(555) 032 - \n6932"),
+    FamilyContact("False", "Second", Relationship.parent, "(555) 693 - \n5823"),
     FamilyContact("False", "Second", Relationship.parent, "(555) 693 - \n5823"),
   ];
   _FamilyContactDisplayState(this.colorScheme);
@@ -57,19 +57,59 @@ class _FamilyContactDisplayState extends State<FamilyContactDisplay> {
                       color:
                           colorScheme.getColor(CustomColorScheme.darkPrimary),
                       width: Sizes.borderWidth)),
-              child: SizedBox(
-                  // height: Sizes.maxContactBoxHeight,
-                  // child: SingleChildScrollView(
-                  // scrollDirection: Axis.vertical,
-                  child: SingleChildScrollView(
-                scrollDirection: Axis.horizontal,
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  mainAxisSize: MainAxisSize.min,
-                  children: getContacts(),
-                ),
-                // ),
-              ))),
+              child: Column(
+                children: [
+                  SizedBox(
+                      height: Sizes.maxContactBoxHeight,
+                      child: SingleChildScrollView(
+                        scrollDirection: Axis.horizontal,
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          mainAxisSize: MainAxisSize.min,
+                          children: getContacts(),
+                        ),
+                      )),
+                  Divider(
+                    height: Sizes.dividerHeight,
+                    thickness: Sizes.dividerThickness,
+                    color: colorScheme.getColor(CustomColorScheme.darkPrimary),
+                  ),
+                  Padding(
+                      padding: const EdgeInsets.all(Sizes.smallMargin),
+                      child: ElevatedButton.icon(
+                        style: ElevatedButton.styleFrom(
+                            shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(
+                                    Sizes.extremeRoundedBorder)),
+                            primary: colorScheme
+                                .getColor(CustomColorScheme.normalText)),
+                        onPressed: addContact,
+                        icon: Stack(
+                          alignment: Alignment.center,
+                          children: [
+                            Icon(
+                              Icons.circle,
+                              size: Sizes.addSize,
+                              color: colorScheme.getColor(CustomColorScheme
+                                  .backgroundAndHighlightedNormalText),
+                            ),
+                            Icon(
+                              Icons.add_outlined,
+                              size: Sizes.plusSize,
+                              color: colorScheme
+                                  .getColor(CustomColorScheme.normalText),
+                            ),
+                          ],
+                        ),
+                        label: Text(
+                          StringList.addMember,
+                          textAlign: TextAlign.center,
+                          style: FontStandards.getTextStyle(
+                              colorScheme, Style.brightNorm, FontSize.medium),
+                        ),
+                      ))
+                ],
+              )),
         ),
         const SizedBox(
           height: Sizes.smallSpacerWidth,
@@ -97,7 +137,7 @@ class _FamilyContactDisplayState extends State<FamilyContactDisplay> {
       case 3:
         return getItems(StringList.options, position);
     }
-    return Text("");
+    return const Text("");
   }
 
   Container getItems(int category, int position) {
@@ -133,10 +173,10 @@ class _FamilyContactDisplayState extends State<FamilyContactDisplay> {
       ],
     );
     for (int i = 0; i < sampleContacts.length; i++) {
-      print("E");
+      // print("E");
       FamilyContact current = sampleContacts.elementAt(i);
 
-      Widget e = new Text("");
+      Widget e = const Text("");
       switch (category) {
         case StringList.name:
           e = Text(
@@ -188,7 +228,7 @@ class _FamilyContactDisplayState extends State<FamilyContactDisplay> {
               // Deny button
               Container(
                 alignment: Alignment.center,
-                margin: EdgeInsets.all(Sizes.smallMargin),
+                margin: const EdgeInsets.all(Sizes.smallMargin),
                 child: Material(
                   shape: const CircleBorder(),
                   color: colorScheme.getColor(CustomColorScheme.delete),
