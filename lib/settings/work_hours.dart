@@ -1,10 +1,13 @@
+// Areeb Emran
+// Work Hours display
+
 import 'package:flutter/material.dart';
 
 import 'package:edunciate/color_scheme.dart';
 import 'package:edunciate/font_standards.dart';
 import 'package:edunciate/settings/res/sizes.dart';
 import 'package:edunciate/settings/res/strings.dart';
-import 'package:edunciate/settings/time_range.dart';
+import 'package:edunciate/settings/items/time_range.dart';
 
 class WorkHours extends StatefulWidget {
   final CustomColorScheme _colorScheme;

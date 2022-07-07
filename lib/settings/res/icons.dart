@@ -21,6 +21,6 @@ class CustomIcons {
   static const _kFontFam = 'X_Icon';
   static const String? _kFontPkg = null;
 
-  static const IconData x_symbol =
+  static const IconData xSymbol =
       IconData(0xe800, fontFamily: _kFontFam, fontPackage: _kFontPkg);
 }
