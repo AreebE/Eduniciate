@@ -36,14 +36,100 @@ class NewClass extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               crossAxisAlignment: CrossAxisAlignment.end,
               children: const [
-                Expanded(child: AddNew()), // plus sign (current page)
+                Expanded(
+                    child: AddNewTaskbarButton()), // plus sign (current page)
                 Expanded(
                     child:
-                        Home()), // home page (list of classes) and default page
-                Expanded(child: Profile()), // personal profile
-                Expanded(child: Settings()), // settings
+                        HomeTaskbarButton()), // home page (list of classes) and default page
+                Expanded(child: ProfileTaskbarButton()), // personal profile
+                Expanded(child: SettingsTaskbarButton()), // settings
               ]),
           body: JoinAndCreateScreen()),
+    );
+  }
+}
+
+// Taskbar
+// Plus sign
+class AddNewTaskbarButton extends StatelessWidget {
+  const AddNewTaskbarButton({super.key});
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      height: 50.0,
+      child: OutlinedButton(
+        style: OutlinedButton.styleFrom(
+            backgroundColor: Color.fromARGB(255, 58, 27, 103),
+            side: BorderSide(color: Colors.white)),
+        onPressed: () {},
+        child: Icon(
+          Icons.add,
+          color: Colors.white,
+        ),
+      ),
+    );
+  }
+}
+
+// home
+class HomeTaskbarButton extends StatelessWidget {
+  const HomeTaskbarButton({super.key});
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      height: 50.0,
+      child: OutlinedButton(
+        style: OutlinedButton.styleFrom(
+            backgroundColor: Color.fromARGB(255, 148, 97, 225),
+            side: BorderSide(color: Colors.white)),
+        onPressed: () {},
+        child: Icon(
+          Icons.home,
+          color: Colors.white,
+        ),
+      ),
+    );
+  }
+}
+
+// indvidual profile
+class ProfileTaskbarButton extends StatelessWidget {
+  const ProfileTaskbarButton({super.key});
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      height: 50.0,
+      child: OutlinedButton(
+        style: OutlinedButton.styleFrom(
+            backgroundColor: Color.fromARGB(255, 148, 97, 225),
+            side: BorderSide(color: Colors.white)),
+        onPressed: () {},
+        child: Icon(
+          Icons.person,
+          color: Colors.white,
+        ),
+      ),
+    );
+  }
+}
+
+// settings
+class SettingsTaskbarButton extends StatelessWidget {
+  const SettingsTaskbarButton({super.key});
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      height: 50.0,
+      child: OutlinedButton(
+        style: OutlinedButton.styleFrom(
+            backgroundColor: Color.fromARGB(255, 148, 97, 225),
+            side: BorderSide(color: Colors.white)),
+        onPressed: () {},
+        child: Icon(
+          Icons.settings,
+          color: Colors.white,
+        ),
+      ),
     );
   }
 }
