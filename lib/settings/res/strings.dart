@@ -1,3 +1,5 @@
+// Areeb Emran
+// List of string resources for the settings menu
 class StringList {
   static const String language = "Language:";
   static const String current = "Current";
@@ -6,7 +8,7 @@ class StringList {
 
   static const String termsOfService = "Terms of Service";
   static const String permissionsEnabled = "Current Permissions Enabled";
-  static const String moreInfo = "More Information";
+  static const String moreInfo = "Details";
   static const String deny = "DENY";
 
   static const String workHours = "Work Hours";
