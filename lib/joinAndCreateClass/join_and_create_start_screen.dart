@@ -1,3 +1,6 @@
+// Tanya Bhandari
+// Join a Class and/or Create a new class page
+
 import 'package:flutter/material.dart';
 
 class JoinAndCreateScreen extends StatelessWidget {

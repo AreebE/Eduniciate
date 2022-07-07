@@ -1,3 +1,6 @@
+// Areeb Emran
+// Color theme changer
+
 import 'package:edunciate/color_scheme.dart';
 import 'package:edunciate/font_standards.dart';
 import 'package:edunciate/settings/res/sizes.dart';

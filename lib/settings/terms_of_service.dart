@@ -1,3 +1,6 @@
+// Areeb Emran
+// Terms of Service display
+
 import 'package:edunciate/settings/items/permission.dart';
 import 'package:edunciate/color_scheme.dart';
 import 'package:edunciate/font_standards.dart';

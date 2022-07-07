@@ -1,3 +1,6 @@
+// Areeb Emran
+// Language display
+
 import 'package:flutter/material.dart';
 import 'package:edunciate/font_standards.dart';
 import 'package:edunciate/settings/res/sizes.dart';

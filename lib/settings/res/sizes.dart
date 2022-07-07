@@ -1,3 +1,6 @@
+// Areeb Emran
+// List of size resources for the settings menu
+
 class Sizes {
   static const double none = 0;
 
