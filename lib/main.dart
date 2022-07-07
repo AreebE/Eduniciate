@@ -20,7 +20,6 @@ class MyApp extends StatelessWidget {
       CustomColorScheme.createFromHex("#B7CFFF"),
       CustomColorScheme.createFromHex("#0244C5"),
       CustomColorScheme.createFromHex("#5F379A"),
-      CustomColorScheme.createFromHex("#A8A8A8")
     ],
   );
 

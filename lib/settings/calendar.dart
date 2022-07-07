@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:edunciate/color_scheme.dart';
 import 'package:edunciate/font_standards.dart';
-import 'package:edunciate/settings/event.dart';
+import 'package:edunciate/settings/items/event.dart';
 import 'package:edunciate/settings/res/icons.dart';
 import 'package:edunciate/settings/res/sizes.dart';
 import 'package:edunciate/settings/res/strings.dart';
@@ -32,7 +32,7 @@ class _CalendarState extends State<Calendar> {
 
   @override
   Widget build(BuildContext context) {
-    DateTime today = DateTime.now();
+    // DateTime today = DateTime.now();
     List<Widget> calenderItems = _createDays();
 
     // print((calenderItems.length / 7).round().toString() + " == length");
@@ -98,7 +98,7 @@ class _CalendarState extends State<Calendar> {
                             colorScheme, Style.darkBold, FontSize.large),
                       ),
                       Padding(
-                        padding: EdgeInsets.all(Sizes.smallMargin),
+                        padding: const EdgeInsets.all(Sizes.smallMargin),
                         child: Material(
                           shape: const CircleBorder(),
                           color: colorScheme
@@ -175,7 +175,7 @@ class _CalendarState extends State<Calendar> {
     }
 
     int currentWeekday = DateTime.sunday - 7;
-    print(currentWeekday);
+    // print(currentWeekday);
     bool useLighterShade = true;
     while (currentWeekday != weekday) {
       widgets
@@ -189,7 +189,7 @@ class _CalendarState extends State<Calendar> {
     }
 
     for (int i = 1; i <= daysInMonth; i++) {
-      print(currentWeekday);
+      // print(currentWeekday);
       bool isEvent = isAnEvent(i, _selectedMonth, _selectedYear);
       if (currentWeekday == Sizes.numOfDays) {
         currentWeekday = 0;
@@ -224,8 +224,8 @@ class _CalendarState extends State<Calendar> {
         backgroundColor = colorScheme.getColor(CustomColorScheme.change);
         fontStyle = (useLighterShade) ? Style.darkVarBold : Style.darkBold;
       }
-      print(widgets.elementAt(currentWeekday).children.length);
-      print("Weekday == " + currentWeekday.toString());
+      // print(widgets.elementAt(currentWeekday).children.length);
+      // print("Weekday == " + currentWeekday.toString());
       widgets.elementAt(currentWeekday).children.add(Container(
           height: Sizes.daySize,
           width: Sizes.daySize,
@@ -277,7 +277,7 @@ class _CalendarState extends State<Calendar> {
               color: colorScheme.getColor(CustomColorScheme.darkPrimary),
               width: Sizes.smallBorder)),
       child: Icon(
-        CustomIcons.x_symbol,
+        CustomIcons.xSymbol,
         color: colorScheme.getColor(CustomColorScheme.lightSecondVariant),
         size: Sizes.plusSize,
       ),
