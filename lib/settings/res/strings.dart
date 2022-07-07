@@ -1,3 +1,5 @@
+// Areeb Emran
+// List of string resources for the settings menu
 class StringList {
   static const String language = "Language:";
   static const String current = "Current";

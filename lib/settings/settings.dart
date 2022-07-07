@@ -1,3 +1,6 @@
+// Areeb Emran
+// Settings display
+
 import 'package:flutter/material.dart';
 import 'package:edunciate/settings/work_hours.dart';
 import 'package:edunciate/settings/color_setter.dart';
