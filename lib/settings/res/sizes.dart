@@ -1,3 +1,6 @@
+// Areeb Emran
+// List of size resources for the settings menu
+
 class Sizes {
   static const double none = 0;
 
@@ -36,4 +39,12 @@ class Sizes {
   static const int familyCategories = 4;
   static const double contactHeight = 50;
   static const double maxContactBoxHeight = 300;
+
+  static const double permissionHeight = 40;
+
+  static const double colorNameWidth = 130;
+  static const double hexcodeWidth = 90;
+  static const double colorNameHeight = 70;
+  static const double outerRadius = 55;
+  static const double innerRadius = 50;
 }

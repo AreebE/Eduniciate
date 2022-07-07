@@ -4,6 +4,7 @@ class Event {
   int _month;
   int _year;
 
+// Testing the settings
   Event(this._message, this._dayOfMonth, this._month, this._year);
 
   String getMessage() {
