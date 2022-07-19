@@ -47,4 +47,6 @@ class Sizes {
   static const double colorNameHeight = 70;
   static const double outerRadius = 55;
   static const double innerRadius = 50;
+
+  static var largeColumnSpace;
 }
