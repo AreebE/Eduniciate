@@ -29,6 +29,13 @@
             {
               "client_id": "491451399144-ti7lgddet0b75ch259roc6a1foktl9l9.apps.googleusercontent.com",
               "client_type": 3
+            },
+            {
+              "client_id": "491451399144-kj7h3g3g7mps51vm8oqv8lma8g6ni2bt.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.edunciate"
+              }
             }
           ]
         }
