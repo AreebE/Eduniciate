@@ -1,5 +1,11 @@
 // Areeb Emran
 // Calendar display
+import 'dart:collection';
+
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:edunciate/firebase_options.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:edunciate/color_scheme.dart';
 import 'package:edunciate/font_standards.dart';
@@ -36,6 +42,7 @@ class _CalendarState extends State<Calendar> {
   Widget build(BuildContext context) {
     // DateTime today = DateTime.now();
     List<Widget> calenderItems = _createDays();
+    // FirebaseStorage.instance.ref("e")
 
     // print((calenderItems.length / 7).round().toString() + " == length");
     return Column(
@@ -321,6 +328,9 @@ class _CalendarState extends State<Calendar> {
   }
 
   String getTitle() {
+    // .whenComplete((){
+
+    // });
     return StringList.getMonth(_selectedMonth) +
         ", " +
         _selectedYear.toString();
