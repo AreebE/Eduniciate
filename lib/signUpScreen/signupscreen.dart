@@ -103,7 +103,11 @@ class AlternateButtons extends StatelessWidget {
             height: 40,
             width: MediaQuery. of(context). size. width *.80,
             child: ElevatedButton (
-              onPressed: () {},
+              onPressed: () {
+                if (buttonText == 'CONTINUE TO LOGIN PAGE') {
+                  Navigator.push(context, MaterialPageRoute(builder: (context) => const LogInScreen()));
+                } 
+              },
               style: ElevatedButton.styleFrom(primary: Color(0xffF9461E1), shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(9.0))),
                 child:Text(buttonText, style: TextStyle( fontSize: 15, fontFamily: 'Lato', color: Colors.white), textAlign: TextAlign.left)
             ) 
