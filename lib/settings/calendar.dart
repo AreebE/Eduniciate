@@ -335,4 +335,8 @@ class _CalendarState extends State<Calendar> {
         ", " +
         _selectedYear.toString();
   }
+
+  void showEvent() {}
+
+  void askForEvent() {}
 }

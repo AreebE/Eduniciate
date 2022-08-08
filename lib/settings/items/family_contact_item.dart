@@ -37,4 +37,18 @@ class FamilyContact {
   String getPhoneNumber() {
     return _phoneNumber;
   }
+
+  static Relationship relation(String type) {
+    switch (type) {
+      case StringList.mom:
+        return Relationship.mom;
+      case StringList.dad:
+        return Relationship.dad;
+      case StringList.guardian:
+        return Relationship.guardian;
+      case StringList.parent:
+        return Relationship.parent;
+    }
+    return Relationship.parent;
+  }
 }
