@@ -3,33 +3,24 @@ import 'package:edunciate/font_standards.dart';
 import 'package:edunciate/homepage/res/sizes.dart';
 import 'package:edunciate/homepage/res/string_list.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
 import 'package:flutter/src/foundation/key.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter/widgets.dart';
 
-class ClassDisplay extends StatefulWidget {
-  CustomColorScheme _colorScheme;
-  ClassDisplay(this._colorScheme, {Key? key}) : super(key: key);
+class SchoolDisplay extends StatefulWidget {
+  final CustomColorScheme _colorScheme;
+  const SchoolDisplay(this._colorScheme, {Key? key}) : super(key: key);
 
   @override
-  State<ClassDisplay> createState() => _ClassDisplayState(_colorScheme);
+  State<SchoolDisplay> createState() => _SchoolDisplayState(_colorScheme);
 }
 
-class _ClassDisplayState extends State<ClassDisplay> {
-  List<String> classes = [
-    "First",
-    "Second",
-    "Third",
-    "4th",
-    "5th",
-    "6th",
-    "7th",
-    "8th"
-  ];
+class _SchoolDisplayState extends State<SchoolDisplay> {
   CustomColorScheme _colorScheme;
 
-  _ClassDisplayState(this._colorScheme);
+  List<String> schools = ["Beta", "Alpha", "Omega", "A", "V", "F", "G"];
+
+  _SchoolDisplayState(this._colorScheme);
 
   @override
   Widget build(BuildContext context) {
@@ -37,7 +28,7 @@ class _ClassDisplayState extends State<ClassDisplay> {
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         Text(
-          StringList.className,
+          StringList.schoolNames,
           style: FontStandards.getTextStyle(
               _colorScheme, Style.darkBold, FontSize.title),
         ),
@@ -47,12 +38,12 @@ class _ClassDisplayState extends State<ClassDisplay> {
           color: _colorScheme.getColor(CustomColorScheme.darkPrimary),
         ),
         SizedBox(
-          height: Numbers.classDisplayHeight,
+          height: Numbers.schoolDisplayHeight,
           child: SingleChildScrollView(
             scrollDirection: Axis.vertical,
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
-              children: _getClasses(),
+              children: _getSchools(),
             ),
           ),
         )
@@ -60,9 +51,9 @@ class _ClassDisplayState extends State<ClassDisplay> {
     );
   }
 
-  List<Widget> _getClasses() {
+  List<Widget> _getSchools() {
     List<Widget> widgets = [];
-    for (int i = 0; i < classes.length; i++) {
+    for (int i = 0; i < schools.length; i++) {
       bool useLightColor = i % 2 == 0;
       widgets.add(Container(
         height: Numbers.nameHeight,
@@ -70,8 +61,9 @@ class _ClassDisplayState extends State<ClassDisplay> {
             ? CustomColorScheme.lightPrimary
             : CustomColorScheme.lightVariant),
         child: Text(
-          classes.elementAt(i),
+          schools.elementAt(i),
           maxLines: 2,
+          textAlign: TextAlign.center,
           style: FontStandards.getTextStyle(
               _colorScheme,
               (useLightColor) ? Style.darkVarNorm : Style.darkNorm,

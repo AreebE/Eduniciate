@@ -9,6 +9,20 @@ class CustomColorScheme {
 
   static const String hashtag = "#";
 
+  static CustomColorScheme defaultColors = CustomColorScheme([
+    CustomColorScheme.createFromHex("#3A1B67"),
+    CustomColorScheme.createFromHex("#5F379A"),
+    CustomColorScheme.createFromHex("#EBDDFF"),
+    CustomColorScheme.createFromHex("#D4B7FF"),
+    CustomColorScheme.createFromHex("#9461E1"),
+    CustomColorScheme.createFromHex("#000000"),
+    CustomColorScheme.createFromHex("#FFFFFF"),
+    CustomColorScheme.createFromHex("#B90000"),
+    CustomColorScheme.createFromHex("#B7CFFF"),
+    CustomColorScheme.createFromHex("#0244C5"),
+    CustomColorScheme.createFromHex("#5F379A"),
+  ]);
+
   static const List<String> colorNames = [
     "Primary Color",
     "Primary Variant",
