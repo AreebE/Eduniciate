@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:edunciate/signUpScreen/loginscreen.dart';
 
 void main() {
   runApp(const SignUpScreen());
