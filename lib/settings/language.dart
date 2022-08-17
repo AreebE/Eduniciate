@@ -19,6 +19,7 @@ class Language extends StatefulWidget {
 
 class _LanguageState extends State<Language> {
   final CustomColorScheme colorScheme;
+  String currentVal = "en";
 
   _LanguageState(this.colorScheme);
 
@@ -98,7 +99,7 @@ class _LanguageState extends State<Language> {
                         shape: RoundedRectangleBorder(
                             borderRadius:
                                 BorderRadius.circular(Sizes.roundedBorder))),
-                    onPressed: _voidFunction,
+                    onPressed: _changeLang,
                     child: Padding(
                       padding: const EdgeInsets.all(Sizes.smallMargin),
                       child: Text(
@@ -120,5 +121,49 @@ class _LanguageState extends State<Language> {
         )
       ],
     );
+  }
+
+  void _changeLang() {
+    print(currentVal);
+    showDialog(
+        context: context,
+        builder: (context) => StatefulBuilder(
+            builder: (context, setState) => AlertDialog(
+                  backgroundColor:
+                      colorScheme.getColor(CustomColorScheme.lightPrimary),
+                  contentPadding: const EdgeInsets.all(Sizes.mediumMargin),
+                  content: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Text(
+                        StringList.changeLang,
+                        style: FontStandards.getTextStyle(
+                            colorScheme, Style.darkBold, FontSize.large),
+                      ),
+                      DropdownButton<String>(
+                          dropdownColor: colorScheme.getColor(CustomColorScheme
+                              .backgroundAndHighlightedNormalText),
+                          focusColor: colorScheme.getColor(CustomColorScheme
+                              .backgroundAndHighlightedNormalText),
+                          items: <String>["en", "fr", "ja"]
+                              .map<DropdownMenuItem<String>>((String val) {
+                            return DropdownMenuItem<String>(
+                              value: val,
+                              child: Text(
+                                val,
+                                style: FontStandards.getTextStyle(colorScheme,
+                                    Style.darkNorm, FontSize.small),
+                              ),
+                            );
+                          }).toList(),
+                          onChanged: (String? newValue) {
+                            setState(() {
+                              currentVal = newValue!;
+                            });
+                          },
+                          value: currentVal)
+                    ],
+                  ),
+                )));
   }
 }
