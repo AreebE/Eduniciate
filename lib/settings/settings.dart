@@ -27,7 +27,8 @@ class _SettingsState extends State<Settings> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      color: const Color.fromARGB(255, 255, 255, 255),
+      color: colorScheme
+          .getColor(CustomColorScheme.backgroundAndHighlightedNormalText),
       padding: const EdgeInsets.all(Sizes.mediumMargin),
       child: ListView.builder(
         scrollDirection: Axis.vertical,
