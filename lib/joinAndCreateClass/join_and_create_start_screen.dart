@@ -1,6 +1,8 @@
 // Tanya Bhandari
 // Join a Class and/or Create a new class page
 
+// ignore_for_file: prefer_const_constructors_in_immutables, prefer_const_constructors
+
 import 'package:flutter/material.dart';
 
 class JoinAndCreateScreen extends StatelessWidget {

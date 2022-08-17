@@ -1,6 +1,8 @@
 // Areeb Emran
 // Color theme changer
 
+// ignore_for_file: no_logic_in_create_state
+
 import 'package:edunciate/color_scheme.dart';
 import 'package:edunciate/font_standards.dart';
 import 'package:edunciate/settings/res/sizes.dart';

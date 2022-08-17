@@ -1,6 +1,6 @@
 //Rishitha Ravi
 //Code for the Updates tab of individual class screens
-// ignore_for_file: prefer_const_constructors
+// ignore_for_file: prefer_const_constructors, unused_import, library_private_types_in_public_api
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';

@@ -1,6 +1,8 @@
 // Areeb Emran
 // Terms of Service display
 
+// ignore_for_file: no_logic_in_create_state
+
 import 'package:edunciate/settings/items/permission.dart';
 import 'package:edunciate/color_scheme.dart';
 import 'package:edunciate/font_standards.dart';

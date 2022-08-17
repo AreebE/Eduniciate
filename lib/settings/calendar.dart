@@ -1,5 +1,7 @@
 // Areeb Emran
 // Calendar display
+// ignore_for_file: unused_import, no_logic_in_create_state, prefer_interpolation_to_compose_strings
+
 import 'dart:collection';
 
 import 'package:cloud_firestore/cloud_firestore.dart';

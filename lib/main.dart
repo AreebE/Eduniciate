@@ -1,9 +1,12 @@
 // Tanya Bhandari
 // Join a Class and/or Create a new class page
-//ignore_for_file: prefer_const_constructors
+//ignore_for_file: prefer_const_constructors, unused_import
+import 'package:edunciate/classroom/top_nav_bar.dart';
 import 'package:edunciate/homepage/homepage.dart';
 import 'package:edunciate/joinAndCreateClass/join_and_create_start_screen.dart';
 import 'package:edunciate/settings/settings.dart';
+import 'package:edunciate/signUpScreen/loginscreen.dart';
+import 'package:edunciate/signUpScreen/signupscreen.dart';
 import 'package:flutter/material.dart';
 import 'color_scheme.dart';
 
@@ -46,9 +49,9 @@ class NewClass extends StatelessWidget {
                 Expanded(child: ProfileTaskbarButton()), // personal profile
                 Expanded(child: SettingsTaskbarButton()), // settings
               ]),
-          body: Homepage(
-            defaultColors,
-          )),
+          body: TopNavBar(
+              // defaultColors,
+              )),
     );
   }
 }

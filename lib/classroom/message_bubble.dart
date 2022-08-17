@@ -1,6 +1,6 @@
 //Rishitha Ravi
 //Code for sent and recieved messages
-// ignore_for_file: prefer_const_constructors
+// ignore_for_file: prefer_const_constructors, avoid_renaming_method_parameters
 
 import 'package:flutter/material.dart';
 import 'dart:math' as math;

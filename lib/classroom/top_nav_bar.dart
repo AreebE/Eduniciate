@@ -1,13 +1,16 @@
 //Rishitha Ravi
 //Code for top navigation bar (appbar)
 
+// ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables, use_key_in_widget_constructors
+
 import 'package:flutter/material.dart';
-import 'updates_page.dart';
+import 'updates_page_1.dart';
 import 'messages_page.dart';
 import 'people_page.dart';
-import 'settings_page.dart';
+import 'details_page.dart';
 
 class TopNavBar extends StatelessWidget {
+  final double _fontSize = 15.0;
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
@@ -67,7 +70,7 @@ class TopNavBar extends StatelessWidget {
                           color: Color.fromARGB(255, 255, 255, 255),
                           fontWeight: FontWeight.bold,
                           fontFamily: 'Josefin Sans',
-                          fontSize: 18.0,
+                          fontSize: _fontSize,
                         )))),
             Tab(
                 child: Align(
@@ -78,7 +81,7 @@ class TopNavBar extends StatelessWidget {
                           color: Color.fromARGB(255, 255, 255, 255),
                           fontWeight: FontWeight.bold,
                           fontFamily: 'Josefin Sans',
-                          fontSize: 18.0,
+                          fontSize: _fontSize,
                         )))),
             Tab(
                 child: Align(
@@ -89,7 +92,7 @@ class TopNavBar extends StatelessWidget {
                           color: Color.fromARGB(255, 255, 255, 255),
                           fontWeight: FontWeight.bold,
                           fontFamily: 'Josefin Sans',
-                          fontSize: 18.0,
+                          fontSize: _fontSize,
                         )))),
             Tab(
                 child: Align(
@@ -100,7 +103,7 @@ class TopNavBar extends StatelessWidget {
                           color: Color.fromARGB(255, 255, 255, 255),
                           fontWeight: FontWeight.bold,
                           fontFamily: 'Josefin Sans',
-                          fontSize: 18.0,
+                          fontSize: _fontSize,
                         ))))
           ]);
 }

@@ -1,6 +1,8 @@
 //Rishitha Ravi
 //Code for displaying people/members in individual class screens
 
+// ignore_for_file: must_be_immutable, use_key_in_widget_constructors, prefer_const_constructors
+
 import 'package:flutter/material.dart';
 
 //Code for the listings of people

@@ -1,3 +1,5 @@
+// ignore_for_file: unnecessary_import, implementation_imports, prefer_final_fields, no_logic_in_create_state, must_be_immutable
+
 import 'package:edunciate/color_scheme.dart';
 import 'package:edunciate/font_standards.dart';
 import 'package:edunciate/homepage/res/sizes.dart';

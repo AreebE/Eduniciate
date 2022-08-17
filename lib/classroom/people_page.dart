@@ -1,6 +1,6 @@
 //Rishitha Ravi
 //Code for the People tab of individual class screens
-// ignore_for_file: prefer_const_constructors
+// ignore_for_file: prefer_const_constructors, library_private_types_in_public_api
 
 import 'package:flutter/material.dart';
 import 'title_block.dart';

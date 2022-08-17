@@ -1,6 +1,8 @@
 //Rishitha Ravi
 //Code for the solid purple headings
 
+// ignore_for_file: must_be_immutable, use_key_in_widget_constructors, prefer_interpolation_to_compose_strings, sort_child_properties_last, prefer_const_constructors
+
 import 'package:flutter/widgets.dart';
 
 class TitleBlock extends StatelessWidget {

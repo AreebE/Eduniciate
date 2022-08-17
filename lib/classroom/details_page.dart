@@ -1,6 +1,6 @@
 //Rishitha Ravi
 //Code for the Settings tab of individual class screen
-// ignore_for_file: prefer_const_constructors
+// ignore_for_file: prefer_const_constructors, prefer_const_constructors_in_immutables, library_private_types_in_public_api, sort_child_properties_last, prefer_interpolation_to_compose_strings, use_key_in_widget_constructors, must_be_immutable
 
 import 'package:flutter/material.dart';
 import 'title_block.dart';
@@ -123,59 +123,64 @@ class _SettingsPageState extends State<SettingsPage> {
               )),
         ),
         TitleBlock("Class Details", 10.0, 10.0),
-        Row(
-          children: [
-            //Changes Organization Name
-            Container(
-                margin: EdgeInsets.all(10.0),
-                padding: EdgeInsets.all(10.0),
-                color: Color.fromARGB(255, 58, 27, 103),
-                child: TextButton(
-                    child: Text("Select Organization",
-                        style: TextStyle(
-                          color: Color.fromARGB(255, 255, 255, 255),
-                          fontWeight: FontWeight.bold,
-                          fontFamily: 'Lato',
-                          fontSize: 15.0,
-                        )),
-                    onPressed: () {
-                      openDialog2();
-                    })),
+        SingleChildScrollView(
+          scrollDirection: Axis.horizontal,
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              //Changes Organization Name
+              Container(
+                  margin: EdgeInsets.all(10.0),
+                  padding: EdgeInsets.all(10.0),
+                  color: Color.fromARGB(255, 58, 27, 103),
+                  child: TextButton(
+                      child: Text("Select Organization",
+                          style: TextStyle(
+                            color: Color.fromARGB(255, 255, 255, 255),
+                            fontWeight: FontWeight.bold,
+                            fontFamily: 'Lato',
+                            fontSize: 15.0,
+                          )),
+                      onPressed: () {
+                        openDialog2();
+                      })),
 
-            //Changes Class Name
-            Container(
-                margin: EdgeInsets.all(10.0),
-                padding: EdgeInsets.all(10.0),
-                color: Color.fromARGB(255, 58, 27, 103),
-                child: TextButton(
-                    child: Text("Set Class Name",
-                        style: TextStyle(
-                          color: Color.fromARGB(255, 255, 255, 255),
-                          fontWeight: FontWeight.bold,
-                          fontFamily: 'Lato',
-                          fontSize: 15.0,
-                        )),
-                    onPressed: () {
-                      openDialog1();
-                    })),
-            //Changes Class Description
-            Container(
-                margin: EdgeInsets.all(10.0),
-                padding: EdgeInsets.all(10.0),
-                color: Color.fromARGB(255, 58, 27, 103),
-                child: TextButton(
-                    child: Text("Edit Class Description",
-                        style: TextStyle(
-                          color: Color.fromARGB(255, 255, 255, 255),
-                          fontWeight: FontWeight.bold,
-                          fontFamily: 'Lato',
-                          fontSize: 15.0,
-                        )),
-                    onPressed: () {
-                      openDialog2();
-                    })),
-          ],
+              //Changes Class Name
+              Container(
+                  margin: EdgeInsets.all(10.0),
+                  padding: EdgeInsets.all(10.0),
+                  color: Color.fromARGB(255, 58, 27, 103),
+                  child: TextButton(
+                      child: Text("Set Class Name",
+                          style: TextStyle(
+                            color: Color.fromARGB(255, 255, 255, 255),
+                            fontWeight: FontWeight.bold,
+                            fontFamily: 'Lato',
+                            fontSize: 15.0,
+                          )),
+                      onPressed: () {
+                        openDialog1();
+                      })),
+              //Changes Class Description
+              Container(
+                  margin: EdgeInsets.all(10.0),
+                  padding: EdgeInsets.all(10.0),
+                  color: Color.fromARGB(255, 58, 27, 103),
+                  child: TextButton(
+                      child: Text("Edit Class Description",
+                          style: TextStyle(
+                            color: Color.fromARGB(255, 255, 255, 255),
+                            fontWeight: FontWeight.bold,
+                            fontFamily: 'Lato',
+                            fontSize: 15.0,
+                          )),
+                      onPressed: () {
+                        openDialog2();
+                      })),
+            ],
+          ),
         ),
+
         Container(
             alignment: Alignment.center,
             padding: EdgeInsets.all(10.0),
