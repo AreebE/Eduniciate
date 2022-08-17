@@ -1,5 +1,6 @@
-// ignore_for_file: unused_import, prefer_const_constructors, prefer_const_literals_to_create_immutables, use_full_hex_values_for_flutter_colors, use_key_in_widget_constructors, avoid_unnecessary_containers, prefer_const_constructors_in_immutables, non_constant_identifier_names, unused_local_variable
+// ignore_for_file: unused_import, prefer_const_constructors, prefer_const_literals_to_create_immutables, use_full_hex_values_for_flutter_colors, use_key_in_widget_constructors, avoid_unnecessary_containers, prefer_const_constructors_in_immutables, non_constant_identifier_names, unused_local_variable, must_be_immutable, no_logic_in_create_state
 
+import 'package:edunciate/signUpScreen/registration_alternator.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -7,8 +8,8 @@ import 'package:edunciate/signUpScreen/loginscreen.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 
 class SignUpScreen extends StatelessWidget {
-  const SignUpScreen({Key? key}) : super(key: key);
-
+  SignUpScreen(this.listener, {Key? key}) : super(key: key);
+  RegistrationListener listener;
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
@@ -38,7 +39,7 @@ class SignUpScreen extends StatelessWidget {
         ]),
         backgroundColor: Color(0xffF9461E1),
       ),
-      body: MyCustomForm(),
+      body: MyCustomForm(listener),
     );
     //  ,
     // ));
@@ -47,15 +48,19 @@ class SignUpScreen extends StatelessWidget {
 }
 
 class MyCustomForm extends StatefulWidget {
-  const MyCustomForm({super.key});
+  MyCustomForm(this.listener, {super.key});
+  RegistrationListener listener;
 
   @override
-  State<MyCustomForm> createState() => _MyCustomFormState();
+  State<MyCustomForm> createState() => _MyCustomFormState(listener);
 }
 
 class _MyCustomFormState extends State<MyCustomForm> {
   final eController = TextEditingController();
   final pController = TextEditingController();
+  RegistrationListener listener;
+
+  _MyCustomFormState(this.listener);
 
   @override
   void dispose() {
@@ -114,9 +119,9 @@ class _MyCustomFormState extends State<MyCustomForm> {
               ),
             ),
           ),
-          AlternateButtons('OR', 'SIGN UP WITH GOOGLE'),
+          AlternateButtons('OR', 'SIGN UP WITH GOOGLE', listener),
           AlternateButtons(
-              'ALREADY HAVE AN ACCOUNT?', 'CONTINUE TO LOGIN PAGE'),
+              'ALREADY HAVE AN ACCOUNT?', 'CONTINUE TO LOGIN PAGE', listener),
         ],
       ),
     );
@@ -160,9 +165,10 @@ class EmailPasswordBox extends StatelessWidget {
 }
 
 class AlternateButtons extends StatelessWidget {
-  AlternateButtons(this.specifier, this.buttonText);
+  AlternateButtons(this.specifier, this.buttonText, this.listener);
   final String specifier;
   final String buttonText;
+  RegistrationListener listener;
 
   @override
   Widget build(BuildContext context) {
@@ -179,10 +185,11 @@ class AlternateButtons extends StatelessWidget {
             child: ElevatedButton(
                 onPressed: () {
                   if (buttonText == 'CONTINUE TO LOGIN PAGE') {
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => const LogInScreen()));
+                    // Navigator.push(
+                    //     context,
+                    //     MaterialPageRoute(
+                    //         builder: (context) => const LogInScreen()));
+                    listener.setRegState(RegistrationState.login);
                   } else if (buttonText == 'SIGN UP WITH GOOGLE') {
                     signInWithGoogle();
                   }

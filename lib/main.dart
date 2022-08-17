@@ -5,36 +5,59 @@ import 'package:edunciate/classroom/top_nav_bar.dart';
 import 'package:edunciate/homepage/homepage.dart';
 import 'package:edunciate/joinAndCreateClass/join_and_create_start_screen.dart';
 import 'package:edunciate/settings/settings.dart';
+import 'package:edunciate/signUpScreen/registration_alternator.dart';
 import 'package:edunciate/signUpScreen/loginscreen.dart';
 import 'package:edunciate/signUpScreen/signupscreen.dart';
 import 'package:flutter/material.dart';
 import 'color_scheme.dart';
 
-void main() {
-  runApp(NewClass());
+enum Page {
+  settings,
+  login,
+  joinClass,
+  homepage,
+  // personalInfo
 }
 
-class NewClass extends StatelessWidget {
-  final CustomColorScheme defaultColors = CustomColorScheme(
-    [
-      CustomColorScheme.createFromHex("#3A1B67"),
-      CustomColorScheme.createFromHex("#5F379A"),
-      CustomColorScheme.createFromHex("#EBDDFF"),
-      CustomColorScheme.createFromHex("#D4B7FF"),
-      CustomColorScheme.createFromHex("#9461E1"),
-      CustomColorScheme.createFromHex("#000000"),
-      CustomColorScheme.createFromHex("#FFFFFF"),
-      CustomColorScheme.createFromHex("#B90000"),
-      CustomColorScheme.createFromHex("#B7CFFF"),
-      CustomColorScheme.createFromHex("#0244C5"),
-      CustomColorScheme.createFromHex("#5F379A"),
-    ],
-  );
+class OnPageChangeListener {
+  void changePage(Page newPage) {}
+}
 
-  NewClass({super.key});
+void main() {
+  runApp(MainDisplay());
+}
+
+class MainDisplay extends StatefulWidget {
+  const MainDisplay({Key? key}) : super(key: key);
+
+  @override
+  State<MainDisplay> createState() => _MainDisplayState();
+}
+
+class _MainDisplayState extends State<MainDisplay>
+    implements OnPageChangeListener {
+  Page current = Page.login;
 
   @override
   Widget build(BuildContext context) {
+    final CustomColorScheme defaultColors = CustomColorScheme(
+      [
+        CustomColorScheme.createFromHex("#3A1B67"),
+        CustomColorScheme.createFromHex("#5F379A"),
+        CustomColorScheme.createFromHex("#EBDDFF"),
+        CustomColorScheme.createFromHex("#D4B7FF"),
+        CustomColorScheme.createFromHex("#9461E1"),
+        CustomColorScheme.createFromHex("#000000"),
+        CustomColorScheme.createFromHex("#FFFFFF"),
+        CustomColorScheme.createFromHex("#B90000"),
+        CustomColorScheme.createFromHex("#B7CFFF"),
+        CustomColorScheme.createFromHex("#0244C5"),
+        CustomColorScheme.createFromHex("#5F379A"),
+      ],
+    );
+
+    Widget body = getBody(current, defaultColors);
+
     return MaterialApp(
       home: Scaffold(
           bottomNavigationBar: Row(
@@ -49,10 +72,32 @@ class NewClass extends StatelessWidget {
                 Expanded(child: ProfileTaskbarButton()), // personal profile
                 Expanded(child: SettingsTaskbarButton()), // settings
               ]),
-          body: TopNavBar(
+          body: RegistrationAlternator(
               // defaultColors,
               )),
     );
+  }
+
+  Widget getBody(Page current, CustomColorScheme defaultColors) {
+    switch (current) {
+      case Page.homepage:
+        return Homepage(defaultColors);
+      case Page.joinClass:
+        return JoinAndCreateScreen();
+      case Page.login:
+        return RegistrationAlternator();
+      case Page.settings:
+        return Settings(
+          colorScheme: defaultColors,
+        );
+      // case Page.personalInfo:
+      //   return PersonalInfoPage();
+    }
+  }
+
+  @override
+  void changePage(Page newPage) {
+    // TODO: implement changePage
   }
 }
 
