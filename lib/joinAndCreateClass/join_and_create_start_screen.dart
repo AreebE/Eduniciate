@@ -1,12 +1,14 @@
 // Tanya Bhandari
 // Join a Class and/or Create a new class page
 
-// ignore_for_file: prefer_const_constructors_in_immutables, prefer_const_constructors
+// ignore_for_file: prefer_const_constructors_in_immutables, prefer_const_constructors, must_be_immutable
 
+import 'package:edunciate/joinAndCreateClass/class_alternator_screen.dart';
 import 'package:flutter/material.dart';
 
 class JoinAndCreateScreen extends StatelessWidget {
-  JoinAndCreateScreen({super.key});
+  ClassChangeListener listener;
+  JoinAndCreateScreen(this.listener, {super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -14,8 +16,8 @@ class JoinAndCreateScreen extends StatelessWidget {
         child: Column(
       mainAxisAlignment: MainAxisAlignment.center,
       crossAxisAlignment: CrossAxisAlignment.center,
-      children: const [
-        JoinButton(), // join a new class
+      children: [
+        JoinButton(listener), // join a new class
         SizedBox(
           height: 10,
         ),
@@ -26,7 +28,8 @@ class JoinAndCreateScreen extends StatelessWidget {
 }
 
 class JoinButton extends StatelessWidget {
-  const JoinButton({super.key});
+  ClassChangeListener listener;
+  JoinButton(this.listener, {super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -34,7 +37,9 @@ class JoinButton extends StatelessWidget {
         height: 50.0,
         width: 250.0,
         child: ElevatedButton(
-          onPressed: () {},
+          onPressed: () {
+            listener.changeState(ClassState.classroom);
+          },
           style: ElevatedButton.styleFrom(
             primary: Color.fromARGB(255, 58, 27, 103),
             onPrimary: Colors.white,

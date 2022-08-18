@@ -1,8 +1,9 @@
 // Tanya Bhandari
 // Join a Class and/or Create a new class page
-//ignore_for_file: prefer_const_constructors, unused_import
+//ignore_for_file: prefer_const_constructors, unused_import, must_be_immutable
 import 'package:edunciate/classroom/top_nav_bar.dart';
 import 'package:edunciate/homepage/homepage.dart';
+import 'package:edunciate/joinAndCreateClass/class_alternator_screen.dart';
 import 'package:edunciate/joinAndCreateClass/join_and_create_start_screen.dart';
 import 'package:edunciate/settings/settings.dart';
 import 'package:edunciate/signUpScreen/registration_alternator.dart';
@@ -59,23 +60,23 @@ class _MainDisplayState extends State<MainDisplay>
     Widget body = getBody(current, defaultColors);
 
     return MaterialApp(
-      home: Scaffold(
-          bottomNavigationBar: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              crossAxisAlignment: CrossAxisAlignment.end,
-              children: const [
-                Expanded(
-                    child: AddNewTaskbarButton()), // plus sign (current page)
-                Expanded(
-                    child:
-                        HomeTaskbarButton()), // home page (list of classes) and default page
-                Expanded(child: ProfileTaskbarButton()), // personal profile
-                Expanded(child: SettingsTaskbarButton()), // settings
-              ]),
-          body: RegistrationAlternator(
-              // defaultColors,
-              )),
-    );
+        home: Scaffold(
+      bottomNavigationBar: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          crossAxisAlignment: CrossAxisAlignment.end,
+          children: [
+            Expanded(
+                child: AddNewTaskbarButton(
+                    this, current)), // plus sign (current page)
+            Expanded(
+                child: HomeTaskbarButton(this,
+                    current)), // home page (list of classes) and default page
+            Expanded(
+                child: ProfileTaskbarButton(this, current)), // personal profile
+            Expanded(child: SettingsTaskbarButton(this, current)), // settings
+          ]),
+      body: body,
+    ));
   }
 
   Widget getBody(Page current, CustomColorScheme defaultColors) {
@@ -83,7 +84,7 @@ class _MainDisplayState extends State<MainDisplay>
       case Page.homepage:
         return Homepage(defaultColors);
       case Page.joinClass:
-        return JoinAndCreateScreen();
+        return ClassAlternator();
       case Page.login:
         return RegistrationAlternator();
       case Page.settings:
@@ -97,7 +98,10 @@ class _MainDisplayState extends State<MainDisplay>
 
   @override
   void changePage(Page newPage) {
-    // TODO: implement changePage
+    if (newPage != current) {
+      current = newPage;
+      setState(() {});
+    }
   }
 }
 
@@ -105,16 +109,23 @@ class _MainDisplayState extends State<MainDisplay>
 // Taskbar
 // Plus sign
 class AddNewTaskbarButton extends StatelessWidget {
-  const AddNewTaskbarButton({super.key});
+  OnPageChangeListener listener;
+  Page current;
+  AddNewTaskbarButton(this.listener, this.current, {super.key});
   @override
   Widget build(BuildContext context) {
     return SizedBox(
       height: 50.0,
       child: OutlinedButton(
         style: OutlinedButton.styleFrom(
-            backgroundColor: Color.fromARGB(255, 58, 27, 103),
+            backgroundColor: (current == Page.joinClass)
+                ? Color.fromARGB(255, 58, 27, 103)
+                : CustomColorScheme.defaultColors
+                    .getColor(CustomColorScheme.lightSecondVariant),
             side: BorderSide(color: Colors.white)),
-        onPressed: () {},
+        onPressed: () {
+          listener.changePage(Page.joinClass);
+        },
         child: Icon(
           Icons.add,
           color: Colors.white,
@@ -126,16 +137,24 @@ class AddNewTaskbarButton extends StatelessWidget {
 
 // home
 class HomeTaskbarButton extends StatelessWidget {
-  const HomeTaskbarButton({super.key});
+  OnPageChangeListener listener;
+  Page current;
+
+  HomeTaskbarButton(this.listener, this.current, {super.key});
   @override
   Widget build(BuildContext context) {
     return SizedBox(
       height: 50.0,
       child: OutlinedButton(
         style: OutlinedButton.styleFrom(
-            backgroundColor: Color.fromARGB(255, 148, 97, 225),
+            backgroundColor: (current == Page.homepage)
+                ? Color.fromARGB(255, 58, 27, 103)
+                : CustomColorScheme.defaultColors
+                    .getColor(CustomColorScheme.lightSecondVariant),
             side: BorderSide(color: Colors.white)),
-        onPressed: () {},
+        onPressed: () {
+          listener.changePage(Page.homepage);
+        },
         child: Icon(
           Icons.home,
           color: Colors.white,
@@ -147,16 +166,27 @@ class HomeTaskbarButton extends StatelessWidget {
 
 // indvidual profile
 class ProfileTaskbarButton extends StatelessWidget {
-  const ProfileTaskbarButton({super.key});
+  OnPageChangeListener listener;
+  Page current;
+
+  ProfileTaskbarButton(this.listener, this.current, {super.key});
+
   @override
   Widget build(BuildContext context) {
     return SizedBox(
       height: 50.0,
       child: OutlinedButton(
         style: OutlinedButton.styleFrom(
-            backgroundColor: Color.fromARGB(255, 148, 97, 225),
+            backgroundColor:
+                // (current == Page.personalProfile)
+                // ? Color.fromARGB(255, 58, 27, 103)
+                // :
+                CustomColorScheme.defaultColors
+                    .getColor(CustomColorScheme.lightSecondVariant),
             side: BorderSide(color: Colors.white)),
-        onPressed: () {},
+        onPressed: () {
+          // listener.changePage(Page.personalProfile);
+        },
         child: Icon(
           Icons.person,
           color: Colors.white,
@@ -168,16 +198,24 @@ class ProfileTaskbarButton extends StatelessWidget {
 
 // settings
 class SettingsTaskbarButton extends StatelessWidget {
-  const SettingsTaskbarButton({super.key});
+  OnPageChangeListener listener;
+  Page current;
+
+  SettingsTaskbarButton(this.listener, this.current, {super.key});
   @override
   Widget build(BuildContext context) {
     return SizedBox(
       height: 50.0,
       child: OutlinedButton(
         style: OutlinedButton.styleFrom(
-            backgroundColor: Color.fromARGB(255, 148, 97, 225),
+            backgroundColor: (current == Page.settings)
+                ? Color.fromARGB(255, 58, 27, 103)
+                : CustomColorScheme.defaultColors
+                    .getColor(CustomColorScheme.lightSecondVariant),
             side: BorderSide(color: Colors.white)),
-        onPressed: () {},
+        onPressed: () {
+          listener.changePage(Page.settings);
+        },
         child: Icon(
           Icons.settings,
           color: Colors.white,

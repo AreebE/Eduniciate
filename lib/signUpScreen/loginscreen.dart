@@ -74,7 +74,10 @@ class _MyCustomFormState extends State<MyCustomForm> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Column(
+        body: SingleChildScrollView(
+      scrollDirection: Axis.vertical,
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
         children: <Widget>[
           EmailPasswordBox('Email'),
           Container(
@@ -135,7 +138,7 @@ class _MyCustomFormState extends State<MyCustomForm> {
               'DON\'T HAVE AN ACCOUNT?', 'CONTINUE TO SIGN UP PAGE', listener),
         ],
       ),
-    );
+    ));
   }
 }
 

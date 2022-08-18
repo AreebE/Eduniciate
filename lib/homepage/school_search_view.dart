@@ -20,7 +20,12 @@ class SchoolDisplay extends StatefulWidget {
 class _SchoolDisplayState extends State<SchoolDisplay> {
   CustomColorScheme _colorScheme;
 
-  List<String> schools = ["Beta", "Alpha", "Omega", "A", "V", "F", "G"];
+  List<String> schools = [
+    "Bothell High School",
+    "North Creek High School",
+    "Woodinville High School",
+    "Inglemoor High School"
+  ];
 
   _SchoolDisplayState(this._colorScheme);
 
@@ -32,7 +37,7 @@ class _SchoolDisplayState extends State<SchoolDisplay> {
         Text(
           StringList.schoolNames,
           style: FontStandards.getTextStyle(
-              _colorScheme, Style.darkBold, FontSize.title),
+              _colorScheme, Style.header, FontSize.title),
         ),
         Divider(
           thickness: Numbers.dividerThickness,
@@ -40,15 +45,19 @@ class _SchoolDisplayState extends State<SchoolDisplay> {
           color: _colorScheme.getColor(CustomColorScheme.darkPrimary),
         ),
         SizedBox(
-          height: Numbers.schoolDisplayHeight,
-          child: SingleChildScrollView(
-            scrollDirection: Axis.vertical,
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: _getSchools(),
-            ),
-          ),
-        )
+            height: Numbers.schoolDisplayHeight,
+            child: Container(
+              color:
+                  _colorScheme.getColor(CustomColorScheme.lightSecondVariant),
+              padding: const EdgeInsets.all(Numbers.smallMargin),
+              child: SingleChildScrollView(
+                scrollDirection: Axis.vertical,
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: _getSchools(),
+                ),
+              ),
+            ))
       ],
     );
   }
@@ -59,6 +68,9 @@ class _SchoolDisplayState extends State<SchoolDisplay> {
       bool useLightColor = i % 2 == 0;
       widgets.add(Container(
         height: Numbers.nameHeight,
+        width: Numbers.nameWidth,
+        alignment: Alignment.center,
+        padding: const EdgeInsets.all(Numbers.smallMargin),
         color: _colorScheme.getColor((useLightColor)
             ? CustomColorScheme.lightPrimary
             : CustomColorScheme.lightVariant),

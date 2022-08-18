@@ -33,4 +33,5 @@ class Numbers {
   static const double dividerThickness = 2;
 
   static const double nameHeight = 50;
+  static const double nameWidth = 300;
 }

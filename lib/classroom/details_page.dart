@@ -2,33 +2,36 @@
 //Code for the Settings tab of individual class screen
 // ignore_for_file: prefer_const_constructors, prefer_const_constructors_in_immutables, library_private_types_in_public_api, sort_child_properties_last, prefer_interpolation_to_compose_strings, use_key_in_widget_constructors, must_be_immutable
 
+import 'top_nav_bar.dart';
 import 'package:flutter/material.dart';
 import 'title_block.dart';
 import 'people_tile.dart';
 
 void main() {
-  runApp(SettingsPage());
+  runApp(DetailsPage());
 }
 
-class SettingsPage extends StatefulWidget {
+class DetailsPage extends StatefulWidget {
   static String className = 'Class Name';
-  SettingsPage({Key? key}) : super(key: key);
+  static String organization = 'Organization';
+
+  DetailsPage({Key? key}) : super(key: key);
 
   @override
-  _SettingsPageState createState() => _SettingsPageState();
+  _DetailsPageState createState() => _DetailsPageState();
 }
 
-class _SettingsPageState extends State<SettingsPage> {
+class _DetailsPageState extends State<DetailsPage> {
   //define variables here
   String bullet = "•";
-  String classDetails = 'Class Details';
+  String classInfo = 'Class Details';
   final _textController1 = TextEditingController();
   final _textController2 = TextEditingController();
 
   void submit1() {
     Navigator.of(context).pop();
     setState(() {
-      SettingsPage.className = _textController1.text;
+      DetailsPage.className = _textController1.text;
     });
     _textController1.clear();
   }
@@ -36,9 +39,16 @@ class _SettingsPageState extends State<SettingsPage> {
   void submit2() {
     Navigator.of(context).pop();
     setState(() {
-      classDetails = _textController2.text;
+      classInfo = _textController2.text;
     });
     _textController2.clear();
+  }
+
+  void submit3() {
+    Navigator.of(context).pop();
+    setState(() {
+      DetailsPage.organization = _DropdownState().selectedValue;
+    });
   }
 
   Future openDialog1() => showDialog(
@@ -109,6 +119,18 @@ class _SettingsPageState extends State<SettingsPage> {
                 ),
               ]));
 
+  Future openDialog3() => showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+              title: AppTitle('Select School', 20.0),
+              content: Dropdown(),
+              actions: [
+                TextButton(
+                  child: AppTitle("SUBMIT", 10.0),
+                  onPressed: submit3,
+                ),
+              ]));
+
   @override
   Widget build(BuildContext context) {
     return ListView(
@@ -122,11 +144,10 @@ class _SettingsPageState extends State<SettingsPage> {
                 radius: 50,
               )),
         ),
-        TitleBlock("Class Details", 10.0, 10.0),
+        TitleBlock("Class Information", 10.0, 10.0),
         SingleChildScrollView(
           scrollDirection: Axis.horizontal,
           child: Row(
-            mainAxisSize: MainAxisSize.min,
             children: [
               //Changes Organization Name
               Container(
@@ -142,7 +163,7 @@ class _SettingsPageState extends State<SettingsPage> {
                             fontSize: 15.0,
                           )),
                       onPressed: () {
-                        openDialog2();
+                        openDialog3();
                       })),
 
               //Changes Class Name
@@ -185,7 +206,7 @@ class _SettingsPageState extends State<SettingsPage> {
             alignment: Alignment.center,
             padding: EdgeInsets.all(10.0),
             margin: EdgeInsets.all(10.0),
-            child: Text(classDetails,
+            child: Text(classInfo,
                 style: TextStyle(
                   color: Color.fromARGB(255, 58, 27, 103),
                   fontWeight: FontWeight.normal,
@@ -225,31 +246,38 @@ class _SettingsPageState extends State<SettingsPage> {
 }
 
 //Dropdown Menu for Organization
-class DropdownButton extends StatefulWidget {
+class Dropdown extends StatefulWidget {
   @override
-  _DropdownButtonState createState() => _DropdownButtonState();
+  _DropdownState createState() => _DropdownState();
 }
 
 //Dropdown for Settings page
-class _DropdownButtonState extends State<DropdownButton> {
+class _DropdownState extends State<Dropdown> {
+  List<String> listitems = ["North Creek HS", "Bothell HS", "Woodinville HS"];
   String selectedValue = "North Creek HS";
 
   @override
   Widget build(BuildContext context) {
-    return DropdownButton();
-  }
-
-  //Creates options for the dropdown menu
-  List<DropdownMenuItem<String>> get dropdownItems {
-    List<DropdownMenuItem<String>> menuItems = [
-      DropdownMenuItem(
-          child: AppTitle("North Creek HS", 10.0), value: "North Creek HS"),
-      DropdownMenuItem(
-          child: AppTitle("Bothell HS", 10.0), value: "North Creek HS"),
-      DropdownMenuItem(
-          child: AppTitle("Woodinville HS", 10.0), value: "North Creek HS"),
-    ];
-    return menuItems;
+    return DropdownButton(
+      value: selectedValue,
+      hint: Text("Select School",
+          style: TextStyle(
+            color: Color.fromARGB(255, 58, 27, 103),
+            fontWeight: FontWeight.normal,
+            fontFamily: 'Lato',
+            fontSize: 10.0,
+          )),
+      icon: Icon(Icons.keyboard_arrow_down_rounded),
+      onChanged: (value) {
+        setState(() {
+          selectedValue = value.toString();
+          TopNavBar.Organization = value.toString();
+        });
+      },
+      items: listitems.map((itemone) {
+        return DropdownMenuItem(value: itemone, child: Text(itemone));
+      }).toList(),
+    );
   }
 }
 
