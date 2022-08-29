@@ -1,18 +1,26 @@
 // Areeb Emran
 // List of string resources for the settings menu
 class StringList {
-  static const String language = "Language:";
+  static const String language = "Language";
   static const String current = "Current";
+  static const String currentLang = "Current:";
+  static const String currentColon = "Current:";
   static const String change = "Change";
   static const String changeLang = "Change Language";
 
+  static const String settingsTitle = "Settings";
+
   static const String termsOfService = "Terms of Service";
-  static const String permissionsEnabled = "Current Permissions Enabled";
+
+  static const String permissionsTitle = "Permissions";
+  static const String permissionsEnabled = "Currently Enabled:";
   static const String moreInfo = "Details";
   static const String deny = "DENY";
 
   static const String workHours = "Work Hours";
   static const String day = "Day:";
+  static const String discard = "Discard";
+  static const String confirm = "Confirm";
   static const List<String> weekDays = [
     "Sunday",
     "Monday",
@@ -141,4 +149,18 @@ class StringList {
   static const String dad = "Dad";
   static const String parent = "Parent";
   static const String guardian = "Guardian";
+
+  static const String textSizeTitle = "Text Size";
+
+  static const String notificationTitle = "Notifications";
+  static const String activated = "Activated";
+  static const String deactivated = "Deactivated";
+
+  static const String no = "No";
+  static const String yes = "Yes";
+  static const String askIfTheyWantToDelete =
+      "Are you sure you want to disable this?";
+
+  static const String currentTermsOfService =
+      "EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE";
 }

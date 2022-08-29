@@ -29,6 +29,8 @@ extension SizeExtension on FontSize {
 
 enum Style {
   norm,
+  normUnderline,
+  normHeader,
   brightNorm,
   darkNorm,
   darkNormUnderline,
@@ -40,6 +42,7 @@ enum Style {
   lightBold,
   lightVarNorm,
   lightVarBold,
+  deleteText,
   title
 }
 
@@ -48,6 +51,8 @@ extension StyleExtension on Style {
     switch (this) {
       case Style.header:
       case Style.darkNormUnderline:
+      case Style.normUnderline:
+      case Style.normHeader:
         return TextDecoration.underline;
       default:
         return TextDecoration.none;
@@ -69,6 +74,7 @@ extension StyleExtension on Style {
       case Style.darkVarBold:
       case Style.lightBold:
       case Style.lightVarBold:
+      case Style.normHeader:
         return FontWeight.w900;
       default:
         return FontWeight.normal;
@@ -79,6 +85,7 @@ extension StyleExtension on Style {
     switch (this) {
       case Style.title:
       case Style.header:
+      case Style.normHeader:
         return "Josefin Sans";
       default:
         return "Lato";
@@ -88,6 +95,8 @@ extension StyleExtension on Style {
   int get color {
     switch (this) {
       case Style.norm:
+      case Style.normUnderline:
+      case Style.normHeader:
         return CustomColorScheme.normalText;
       case Style.brightNorm:
       case Style.title:
@@ -106,6 +115,8 @@ extension StyleExtension on Style {
       case Style.lightVarNorm:
       case Style.lightVarBold:
         return CustomColorScheme.lightVariant;
+      case Style.deleteText:
+        return CustomColorScheme.delete;
     }
   }
 }

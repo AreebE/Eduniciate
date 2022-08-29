@@ -10,6 +10,28 @@ import 'package:edunciate/settings/res/strings.dart';
 
 import '../color_scheme.dart';
 
+class LanguageApp extends StatefulWidget {
+  CustomColorScheme _colorScheme;
+  LanguageApp(this._colorScheme, {Key? key}) : super(key: key);
+
+  @override
+  State<LanguageApp> createState() => _LanguageAppState(_colorScheme);
+}
+
+class _LanguageAppState extends State<LanguageApp> {
+  CustomColorScheme _colorScheme;
+
+  _LanguageAppState(this._colorScheme);
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+        home: Scaffold(
+      body: Language(_colorScheme),
+    ));
+  }
+}
+
 class Language extends StatefulWidget {
   final CustomColorScheme colorScheme;
 
@@ -43,20 +65,14 @@ class _LanguageState extends State<Language> {
               textDirection: TextDirection.ltr,
               style: FontStandards.getTextStyle(
                 colorScheme,
-                Style.header,
+                Style.normHeader,
                 FontSize.heading,
               )),
         ),
         // The language display box
         SizedBox(
           child: Container(
-            decoration: BoxDecoration(
-              color: colorScheme.getColor(CustomColorScheme.lightPrimary),
-              border: Border.all(
-                  color: colorScheme.getColor(CustomColorScheme.darkPrimary),
-                  width: Sizes.borderWidth),
-            ),
-            padding: const EdgeInsets.all(Sizes.mediumMargin),
+            padding: const EdgeInsets.all(Sizes.smallMargin),
             child: Column(
               mainAxisSize: MainAxisSize.max,
               verticalDirection: VerticalDirection.down,
@@ -67,24 +83,22 @@ class _LanguageState extends State<Language> {
                   mainAxisSize: MainAxisSize.max,
                   children: [
                     Text(
-                      StringList.language,
+                      StringList.currentLang,
                       textWidthBasis: TextWidthBasis.longestLine,
                       style: FontStandards.getTextStyle(
-                          colorScheme, Style.darkVarBold, FontSize.large),
+                          colorScheme, Style.norm, FontSize.large),
                     ),
                     const SizedBox(
                       width: Sizes.mediumMargin,
                     ),
                     Container(
                       alignment: Alignment.centerRight,
-                      color:
-                          colorScheme.getColor(CustomColorScheme.lightVariant),
                       padding: const EdgeInsets.all(Sizes.smallMargin),
                       child: Text(
                         textWidthBasis: TextWidthBasis.longestLine,
                         "English",
-                        style: FontStandards.getTextStyle(colorScheme,
-                            Style.darkNormUnderline, FontSize.large),
+                        style: FontStandards.getTextStyle(
+                            colorScheme, Style.normUnderline, FontSize.large),
                       ),
                     )
                   ],
@@ -95,9 +109,10 @@ class _LanguageState extends State<Language> {
                 // Change language box
                 ElevatedButton(
                     style: ElevatedButton.styleFrom(
-                        primary: colorScheme.getColor(CustomColorScheme.change),
-                        onPrimary:
-                            colorScheme.getColor(CustomColorScheme.normalText),
+                        primary:
+                            colorScheme.getColor(CustomColorScheme.darkPrimary),
+                        onPrimary: colorScheme.getColor(CustomColorScheme
+                            .backgroundAndHighlightedNormalText),
                         shape: RoundedRectangleBorder(
                             borderRadius:
                                 BorderRadius.circular(Sizes.roundedBorder))),
@@ -111,7 +126,7 @@ class _LanguageState extends State<Language> {
                         overflow: TextOverflow.clip,
                         textAlign: TextAlign.center,
                         style: FontStandards.getTextStyle(
-                            colorScheme, Style.norm, FontSize.large),
+                            colorScheme, Style.brightNorm, FontSize.large),
                       ),
                     )),
               ],
@@ -131,8 +146,8 @@ class _LanguageState extends State<Language> {
         context: context,
         builder: (context) => StatefulBuilder(
             builder: (context, setState) => AlertDialog(
-                  backgroundColor:
-                      colorScheme.getColor(CustomColorScheme.lightPrimary),
+                  backgroundColor: colorScheme.getColor(
+                      CustomColorScheme.backgroundAndHighlightedNormalText),
                   contentPadding: const EdgeInsets.all(Sizes.mediumMargin),
                   content: Column(
                     mainAxisSize: MainAxisSize.min,
@@ -140,7 +155,7 @@ class _LanguageState extends State<Language> {
                       Text(
                         StringList.changeLang,
                         style: FontStandards.getTextStyle(
-                            colorScheme, Style.darkBold, FontSize.large),
+                            colorScheme, Style.norm, FontSize.large),
                       ),
                       DropdownButton<String>(
                           dropdownColor: colorScheme.getColor(CustomColorScheme
@@ -153,8 +168,8 @@ class _LanguageState extends State<Language> {
                               value: val,
                               child: Text(
                                 val,
-                                style: FontStandards.getTextStyle(colorScheme,
-                                    Style.darkNorm, FontSize.small),
+                                style: FontStandards.getTextStyle(
+                                    colorScheme, Style.norm, FontSize.small),
                               ),
                             );
                           }).toList(),
