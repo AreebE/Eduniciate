@@ -1,3 +1,5 @@
+// ignore_for_file: prefer_final_fields
+
 import 'package:edunciate/color_scheme.dart';
 import 'package:edunciate/settings/items/family_contact_item.dart';
 import 'package:edunciate/settings/items/permission.dart';

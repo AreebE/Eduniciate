@@ -1,3 +1,5 @@
+// ignore_for_file: prefer_final_fields, prefer_interpolation_to_compose_strings
+
 import 'package:edunciate/settings/res/strings.dart';
 
 enum Relationship { mom, dad, guardian, parent }

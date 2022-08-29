@@ -1,6 +1,8 @@
 // Areeb Emran
 // Work Hours display
 
+// ignore_for_file: no_logic_in_create_state
+
 import 'package:flutter/material.dart';
 
 import 'package:edunciate/color_scheme.dart';

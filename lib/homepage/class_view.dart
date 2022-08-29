@@ -1,3 +1,5 @@
+// ignore_for_file: unnecessary_import, implementation_imports, prefer_final_fields, no_logic_in_create_state, must_be_immutable
+
 import 'package:edunciate/color_scheme.dart';
 import 'package:edunciate/font_standards.dart';
 import 'package:edunciate/homepage/res/sizes.dart';
@@ -18,14 +20,13 @@ class ClassDisplay extends StatefulWidget {
 
 class _ClassDisplayState extends State<ClassDisplay> {
   List<String> classes = [
-    "First",
-    "Second",
-    "Third",
-    "4th",
-    "5th",
-    "6th",
-    "7th",
-    "8th"
+    "AP Biology",
+    "AP History",
+    "DECA",
+    "TSA",
+    "AP Calculus",
+    "Health",
+    "Life Fitness",
   ];
   CustomColorScheme _colorScheme;
 
@@ -39,7 +40,7 @@ class _ClassDisplayState extends State<ClassDisplay> {
         Text(
           StringList.className,
           style: FontStandards.getTextStyle(
-              _colorScheme, Style.darkBold, FontSize.title),
+              _colorScheme, Style.header, FontSize.title),
         ),
         Divider(
           thickness: Numbers.dividerThickness,
@@ -47,15 +48,19 @@ class _ClassDisplayState extends State<ClassDisplay> {
           color: _colorScheme.getColor(CustomColorScheme.darkPrimary),
         ),
         SizedBox(
-          height: Numbers.classDisplayHeight,
-          child: SingleChildScrollView(
-            scrollDirection: Axis.vertical,
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: _getClasses(),
-            ),
-          ),
-        )
+            height: Numbers.classDisplayHeight,
+            child: Container(
+              color:
+                  _colorScheme.getColor(CustomColorScheme.lightSecondVariant),
+              padding: const EdgeInsets.all(Numbers.smallMargin),
+              child: SingleChildScrollView(
+                scrollDirection: Axis.vertical,
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: _getClasses(),
+                ),
+              ),
+            ))
       ],
     );
   }
@@ -63,15 +68,19 @@ class _ClassDisplayState extends State<ClassDisplay> {
   List<Widget> _getClasses() {
     List<Widget> widgets = [];
     for (int i = 0; i < classes.length; i++) {
-      bool useLightColor = i % 2 == 0;
+      bool useLightColor = i % 2 == 1;
       widgets.add(Container(
         height: Numbers.nameHeight,
+        width: Numbers.nameWidth,
+        alignment: Alignment.center,
+        padding: const EdgeInsets.all(Numbers.smallMargin),
         color: _colorScheme.getColor((useLightColor)
             ? CustomColorScheme.lightPrimary
             : CustomColorScheme.lightVariant),
         child: Text(
           classes.elementAt(i),
           maxLines: 2,
+          textAlign: TextAlign.center,
           style: FontStandards.getTextStyle(
               _colorScheme,
               (useLightColor) ? Style.darkVarNorm : Style.darkNorm,

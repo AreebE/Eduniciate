@@ -1,3 +1,5 @@
+// ignore_for_file: prefer_final_fields
+
 import 'dart:typed_data';
 
 import 'package:flutter/widgets.dart';

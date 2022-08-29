@@ -1,9 +1,11 @@
 // Areeb Emran
 // Settings display
 
+// ignore_for_file: no_logic_in_create_state
+
 import 'package:flutter/material.dart';
 import 'package:edunciate/settings/work_hours.dart';
-import 'package:edunciate/settings/color_setter.dart';
+// import 'package:edunciate/settings/color_setter.dart';
 import 'package:edunciate/settings/family_contacts.dart';
 import 'package:edunciate/settings/language.dart';
 import 'package:edunciate/settings/res/sizes.dart';
@@ -36,16 +38,16 @@ class _SettingsState extends State<Settings> {
           // print(index);
           if ((index + 1) % 3 == 0) {
             switch (((index + 1) / 3).round()) {
-              case 3:
+              case 1:
                 return Calendar(colorScheme);
               case 2:
                 return WorkHours(colorScheme);
-              case 6:
+              case 3:
                 return FamilyContactDisplay(colorScheme);
               case 4:
                 return Language(colorScheme);
-              case 1:
-                return ColorSetter(colorScheme);
+              // case 5:
+              // return ColorSetter(colorScheme);
               case 5:
                 return TermsOfService(colorScheme);
             }
@@ -56,7 +58,7 @@ class _SettingsState extends State<Settings> {
             color: colorScheme.getColor(CustomColorScheme.darkPrimary),
           );
         },
-        itemCount: 6 * 3 + 2,
+        itemCount: 5 * 3 + 2,
       ),
     );
   }

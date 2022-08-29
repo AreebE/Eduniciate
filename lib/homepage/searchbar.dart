@@ -1,3 +1,5 @@
+// ignore_for_file: unused_import, unnecessary_import, implementation_imports, prefer_final_fields, must_be_immutable, no_logic_in_create_state
+
 import 'dart:ui';
 
 import 'package:edunciate/color_scheme.dart';

@@ -1,6 +1,8 @@
 // Areeb Emran
 // Language display
 
+// ignore_for_file: no_logic_in_create_state, unused_element, avoid_print
+
 import 'package:flutter/material.dart';
 import 'package:edunciate/font_standards.dart';
 import 'package:edunciate/settings/res/sizes.dart';
