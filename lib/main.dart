@@ -51,7 +51,7 @@ class _MainDisplayState extends State<MainDisplay>
         CustomColorScheme.createFromHex("#000000"),
         CustomColorScheme.createFromHex("#FFFFFF"),
         CustomColorScheme.createFromHex("#B90000"),
-        CustomColorScheme.createFromHex("#B7CFFF"),
+        CustomColorScheme.createFromHex("#DDDDDD"),
         CustomColorScheme.createFromHex("#0244C5"),
         CustomColorScheme.createFromHex("#5F379A"),
       ],
