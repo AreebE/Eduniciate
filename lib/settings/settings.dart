@@ -93,28 +93,27 @@ class _SettingsState extends State<Settings> {
         ? CustomColorScheme.backgroundAndHighlightedNormalText
         : CustomColorScheme.gray;
 
-    return Padding(
-        padding: EdgeInsets.all(Sizes.smallMargin),
-        child: Container(
-          color: colorScheme.getColor(backgroundColorID),
-          child: ListTile(
-            selectedColor: colorScheme.getColor(CustomColorScheme.gray),
-            focusColor: colorScheme.getColor(CustomColorScheme.gray),
-            tileColor: colorScheme.getColor(CustomColorScheme.gray),
-            selected: false,
-            leading: Icon(
-              leadingData,
-              size: Sizes.iconSize,
-              color: colorScheme.getColor(CustomColorScheme.darkPrimary),
-            ),
-            title: Text(text,
-                style: FontStandards.getTextStyle(
-                    colorScheme, Style.norm, FontSize.medium)),
-            onTap: () {
-              openSection(position);
-            },
-          ),
-        ));
+    return Container(
+      padding: EdgeInsets.all(Sizes.smallMargin),
+      color: colorScheme.getColor(backgroundColorID),
+      child: ListTile(
+        selectedColor: colorScheme.getColor(CustomColorScheme.gray),
+        focusColor: colorScheme.getColor(CustomColorScheme.gray),
+        tileColor: colorScheme.getColor(CustomColorScheme.gray),
+        selected: false,
+        leading: Icon(
+          leadingData,
+          size: Sizes.iconSize,
+          color: colorScheme.getColor(CustomColorScheme.darkPrimary),
+        ),
+        title: Text(text,
+            style: FontStandards.getTextStyle(
+                colorScheme, Style.norm, FontSize.medium)),
+        onTap: () {
+          openSection(position - 1);
+        },
+      ),
+    );
   }
 
   void openSection(int type) {
