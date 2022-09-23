@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:edunciate/signUpScreen/loginscreen.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 
 
@@ -14,16 +12,6 @@ class SignUpScreen extends StatelessWidget {
     return MaterialApp(
       title: 'Flutter Demo',
       home: Scaffold (
-        appBar: AppBar(
-          title: Row(
-          children: <Widget>[
-            Text('Edunicate', style: TextStyle(fontSize:24, fontFamily: 'Josefin Sans')),
-            Spacer(),
-            Text( 'Sign In', style: TextStyle(fontSize: 24, fontFamily: 'Josefin Sans'))
-            ] 
-          ),
-        backgroundColor: Color(0xffF9461E1),
-        ),
         body: MyCustomForm(),
       )
     );
@@ -38,157 +26,96 @@ class MyCustomForm extends StatefulWidget {
 }
 
 class _MyCustomFormState extends State<MyCustomForm>{
-  final eController = TextEditingController();
-  final pController = TextEditingController();
-
-  @override
-  void dispose() {
-    // Clean up the controller when the widget is disposed.
-    eController.dispose();
-    pController.dispose();
-    super.dispose();
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-    body: Column(
+      resizeToAvoidBottomInset: false,
+    body: Stack (
       children: <Widget>[
-        EmailPasswordBox('Email'),
-        Container(
-          decoration:BoxDecoration(border: Border.all()),
-          height: 30,
-          width: MediaQuery. of(context). size. width *.80,
-          padding: EdgeInsets.symmetric(horizontal:2),
-          child: TextField(textAlignVertical: TextAlignVertical.center, controller: eController)
-        ),
-      
-        EmailPasswordBox('Password'),
-        Container(
-          decoration:BoxDecoration(border: Border.all()),
-          height: 30,
-          width: MediaQuery. of(context). size. width *.80,
-          padding: EdgeInsets.symmetric(horizontal:2),
-          child: TextField(textAlignVertical: TextAlignVertical.center, controller: pController,)
-        ),
-        SizedBox(height: 30),
-         
-        SizedBox (
-          height: 30,
-          width: 90,
-          child: ElevatedButton(
-            onPressed: () {
-              if(!eController.text.endsWith('nsd.org')) {
-                showAlertDialog(context,'WRONG EMAIL', 'Only \'apps.nsd\' or \'.nsd\' emails!');
-              }
-              else {
-                AuthenticationHelp(context, eController.text, pController.text);
-              }
-            },
-            style: ElevatedButton.styleFrom (primary: Color(0xffF5A2E9C), shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(9.0))),
-            child: Text('Sign Up', style: TextStyle( fontSize: 15, fontFamily: 'Lato', color: Colors.white),
-            ),
+          Container (
+            height: MediaQuery. of(context). size.height,
+            child: Image.asset("assets/images/purple2.jpeg", fit: BoxFit.fill),
           ),
-        ),
-  
-          AlternateButtons('OR', 'SIGN UP WITH GOOGLE'),
-          AlternateButtons('ALREADY HAVE AN ACCOUNT?', 'CONTINUE TO LOGIN PAGE'),
-        ],
-    ),
-    );
-  }
-}
-
-showAlertDialog(BuildContext context, String titleText, String contentText){
-  AlertDialog alert = AlertDialog(
-    title: Text(titleText),
-    content: Text(contentText),
-  );
-
-  // show the dialog
-  showDialog(
-    context: context,
-    builder: (BuildContext context) {
-      return alert;
-    }
-  );
-}
-
-class EmailPasswordBox extends StatelessWidget {
-  EmailPasswordBox(this.aboveText);
-  final String aboveText;
-
-  @override
-  Widget build(BuildContext context) {
-    return Container (
-      child: Column (
-        children: <Widget> [
-        SizedBox(height:30),
-        SizedBox(
-          width:  MediaQuery. of(context). size. width *.80,
-          child:Text(aboveText, style: TextStyle(fontSize: 15, fontFamily: 'Lato'), textAlign: TextAlign.left,)
-        ),
-        ],
+          Align (
+            alignment: Alignment.center,
+            child: Container(
+              width: MediaQuery. of(context). size.width * 0.78,
+              height:  MediaQuery. of(context). size.height * 0.45,
+              decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(20)),
+              child: Column (
+                children: <Widget> [
+                  SizedBox(height:  MediaQuery. of(context). size.height * 0.03),
+                  Text('Welcome to Leap!', style: TextStyle(fontSize : 30, fontFamily: 'Josefin Sans', fontWeight: FontWeight.w600)),
+                  Divider(color: Colors.black),
+                  SizedBox(height:  MediaQuery. of(context). size.height * 0.03),
+                  Container(
+                    width: MediaQuery. of(context). size. width *.7,
+                    child: Text('New user?', style: TextStyle(fontSize : 15, fontFamily: 'Lato', fontWeight: FontWeight.w600), textAlign: TextAlign.left)
+                  ),
+                  SizedBox(height:  MediaQuery. of(context). size.height * 0.01),
+                  AlternateButtons('Sign up with Google'),
+                  SizedBox(height:  MediaQuery. of(context). size.height * 0.06),
+                  SizedBox(
+                    width: MediaQuery. of(context). size. width *.7,
+                    child: Text('Already have an account?', style: TextStyle(fontSize : 15, fontFamily: 'Lato', fontWeight: FontWeight.w600), textAlign: TextAlign.left)
+                  ),
+                  SizedBox(height:  MediaQuery. of(context). size.height * 0.01),
+                  AlternateButtons('Log in with Google')
+                ]
+              )
+            )
+          )
+        ]
       )
     );
   }
 }
 
 class AlternateButtons extends StatelessWidget {
-  AlternateButtons(this.specifier, this.buttonText);
-  final String specifier;
+  AlternateButtons(this.buttonText);
   final String buttonText;
 
   @override
   Widget build(BuildContext context) {
-    return Container (
-      child: Column (
+    return Column (
         children: <Widget> [
-        Container(height:30),
-          Divider(color: Colors.black),
-          Text(specifier, style: TextStyle(fontSize : 15, fontFamily: 'Lato')),
-          Container(height: 15),
           SizedBox(
-            height: 40,
-            width: MediaQuery. of(context). size. width *.80,
+            height: MediaQuery. of(context). size. height *.06,
+            width: MediaQuery. of(context). size. width *.7,
             child: ElevatedButton (
               onPressed: () {
-                if (buttonText == 'CONTINUE TO LOGIN PAGE') {
-                  Navigator.push(context, MaterialPageRoute(builder: (context) => const LogInScreen()));
-                }
-                else if(buttonText == 'SIGN UP WITH GOOGLE') {
-                  signInWithGoogle();
-                }
+                signInWithGoogle();  
               },
-              style: ElevatedButton.styleFrom(primary: Color(0xffF9461E1), shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(9.0))),
-                child:Text(buttonText, style: TextStyle( fontSize: 15, fontFamily: 'Lato', color: Colors.white), textAlign: TextAlign.left)
-            ) 
+              style: ElevatedButton.styleFrom(primary: Colors.white, shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(40)), side: BorderSide(color: Colors.grey)),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  Container(
+                    height: 20.0,
+                    width: 20.0,
+                    decoration: BoxDecoration(
+                      image: DecorationImage(
+                          image:
+                              AssetImage('assets/images/google_logo.png'),
+                          fit: BoxFit.cover),
+                      shape: BoxShape.circle,
+                    ),
+                  ),
+                  SizedBox(
+                    width: 20,
+                  ),
+                  Text(buttonText, style: TextStyle(fontSize : 16, fontFamily: 'Lato', fontWeight: FontWeight.w300, color: Colors.black))
+                ],
+              ),
+            ),
           ),
         ],
-      )
-    );
+      );
   }
-}
-
-Future<bool> AuthenticationHelp(BuildContext context,String emailAddress, String password) async {
-  try {
-      final credential = await FirebaseAuth.instance.createUserWithEmailAndPassword(
-      email: emailAddress,
-      password: password,
-    );
-  } on FirebaseAuthException catch (e) {
-    if (e.code == 'weak-password') {
-      showAlertDialog(context, 'Password too weak', 'Must have 1 lowercase, 1 uppercase, 1 special character, and be at least 8 characters');
-    } else if (e.code == 'email-already-in-use') {
-      showAlertDialog(context, 'Email already in use', 'Please, continue to login page!');
-    }
-  } catch (e) {
-    return false;
-  }
-  return true;
 }
 
 Future<UserCredential> signInWithGoogle() async {
+  String accountType = "";
   // Trigger the authentication flow
   final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
 
@@ -201,9 +128,20 @@ Future<UserCredential> signInWithGoogle() async {
     idToken: googleAuth?.idToken,
   );
 
+
   // Once signed in, return the UserCredential
   return await FirebaseAuth.instance.signInWithCredential(credential);
 }
+
+
+
+
+
+
+
+
+
+
 
 
 
