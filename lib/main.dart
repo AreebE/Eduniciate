@@ -107,7 +107,7 @@ class _MainDisplayState extends State<MainDisplay>
 
 // Tanya Bhandari
 // Taskbar
-// Plus sign
+// Home page sign
 class AddNewTaskbarButton extends StatelessWidget {
   OnPageChangeListener listener;
   Page current;
@@ -127,7 +127,7 @@ class AddNewTaskbarButton extends StatelessWidget {
           listener.changePage(Page.joinClass);
         },
         child: Icon(
-          Icons.add,
+          Icons.home,
           color: Colors.white,
         ),
       ),
@@ -135,7 +135,7 @@ class AddNewTaskbarButton extends StatelessWidget {
   }
 }
 
-// home
+// calendar page sign
 class HomeTaskbarButton extends StatelessWidget {
   OnPageChangeListener listener;
   Page current;
@@ -156,7 +156,7 @@ class HomeTaskbarButton extends StatelessWidget {
           listener.changePage(Page.homepage);
         },
         child: Icon(
-          Icons.home,
+          Icons.calendar_month,
           color: Colors.white,
         ),
       ),
