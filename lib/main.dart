@@ -118,17 +118,26 @@ class AddNewTaskbarButton extends StatelessWidget {
       height: 50.0,
       child: OutlinedButton(
         style: OutlinedButton.styleFrom(
-            backgroundColor: (current == Page.joinClass)
-                ? Color.fromARGB(255, 58, 27, 103)
-                : CustomColorScheme.defaultColors
-                    .getColor(CustomColorScheme.lightSecondVariant),
+            backgroundColor:
+              CustomColorScheme.defaultColors
+                    .getColor(
+                      (current == Page.homepage)
+                  ? CustomColorScheme.darkPrimary
+                  : CustomColorScheme.backgroundAndHighlightedNormalText)
+                    ,
             side: BorderSide(color: Colors.white)),
         onPressed: () {
-          listener.changePage(Page.joinClass);
+          listener.changePage(Page.homepage);
         },
         child: Icon(
           Icons.home,
-          color: Colors.white,
+          iconColor:
+              CustomColorScheme.defaultColors
+                    .getColor(
+                      (current != Page.homepage)
+                  ? CustomColorScheme.darkPrimary
+                  : CustomColorScheme.backgroundAndHighlightedNormalText)
+                    ,
         ),
       ),
     );
@@ -147,17 +156,26 @@ class HomeTaskbarButton extends StatelessWidget {
       height: 50.0,
       child: OutlinedButton(
         style: OutlinedButton.styleFrom(
-            backgroundColor: (current == Page.homepage)
-                ? Color.fromARGB(255, 58, 27, 103)
-                : CustomColorScheme.defaultColors
-                    .getColor(CustomColorScheme.lightSecondVariant),
+            backgroundColor:
+              CustomColorScheme.defaultColors
+                    .getColor(
+                      (current == Page.calendarPage) // calendarPage needs to be updated
+                  ? CustomColorScheme.darkPrimary
+                  : CustomColorScheme.backgroundAndHighlightedNormalText)
+                    ,
             side: BorderSide(color: Colors.white)),
         onPressed: () {
-          listener.changePage(Page.homepage);
+          listener.changePage(Page.calendarPage);
         },
         child: Icon(
           Icons.calendar_month,
-          color: Colors.white,
+          iconColor:
+              CustomColorScheme.defaultColors
+                    .getColor(
+                      (current != Page.calendarPage)
+                  ? CustomColorScheme.darkPrimary
+                  : CustomColorScheme.backgroundAndHighlightedNormalText)
+                    ,
         ),
       ),
     );
@@ -178,18 +196,25 @@ class ProfileTaskbarButton extends StatelessWidget {
       child: OutlinedButton(
         style: OutlinedButton.styleFrom(
             backgroundColor:
-                // (current == Page.personalProfile)
-                // ? Color.fromARGB(255, 58, 27, 103)
-                // :
-                CustomColorScheme.defaultColors
-                    .getColor(CustomColorScheme.lightSecondVariant),
+              CustomColorScheme.defaultColors
+                    .getColor(
+                      (current == Page.personalProfile)
+                  ? CustomColorScheme.darkPrimary
+                  : CustomColorScheme.backgroundAndHighlightedNormalText)
+                    ,
             side: BorderSide(color: Colors.white)),
         onPressed: () {
           // listener.changePage(Page.personalProfile);
         },
         child: Icon(
           Icons.person,
-          color: Colors.white,
+          iconColor:
+              CustomColorScheme.defaultColors
+                    .getColor(
+                      (current != Page.personalProfile)
+                  ? CustomColorScheme.darkPrimary
+                  : CustomColorScheme.backgroundAndHighlightedNormalText)
+                    ,
         ),
       ),
     );
@@ -208,17 +233,26 @@ class SettingsTaskbarButton extends StatelessWidget {
       height: 50.0,
       child: OutlinedButton(
         style: OutlinedButton.styleFrom(
-            backgroundColor: (current == Page.settings)
-                ? Color.fromARGB(255, 58, 27, 103)
-                : CustomColorScheme.defaultColors
-                    .getColor(CustomColorScheme.lightSecondVariant),
+            backgroundColor:
+              CustomColorScheme.defaultColors
+                    .getColor(
+                      (current == Page.settings)
+                  ? CustomColorScheme.darkPrimary
+                  : CustomColorScheme.backgroundAndHighlightedNormalText)
+                    ,
             side: BorderSide(color: Colors.white)),
         onPressed: () {
           listener.changePage(Page.settings);
         },
         child: Icon(
           Icons.settings,
-          color: Colors.white,
+          iconColor:
+              CustomColorScheme.defaultColors
+                    .getColor(
+                      (current != Page.settings)
+                  ? CustomColorScheme.darkPrimary
+                  : CustomColorScheme.backgroundAndHighlightedNormalText)
+                    ,
         ),
       ),
     );
