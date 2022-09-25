@@ -1,5 +1,6 @@
 import 'package:edunciate/color_scheme.dart';
 import 'package:edunciate/font_standards.dart';
+import 'package:edunciate/settings/items/settings_item.dart';
 import 'package:edunciate/settings/res/sizes.dart';
 import 'package:edunciate/settings/res/strings.dart';
 import 'package:flutter/cupertino.dart';
@@ -9,41 +10,49 @@ import 'package:flutter/src/widgets/framework.dart';
 
 class TextSizeChangerApp extends StatefulWidget {
   CustomColorScheme _colorScheme;
-  TextSizeChangerApp(this._colorScheme, {Key? key}) : super(key: key);
+  SettingsItem _settingsItem;
+
+  TextSizeChangerApp(this._colorScheme, this._settingsItem, {Key? key})
+      : super(key: key);
 
   @override
   State<TextSizeChangerApp> createState() =>
-      _TextSizeChangerAppState(_colorScheme);
+      _TextSizeChangerAppState(_colorScheme, this._settingsItem);
 }
 
 class _TextSizeChangerAppState extends State<TextSizeChangerApp> {
   CustomColorScheme _colorScheme;
+  SettingsItem _settingsItem;
 
-  _TextSizeChangerAppState(this._colorScheme);
+  _TextSizeChangerAppState(this._colorScheme, this._settingsItem);
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
         home: Scaffold(
-      body: TextSizeChanger(_colorScheme),
+      body: TextSizeChanger(_colorScheme, _settingsItem),
     ));
   }
 }
 
 class TextSizeChanger extends StatefulWidget {
   CustomColorScheme _colorScheme;
+  SettingsItem _settingsItem;
 
-  TextSizeChanger(this._colorScheme, {Key? key}) : super(key: key);
+  TextSizeChanger(this._colorScheme, this._settingsItem, {Key? key})
+      : super(key: key);
 
   @override
-  State<TextSizeChanger> createState() => _TextSizeChangerState(_colorScheme);
+  State<TextSizeChanger> createState() =>
+      _TextSizeChangerState(_colorScheme, _settingsItem);
 }
 
 class _TextSizeChangerState extends State<TextSizeChanger> {
   CustomColorScheme _colorScheme;
+  SettingsItem _settingsItem;
   int currentFontSize = 12;
 
-  _TextSizeChangerState(this._colorScheme);
+  _TextSizeChangerState(this._colorScheme, this._settingsItem);
 
   @override
   Widget build(BuildContext context) {
@@ -90,6 +99,7 @@ class _TextSizeChangerState extends State<TextSizeChanger> {
 
   void changedSize(int? newValue) {
     currentFontSize = int.parse(newValue.toString());
+    _settingsItem.changeTextSize(newValue!);
     setState(() {});
   }
 }

@@ -6,7 +6,7 @@ class StringList {
   static const String currentLang = "Current:";
   static const String currentColon = "Current:";
   static const String change = "Change";
-  static const String changeLang = "Change Language";
+  static const String changeLang = "Change";
 
   static const String settingsTitle = "Settings";
 

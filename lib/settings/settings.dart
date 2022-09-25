@@ -1,9 +1,10 @@
 // Areeb Emran
-// Settings display
+// SettingsPage display
 
 // ignore_for_file: no_logic_in_create_state
 
 import 'package:edunciate/font_standards.dart';
+import 'package:edunciate/settings/items/settings_item.dart';
 import 'package:edunciate/settings/notification_setter.dart';
 import 'package:edunciate/settings/permissions.dart';
 import 'package:edunciate/settings/res/strings.dart';
@@ -11,7 +12,6 @@ import 'package:edunciate/settings/text_size_changer.dart';
 import 'package:flutter/material.dart';
 import 'package:edunciate/settings/work_hours.dart';
 // import 'package:edunciate/settings/color_setter.dart';
-import 'package:edunciate/settings/family_contacts.dart';
 import 'package:edunciate/settings/language.dart';
 import 'package:edunciate/settings/res/sizes.dart';
 import 'package:edunciate/settings/terms_of_service.dart';
@@ -19,17 +19,23 @@ import 'package:edunciate/settings/calendar.dart';
 
 import '../color_scheme.dart';
 
-class Settings extends StatefulWidget {
+class SettingsPage extends StatefulWidget {
   final CustomColorScheme colorScheme;
-  const Settings({required this.colorScheme, Key? key}) : super(key: key);
+  SettingsItem settingsItem;
+  SettingsPage(
+      {required this.settingsItem, required this.colorScheme, Key? key})
+      : super(key: key);
 
   @override
-  State<Settings> createState() => _SettingsState(colorScheme);
+  State<SettingsPage> createState() =>
+      _SettingsPageState(colorScheme, settingsItem);
 }
 
-class _SettingsState extends State<Settings> {
+class _SettingsPageState extends State<SettingsPage> {
   final CustomColorScheme colorScheme;
-  _SettingsState(this.colorScheme);
+  SettingsItem _settingsItem;
+
+  _SettingsPageState(this.colorScheme, this._settingsItem);
 
   @override
   Widget build(BuildContext context) {
@@ -43,21 +49,28 @@ class _SettingsState extends State<Settings> {
             child: ListView.builder(
               scrollDirection: Axis.vertical,
               itemBuilder: buildListTile,
-              itemCount: 7,
+              itemCount: 8,
             )));
   }
 
   Widget buildListTile(BuildContext c, int position) {
     IconData leadingData = Icons.abc;
     String text = StringList.addMember;
-    switch (position - 1) {
-      case -1:
+    switch (position - 2) {
+      case -2:
         return Text(
           StringList.settingsTitle,
           textAlign: TextAlign.center,
           style: FontStandards.getTextStyle(
               colorScheme, Style.normHeader, FontSize.heading),
         );
+      case -1:
+        return Divider(
+          color: colorScheme.getColor(CustomColorScheme.gray),
+          height: Sizes.dividerHeight,
+          thickness: Sizes.dividerThickness,
+        );
+
       case Sizes.languageTile:
         text = StringList.language;
         leadingData = Icons.translate;
@@ -89,12 +102,12 @@ class _SettingsState extends State<Settings> {
         break;
     }
 
-    int backgroundColorID = (position - 1) % 2 == 0
+    int backgroundColorID = (position - 2) % 2 == 0
         ? CustomColorScheme.backgroundAndHighlightedNormalText
         : CustomColorScheme.gray;
 
     return Container(
-      padding: EdgeInsets.all(Sizes.smallMargin),
+      padding: const EdgeInsets.all(Sizes.smallMargin),
       color: colorScheme.getColor(backgroundColorID),
       child: ListTile(
         selectedColor: colorScheme.getColor(CustomColorScheme.gray),
@@ -110,7 +123,7 @@ class _SettingsState extends State<Settings> {
             style: FontStandards.getTextStyle(
                 colorScheme, Style.norm, FontSize.medium)),
         onTap: () {
-          openSection(position - 1);
+          openSection(position - 2);
         },
       ),
     );
@@ -120,15 +133,15 @@ class _SettingsState extends State<Settings> {
     Widget section = SizedBox();
     switch (type) {
       case Sizes.languageTile:
-        section = LanguageApp(colorScheme);
+        section = LanguageApp(colorScheme, _settingsItem);
         break;
 
       case Sizes.textSizeTile:
-        section = TextSizeChangerApp(colorScheme);
+        section = TextSizeChangerApp(colorScheme, _settingsItem);
         break;
 
       case Sizes.workHoursTile:
-        section = WorkHoursApp(colorScheme);
+        section = WorkHoursApp(colorScheme, _settingsItem);
         break;
 
       case Sizes.permissionsTile:
@@ -136,7 +149,7 @@ class _SettingsState extends State<Settings> {
         break;
 
       case Sizes.notificationsTile:
-        section = NotificationStatusSetterApp(colorScheme);
+        section = NotificationStatusSetterApp(colorScheme, _settingsItem);
         break;
 
       case Sizes.termsOfServiceTile:

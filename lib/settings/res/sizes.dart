@@ -21,6 +21,7 @@ class Sizes {
   static const double rowSpace = 0.75;
   static const double largeRowSpace = 0.95;
   static const double spacerWidth = 80;
+  static const double timeSize = 100;
 
   static const double smallSpacerWidth = 20;
   static const double fineSpacerWidth = 1;

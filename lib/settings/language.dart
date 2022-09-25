@@ -3,6 +3,7 @@
 
 // ignore_for_file: no_logic_in_create_state, unused_element, avoid_print
 
+import 'package:edunciate/settings/items/settings_item.dart';
 import 'package:flutter/material.dart';
 import 'package:edunciate/font_standards.dart';
 import 'package:edunciate/settings/res/sizes.dart';
@@ -10,42 +11,79 @@ import 'package:edunciate/settings/res/strings.dart';
 
 import '../color_scheme.dart';
 
+enum SupportedLanguages { english, japanese, french, spanish, bengali }
+
+extension LangProcessor on SupportedLanguages {
+  String get code {
+    switch (this) {
+      case SupportedLanguages.english:
+        return "en";
+      case SupportedLanguages.japanese:
+        return "ja";
+      case SupportedLanguages.french:
+        return "fr";
+      case SupportedLanguages.spanish:
+        return "es";
+      case SupportedLanguages.bengali:
+        return "bn";
+    }
+  }
+
+  static SupportedLanguages getLang(String code) {
+    for (int i = 0; i < SupportedLanguages.values.length; i++) {
+      if (SupportedLanguages.values.elementAt(i).code == code) {
+        return SupportedLanguages.values.elementAt(i);
+      }
+    }
+    return SupportedLanguages.english;
+  }
+}
+
 class LanguageApp extends StatefulWidget {
   CustomColorScheme _colorScheme;
-  LanguageApp(this._colorScheme, {Key? key}) : super(key: key);
+  SettingsItem _settingsItem;
+
+  LanguageApp(this._colorScheme, this._settingsItem, {Key? key})
+      : super(key: key);
 
   @override
-  State<LanguageApp> createState() => _LanguageAppState(_colorScheme);
+  State<LanguageApp> createState() =>
+      _LanguageAppState(_colorScheme, _settingsItem);
 }
 
 class _LanguageAppState extends State<LanguageApp> {
   CustomColorScheme _colorScheme;
+  SettingsItem _settingsItem;
 
-  _LanguageAppState(this._colorScheme);
+  _LanguageAppState(this._colorScheme, this._settingsItem);
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
         home: Scaffold(
-      body: Language(_colorScheme),
+      body: Language(_colorScheme, _settingsItem),
     ));
   }
 }
 
 class Language extends StatefulWidget {
   final CustomColorScheme colorScheme;
+  SettingsItem _settingsItem;
 
-  const Language(this.colorScheme, {Key? key}) : super(key: key);
+  Language(this.colorScheme, this._settingsItem, {Key? key}) : super(key: key);
 
   @override
-  State<Language> createState() => _LanguageState(colorScheme);
+  State<Language> createState() => _LanguageState(colorScheme, _settingsItem);
 }
 
 class _LanguageState extends State<Language> {
   final CustomColorScheme colorScheme;
-  String currentVal = "en";
+  SettingsItem _settingsItem;
+  late SupportedLanguages currentVal;
 
-  _LanguageState(this.colorScheme);
+  _LanguageState(this.colorScheme, this._settingsItem) {
+    currentVal = LangProcessor.getLang(_settingsItem.getLanguage());
+  }
 
   void _voidFunction() {
     // print("EEEEEE");
@@ -96,7 +134,7 @@ class _LanguageState extends State<Language> {
                       padding: const EdgeInsets.all(Sizes.smallMargin),
                       child: Text(
                         textWidthBasis: TextWidthBasis.longestLine,
-                        "English",
+                        getFullLangName(currentVal.code),
                         style: FontStandards.getTextStyle(
                             colorScheme, Style.normUnderline, FontSize.large),
                       ),
@@ -157,30 +195,40 @@ class _LanguageState extends State<Language> {
                         style: FontStandards.getTextStyle(
                             colorScheme, Style.norm, FontSize.large),
                       ),
-                      DropdownButton<String>(
+                      DropdownButton<SupportedLanguages>(
                           dropdownColor: colorScheme.getColor(CustomColorScheme
                               .backgroundAndHighlightedNormalText),
                           focusColor: colorScheme.getColor(CustomColorScheme
                               .backgroundAndHighlightedNormalText),
-                          items: <String>["en", "fr", "ja"]
-                              .map<DropdownMenuItem<String>>((String val) {
-                            return DropdownMenuItem<String>(
+                          items: SupportedLanguages.values
+                              .map<DropdownMenuItem<SupportedLanguages>>(
+                                  (SupportedLanguages val) {
+                            return DropdownMenuItem<SupportedLanguages>(
                               value: val,
                               child: Text(
-                                val,
+                                getFullLangName(val.code),
                                 style: FontStandards.getTextStyle(
                                     colorScheme, Style.norm, FontSize.small),
                               ),
                             );
                           }).toList(),
-                          onChanged: (String? newValue) {
+                          onChanged: (SupportedLanguages? newValue) {
                             setState(() {
                               currentVal = newValue!;
+                              _settingsItem.changeLanguage(currentVal.code);
                             });
                           },
                           value: currentVal)
                     ],
                   ),
-                )));
+                ))).then((value) {
+      setState(() {});
+    });
+  }
+
+  static String getFullLangName(String code) {
+    String lowercaseName = LangProcessor.getLang(code).name;
+    String firstElem = lowercaseName.characters.elementAt(0).toUpperCase();
+    return firstElem + lowercaseName.substring(1);
   }
 }

@@ -52,7 +52,7 @@ extension StyleExtension on Style {
       case Style.header:
       case Style.darkNormUnderline:
       case Style.normUnderline:
-      case Style.normHeader:
+        // case Style.normHeader:
         return TextDecoration.underline;
       default:
         return TextDecoration.none;
@@ -74,7 +74,7 @@ extension StyleExtension on Style {
       case Style.darkVarBold:
       case Style.lightBold:
       case Style.lightVarBold:
-      case Style.normHeader:
+        // case Style.normHeader:
         return FontWeight.w900;
       default:
         return FontWeight.normal;
