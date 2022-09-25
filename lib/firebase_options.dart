@@ -17,10 +17,7 @@ import 'package:flutter/foundation.dart'
 class DefaultFirebaseOptions {
   static FirebaseOptions get currentPlatform {
     if (kIsWeb) {
-      throw UnsupportedError(
-        'DefaultFirebaseOptions have not been configured for web - '
-        'you can reconfigure this by running the FlutterFire CLI again.',
-      );
+      return web;
     }
     switch (defaultTargetPlatform) {
       case TargetPlatform.android:
@@ -28,10 +25,7 @@ class DefaultFirebaseOptions {
       case TargetPlatform.iOS:
         return ios;
       case TargetPlatform.macOS:
-        throw UnsupportedError(
-          'DefaultFirebaseOptions have not been configured for macos - '
-          'you can reconfigure this by running the FlutterFire CLI again.',
-        );
+        return macos;
       case TargetPlatform.windows:
         throw UnsupportedError(
           'DefaultFirebaseOptions have not been configured for windows - '
@@ -49,6 +43,16 @@ class DefaultFirebaseOptions {
     }
   }
 
+  static const FirebaseOptions web = FirebaseOptions(
+    apiKey: 'AIzaSyCUiVRQONri34WP7Shj5eOMHoRTWKF955E',
+    appId: '1:491451399144:web:18919206d103d9d7d1025d',
+    messagingSenderId: '491451399144',
+    projectId: 'eduniciate',
+    authDomain: 'eduniciate.firebaseapp.com',
+    storageBucket: 'eduniciate.appspot.com',
+    measurementId: 'G-XBKT1L7X2F',
+  );
+
   static const FirebaseOptions android = FirebaseOptions(
     apiKey: 'AIzaSyAgvoQKnK95-PCb5KsoEfaw-xJwBoPJ6Vk',
     appId: '1:491451399144:android:e826f19e242a9ae8d1025d',
@@ -63,6 +67,18 @@ class DefaultFirebaseOptions {
     messagingSenderId: '491451399144',
     projectId: 'eduniciate',
     storageBucket: 'eduniciate.appspot.com',
+    androidClientId: '491451399144-0em12j33i01i9c9d5qki8ju75sn63ist.apps.googleusercontent.com',
+    iosClientId: '491451399144-kj7h3g3g7mps51vm8oqv8lma8g6ni2bt.apps.googleusercontent.com',
+    iosBundleId: 'com.example.edunciate',
+  );
+
+  static const FirebaseOptions macos = FirebaseOptions(
+    apiKey: 'AIzaSyD9TgYYiBZyyDysj50boA64rG1FYIkzBtw',
+    appId: '1:491451399144:ios:018f463b6d0f2e08d1025d',
+    messagingSenderId: '491451399144',
+    projectId: 'eduniciate',
+    storageBucket: 'eduniciate.appspot.com',
+    androidClientId: '491451399144-0em12j33i01i9c9d5qki8ju75sn63ist.apps.googleusercontent.com',
     iosClientId: '491451399144-kj7h3g3g7mps51vm8oqv8lma8g6ni2bt.apps.googleusercontent.com',
     iosBundleId: 'com.example.edunciate',
   );

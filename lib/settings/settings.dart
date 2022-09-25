@@ -1,12 +1,17 @@
 // Areeb Emran
-// Settings display
+// SettingsPage display
 
 // ignore_for_file: no_logic_in_create_state
 
+import 'package:edunciate/font_standards.dart';
+import 'package:edunciate/settings/items/settings_item.dart';
+import 'package:edunciate/settings/notification_setter.dart';
+import 'package:edunciate/settings/permissions.dart';
+import 'package:edunciate/settings/res/strings.dart';
+import 'package:edunciate/settings/text_size_changer.dart';
 import 'package:flutter/material.dart';
 import 'package:edunciate/settings/work_hours.dart';
 // import 'package:edunciate/settings/color_setter.dart';
-import 'package:edunciate/settings/family_contacts.dart';
 import 'package:edunciate/settings/language.dart';
 import 'package:edunciate/settings/res/sizes.dart';
 import 'package:edunciate/settings/terms_of_service.dart';
@@ -14,52 +19,145 @@ import 'package:edunciate/settings/calendar.dart';
 
 import '../color_scheme.dart';
 
-class Settings extends StatefulWidget {
+class SettingsPage extends StatefulWidget {
   final CustomColorScheme colorScheme;
-  const Settings({required this.colorScheme, Key? key}) : super(key: key);
+  SettingsItem settingsItem;
+  SettingsPage(
+      {required this.settingsItem, required this.colorScheme, Key? key})
+      : super(key: key);
 
   @override
-  State<Settings> createState() => _SettingsState(colorScheme);
+  State<SettingsPage> createState() =>
+      _SettingsPageState(colorScheme, settingsItem);
 }
 
-class _SettingsState extends State<Settings> {
+class _SettingsPageState extends State<SettingsPage> {
   final CustomColorScheme colorScheme;
-  _SettingsState(this.colorScheme);
+  SettingsItem _settingsItem;
+
+  _SettingsPageState(this.colorScheme, this._settingsItem);
 
   @override
   Widget build(BuildContext context) {
+    return FractionallySizedBox(
+        alignment: Alignment.center,
+        heightFactor: 1,
+        child: Container(
+            color: colorScheme
+                .getColor(CustomColorScheme.backgroundAndHighlightedNormalText),
+            padding: const EdgeInsets.all(Sizes.mediumMargin),
+            child: ListView.builder(
+              scrollDirection: Axis.vertical,
+              itemBuilder: buildListTile,
+              itemCount: 8,
+            )));
+  }
+
+  Widget buildListTile(BuildContext c, int position) {
+    IconData leadingData = Icons.abc;
+    String text = StringList.addMember;
+    switch (position - 2) {
+      case -2:
+        return Text(
+          StringList.settingsTitle,
+          textAlign: TextAlign.center,
+          style: FontStandards.getTextStyle(
+              colorScheme, Style.normHeader, FontSize.heading),
+        );
+      case -1:
+        return Divider(
+          color: colorScheme.getColor(CustomColorScheme.gray),
+          height: Sizes.dividerHeight,
+          thickness: Sizes.dividerThickness,
+        );
+
+      case Sizes.languageTile:
+        text = StringList.language;
+        leadingData = Icons.translate;
+        break;
+
+      case Sizes.textSizeTile:
+        text = StringList.textSizeTitle;
+        leadingData = Icons.text_fields;
+        break;
+
+      case Sizes.workHoursTile:
+        text = StringList.workHours;
+        leadingData = Icons.timer;
+        break;
+
+      case Sizes.permissionsTile:
+        text = StringList.permissionsTitle;
+        leadingData = Icons.perm_camera_mic;
+        break;
+
+      case Sizes.notificationsTile:
+        text = StringList.notificationTitle;
+        leadingData = Icons.notification_add;
+        break;
+
+      case Sizes.termsOfServiceTile:
+        text = StringList.termsOfService;
+        leadingData = Icons.tab;
+        break;
+    }
+
+    int backgroundColorID = (position - 2) % 2 == 0
+        ? CustomColorScheme.backgroundAndHighlightedNormalText
+        : CustomColorScheme.gray;
+
     return Container(
-      color: colorScheme
-          .getColor(CustomColorScheme.backgroundAndHighlightedNormalText),
-      padding: const EdgeInsets.all(Sizes.mediumMargin),
-      child: ListView.builder(
-        scrollDirection: Axis.vertical,
-        itemBuilder: (context, index) {
-          // print(index);
-          if ((index + 1) % 3 == 0) {
-            switch (((index + 1) / 3).round()) {
-              case 1:
-                return Calendar(colorScheme);
-              case 2:
-                return WorkHours(colorScheme);
-              case 3:
-                return FamilyContactDisplay(colorScheme);
-              case 4:
-                return Language(colorScheme);
-              // case 5:
-              // return ColorSetter(colorScheme);
-              case 5:
-                return TermsOfService(colorScheme);
-            }
-          }
-          return Divider(
-            height: Sizes.dividerHeight,
-            thickness: Sizes.dividerThickness,
-            color: colorScheme.getColor(CustomColorScheme.darkPrimary),
-          );
+      padding: const EdgeInsets.all(Sizes.smallMargin),
+      color: colorScheme.getColor(backgroundColorID),
+      child: ListTile(
+        selectedColor: colorScheme.getColor(CustomColorScheme.gray),
+        focusColor: colorScheme.getColor(CustomColorScheme.gray),
+        tileColor: colorScheme.getColor(CustomColorScheme.gray),
+        selected: false,
+        leading: Icon(
+          leadingData,
+          size: Sizes.iconSize,
+          color: colorScheme.getColor(CustomColorScheme.darkPrimary),
+        ),
+        title: Text(text,
+            style: FontStandards.getTextStyle(
+                colorScheme, Style.norm, FontSize.medium)),
+        onTap: () {
+          openSection(position - 2);
         },
-        itemCount: 5 * 3 + 2,
       ),
     );
+  }
+
+  void openSection(int type) {
+    Widget section = SizedBox();
+    switch (type) {
+      case Sizes.languageTile:
+        section = LanguageApp(colorScheme, _settingsItem);
+        break;
+
+      case Sizes.textSizeTile:
+        section = TextSizeChangerApp(colorScheme, _settingsItem);
+        break;
+
+      case Sizes.workHoursTile:
+        section = WorkHoursApp(colorScheme, _settingsItem);
+        break;
+
+      case Sizes.permissionsTile:
+        section = PermissionsApp(colorScheme);
+        break;
+
+      case Sizes.notificationsTile:
+        section = NotificationStatusSetterApp(colorScheme, _settingsItem);
+        break;
+
+      case Sizes.termsOfServiceTile:
+        section = TermsOfServiceApp(colorScheme);
+        break;
+    }
+    Navigator.push(context, MaterialPageRoute(builder: (context) {
+      return section;
+    }));
   }
 }

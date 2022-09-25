@@ -1,14 +1,21 @@
 // Tanya Bhandari
 // Join a Class and/or Create a new class page
 //ignore_for_file: prefer_const_constructors, unused_import, must_be_immutable
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:edunciate/classroom/top_nav_bar.dart';
+import 'package:edunciate/firebaseAccessor/firebase_listener.dart';
+import 'package:edunciate/firebaseAccessor/settings_firebase.dart';
+import 'package:edunciate/firebaseAccessor/users_firebase.dart';
 import 'package:edunciate/homepage/homepage.dart';
 import 'package:edunciate/joinAndCreateClass/class_alternator_screen.dart';
 import 'package:edunciate/joinAndCreateClass/join_and_create_start_screen.dart';
+import 'package:edunciate/settings/items/settings_item.dart';
+import 'package:edunciate/settings/items/time_range.dart';
 import 'package:edunciate/settings/settings.dart';
 import 'package:edunciate/signUpScreen/registration_alternator.dart';
 import 'package:edunciate/signUpScreen/loginscreen.dart';
 import 'package:edunciate/signUpScreen/signupscreen.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'color_scheme.dart';
 
@@ -18,6 +25,13 @@ enum Page {
   joinClass,
   homepage,
   // personalInfo
+}
+
+class BlankListener extends FirebaseListener {
+  @override
+  void onSuccess(List items) {
+    // print(items);
+  }
 }
 
 class OnPageChangeListener {
@@ -36,28 +50,17 @@ class MainDisplay extends StatefulWidget {
 }
 
 class _MainDisplayState extends State<MainDisplay>
-    implements OnPageChangeListener {
+    implements OnPageChangeListener, FirebaseListener {
   Page current = Page.login;
+  Widget body = Homepage(CustomColorScheme.defaultColors);
 
   @override
   Widget build(BuildContext context) {
-    final CustomColorScheme defaultColors = CustomColorScheme(
-      [
-        CustomColorScheme.createFromHex("#3A1B67"),
-        CustomColorScheme.createFromHex("#5F379A"),
-        CustomColorScheme.createFromHex("#EBDDFF"),
-        CustomColorScheme.createFromHex("#D4B7FF"),
-        CustomColorScheme.createFromHex("#9461E1"),
-        CustomColorScheme.createFromHex("#000000"),
-        CustomColorScheme.createFromHex("#FFFFFF"),
-        CustomColorScheme.createFromHex("#B90000"),
-        CustomColorScheme.createFromHex("#B7CFFF"),
-        CustomColorScheme.createFromHex("#0244C5"),
-        CustomColorScheme.createFromHex("#5F379A"),
-      ],
-    );
-
-    Widget body = getBody(current, defaultColors);
+    // print("started");
+    Firebase.initializeApp().whenComplete(() {
+      // UsersFirebaseAccessor().createNewUser("1054159@apps.nsd.org",
+      // "425-236-3911", "he/him", "Areeb;Emran", BlankListener());
+    });
 
     return MaterialApp(
         home: Scaffold(
@@ -79,20 +82,25 @@ class _MainDisplayState extends State<MainDisplay>
     ));
   }
 
-  Widget getBody(Page current, CustomColorScheme defaultColors) {
+  void setBody() {
     switch (current) {
       case Page.homepage:
-        return Homepage(defaultColors);
+        body = Homepage(CustomColorScheme.defaultColors);
+
+        break;
       case Page.joinClass:
-        return ClassAlternator();
+        body = ClassAlternator();
+        break;
       case Page.login:
-        return RegistrationAlternator();
+        body = RegistrationAlternator();
+        break;
       case Page.settings:
-        return Settings(
-          colorScheme: defaultColors,
-        );
+        print("calling this");
+        FirebaseSettingsAccessor()
+            .getSettingsInfo("uSDrCPEvRKmTQHPrbP5N", this);
+        break;
       // case Page.personalInfo:
-      //   return PersonalInfoPage();
+      // return PersonalInfoPage();
     }
   }
 
@@ -100,7 +108,31 @@ class _MainDisplayState extends State<MainDisplay>
   void changePage(Page newPage) {
     if (newPage != current) {
       current = newPage;
+      setBody();
       setState(() {});
+    }
+  }
+
+  @override
+  void onFailure(String reason) {
+    // TODO: implement onFailure
+  }
+
+  @override
+  void onSuccess(List objects) {
+    switch (current) {
+      case Page.settings:
+        print(objects);
+        SettingsItem item = SettingsItem(
+            objects[FirebaseSettingsAccessor.notifStatusArrayKey],
+            objects[FirebaseSettingsAccessor.textArrayKey],
+            (objects[FirebaseSettingsAccessor.workHoursStatusArrayKey] as List)
+                .cast<TimeRange>(),
+            objects[FirebaseSettingsAccessor.langArrayKey],
+            "uSDrCPEvRKmTQHPrbP5N");
+        body = SettingsPage(
+            settingsItem: item, colorScheme: CustomColorScheme.defaultColors);
+        setState(() {});
     }
   }
 }
