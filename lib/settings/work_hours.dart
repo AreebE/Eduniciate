@@ -3,6 +3,9 @@
 
 // ignore_for_file: no_logic_in_create_state
 
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:edunciate/firebaseAccessor/settings_firebase.dart';
+import 'package:edunciate/settings/items/settings_item.dart';
 import 'package:flutter/material.dart';
 
 import 'package:edunciate/color_scheme.dart';
@@ -13,44 +16,52 @@ import 'package:edunciate/settings/items/time_range.dart';
 
 class WorkHoursApp extends StatefulWidget {
   CustomColorScheme _colorScheme;
-  WorkHoursApp(this._colorScheme, {Key? key}) : super(key: key);
+  SettingsItem _settingsItem;
+
+  WorkHoursApp(this._colorScheme, this._settingsItem, {Key? key})
+      : super(key: key);
 
   @override
-  State<WorkHoursApp> createState() => _WorkHoursAppState(_colorScheme);
+  State<WorkHoursApp> createState() =>
+      _WorkHoursAppState(_colorScheme, _settingsItem);
 }
 
 class _WorkHoursAppState extends State<WorkHoursApp> {
   CustomColorScheme _colorScheme;
+  SettingsItem _settingsItem;
 
-  _WorkHoursAppState(this._colorScheme);
+  _WorkHoursAppState(this._colorScheme, this._settingsItem);
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
         home: Scaffold(
-      body: WorkHours(_colorScheme),
+      body: WorkHours(_colorScheme, _settingsItem),
     ));
   }
 }
 
 class WorkHours extends StatefulWidget {
   final CustomColorScheme _colorScheme;
+  SettingsItem _settingsItem;
 
-  const WorkHours(this._colorScheme, {Key? key}) : super(key: key);
+  WorkHours(this._colorScheme, this._settingsItem, {Key? key})
+      : super(key: key);
 
   @override
-  State<WorkHours> createState() => _WorkHoursState(_colorScheme);
+  State<WorkHours> createState() =>
+      _WorkHoursState(_colorScheme, _settingsItem);
 }
 
 class _WorkHoursState extends State<WorkHours> {
   int _selectedIndex = 0;
   final CustomColorScheme _colorScheme;
-  List<TimeRange> setRanges = [
-    TimeRange("8:00\nA.M.", "6:00\nP.M."),
-    TimeRange("1:00\nP.M.", "6:00\nP.M."),
-  ];
+  SettingsItem _settingsItem;
+  late List<TimeRange> _setRanges;
 
-  _WorkHoursState(this._colorScheme);
+  _WorkHoursState(this._colorScheme, this._settingsItem) {
+    _setRanges = _settingsItem.getTimeRanges();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -168,56 +179,57 @@ class _WorkHoursState extends State<WorkHours> {
     List<Widget> widgets = [];
 
     widgets.add(buildRange());
-    widgets.add(
-      Padding(
-          padding: const EdgeInsets.all(Sizes.smallMargin),
-          child: ElevatedButton.icon(
-            style: ElevatedButton.styleFrom(
-                shape: RoundedRectangleBorder(
-                    borderRadius:
-                        BorderRadius.circular(Sizes.extremeRoundedBorder)),
-                primary: _colorScheme.getColor(CustomColorScheme.darkPrimary)),
-            onPressed: changeState,
-            icon: Icon(
-              Icons.timer,
-              size: Sizes.addSize,
-              color: _colorScheme.getColor(
-                  CustomColorScheme.backgroundAndHighlightedNormalText),
-            ),
-            label: Text(
-              StringList.change,
-              textAlign: TextAlign.center,
-              style: FontStandards.getTextStyle(
-                  _colorScheme, Style.brightNorm, FontSize.medium),
-            ),
-          )),
-    );
+    // widgets.add(
+    //   Padding(
+    //       padding: const EdgeInsets.all(Sizes.smallMargin),
+    //       child: ElevatedButton.icon(
+    //         style: ElevatedButton.styleFrom(
+    //             shape: RoundedRectangleBorder(
+    //                 borderRadius:
+    //                     BorderRadius.circular(Sizes.extremeRoundedBorder)),
+    //             primary: _colorScheme.getColor(CustomColorScheme.darkPrimary)),
+    //         onPressed: () => {changeState(true)},
+    //         icon: Icon(
+    //           Icons.timer,
+    //           size: Sizes.addSize,
+    //           color: _colorScheme.getColor(
+    //               CustomColorScheme.backgroundAndHighlightedNormalText),
+    //         ),
+    //         label: Text(
+    //           StringList.change,
+    //           textAlign: TextAlign.center,
+    //           style: FontStandards.getTextStyle(
+    //               _colorScheme, Style.brightNorm, FontSize.medium),
+    //         ),
+    //       )),
+    // );
     return widgets;
   }
 
   Widget buildRange() {
-    TimeRange current = setRanges.elementAt(0);
+    TimeRange current = _setRanges.elementAt(_selectedIndex);
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       mainAxisSize: MainAxisSize.max,
       children: [
         const SizedBox(),
         // The start time
-        Container(
-          decoration: BoxDecoration(
-            shape: BoxShape.circle,
-            color: _colorScheme.getColor(CustomColorScheme.lightSecondVariant),
-          ),
-          padding: const EdgeInsets.all(Sizes.mediumMargin),
-          margin: const EdgeInsets.fromLTRB(
-              Sizes.none, Sizes.smallMargin, Sizes.none, Sizes.smallMargin),
-          child: Text(
-            current.getStart(),
-            textAlign: TextAlign.center,
-            style: FontStandards.getTextStyle(
-                _colorScheme, Style.brightNorm, FontSize.medium),
-          ),
-        ),
+        ElevatedButton(
+            onPressed: () => {changeState(true)},
+            style: ElevatedButton.styleFrom(
+                fixedSize: const Size(Sizes.timeSize, Sizes.timeSize),
+                primary:
+                    _colorScheme.getColor(CustomColorScheme.lightSecondVariant),
+                shadowColor:
+                    _colorScheme.getColor(CustomColorScheme.darkPrimary),
+                shape: const CircleBorder()),
+            child: Text(
+              current.getStart(),
+              textAlign: TextAlign.center,
+              style: FontStandards.getTextStyle(
+                  _colorScheme, Style.brightNorm, FontSize.medium),
+            )),
+
         // to transition
         Text(
           StringList.to,
@@ -225,22 +237,22 @@ class _WorkHoursState extends State<WorkHours> {
           style: FontStandards.getTextStyle(
               _colorScheme, Style.norm, FontSize.medium),
         ),
-        // End time
-        Container(
-          decoration: BoxDecoration(
-            shape: BoxShape.circle,
-            color: _colorScheme.getColor(CustomColorScheme.lightSecondVariant),
-          ),
-          padding: const EdgeInsets.all(Sizes.mediumMargin),
-          margin: const EdgeInsets.fromLTRB(
-              Sizes.none, Sizes.smallMargin, Sizes.none, Sizes.smallMargin),
-          child: Text(
-            current.getEnd(),
-            textAlign: TextAlign.center,
-            style: FontStandards.getTextStyle(
-                _colorScheme, Style.brightNorm, FontSize.medium),
-          ),
-        ),
+        ElevatedButton(
+            onPressed: () => {changeState(false)},
+            style: ElevatedButton.styleFrom(
+                fixedSize: const Size(Sizes.timeSize, Sizes.timeSize),
+                primary:
+                    _colorScheme.getColor(CustomColorScheme.lightSecondVariant),
+                shadowColor:
+                    _colorScheme.getColor(CustomColorScheme.darkPrimary),
+                shape: const CircleBorder()),
+            child: Text(
+              current.getEnd(),
+              textAlign: TextAlign.center,
+              style: FontStandards.getTextStyle(
+                  _colorScheme, Style.brightNorm, FontSize.medium),
+            )),
+
         // // Change button
         // ElevatedButton(
         //   style: ElevatedButton.styleFrom(
@@ -267,120 +279,26 @@ class _WorkHoursState extends State<WorkHours> {
 
   void addState() {}
 
-  void changeState() {
-    showDialog(
-        context: context,
-        builder: (context) => StatefulBuilder(
-            builder: (context, setState) => AlertDialog(
-                backgroundColor: _colorScheme.getColor(
-                    CustomColorScheme.backgroundAndHighlightedNormalText),
-                contentPadding: const EdgeInsets.all(Sizes.mediumMargin),
-                content: FractionallySizedBox(
-                  widthFactor: Sizes.largeRowSpace,
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        mainAxisSize: MainAxisSize.max,
-                        children: [
-                          const SizedBox(),
-                          // The start time
-                          Container(
-                            decoration: BoxDecoration(
-                              shape: BoxShape.circle,
-                              color: _colorScheme.getColor(
-                                  CustomColorScheme.lightSecondVariant),
-                            ),
-                            padding: const EdgeInsets.all(Sizes.mediumMargin),
-                            margin: const EdgeInsets.fromLTRB(
-                                Sizes.none,
-                                Sizes.smallMargin,
-                                Sizes.none,
-                                Sizes.smallMargin),
-                            child: Text(
-                              "8:00\n A.M.",
-                              textAlign: TextAlign.center,
-                              style: FontStandards.getTextStyle(_colorScheme,
-                                  Style.brightNorm, FontSize.medium),
-                            ),
-                          ),
-                          // to transition
-                          Text(
-                            StringList.to,
-                            textAlign: TextAlign.center,
-                            style: FontStandards.getTextStyle(
-                                _colorScheme, Style.norm, FontSize.medium),
-                          ),
-                          // End time
-                          Container(
-                            decoration: BoxDecoration(
-                              shape: BoxShape.circle,
-                              color: _colorScheme.getColor(
-                                  CustomColorScheme.lightSecondVariant),
-                            ),
-                            padding: const EdgeInsets.all(Sizes.mediumMargin),
-                            margin: const EdgeInsets.fromLTRB(
-                                Sizes.none,
-                                Sizes.smallMargin,
-                                Sizes.none,
-                                Sizes.smallMargin),
-                            child: Text(
-                              "6:00\nP.M.",
-                              textAlign: TextAlign.center,
-                              style: FontStandards.getTextStyle(_colorScheme,
-                                  Style.brightNorm, FontSize.medium),
-                            ),
-                          ),
-                          // // Change button
-                          // ElevatedButton(
-                          //   style: ElevatedButton.styleFrom(
-                          //       primary: _colorScheme.getColor(CustomColorScheme.change),
-                          //       shape: RoundedRectangleBorder(
-                          //           borderRadius: BorderRadius.circular(Sizes.roundedBorder))),
-                          //   onPressed: changeState,
-                          //   child: Text(
-                          //     StringList.change,
-                          //     textAlign: TextAlign.center,
-                          //     style: FontStandards.getTextStyle(
-                          //         _colorScheme, Style.darkBold, FontSize.medium),
-                          //   ),
-                          // ),
-                          const SizedBox(),
-                        ],
-                      ),
-                      const SizedBox(
-                        height: Sizes.mediumMargin,
-                      ),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                        children: [
-                          ElevatedButton(
-                              onPressed: () => confirmChanges(false),
-                              style: ElevatedButton.styleFrom(
-                                  primary: _colorScheme
-                                      .getColor(CustomColorScheme.delete)),
-                              child: Text(
-                                StringList.discard,
-                                style: FontStandards.getTextStyle(_colorScheme,
-                                    Style.brightNorm, FontSize.small),
-                              )),
-                          ElevatedButton(
-                              onPressed: () => confirmChanges(true),
-                              style: ElevatedButton.styleFrom(
-                                  primary: _colorScheme
-                                      .getColor(CustomColorScheme.darkPrimary)),
-                              child: Text(
-                                StringList.confirm,
-                                style: FontStandards.getTextStyle(_colorScheme,
-                                    Style.brightNorm, FontSize.small),
-                              ))
-                        ],
-                      )
-                    ],
-                  ),
-                ))));
+  Future<void> changeState(bool usingStart) async {
+    TimeRange current = _setRanges[_selectedIndex];
+    DateTime selectedTime = current.getTime(usingStart, false);
+    TimeOfDay? newTime = await showTimePicker(
+        context: context, initialTime: TimeOfDay.fromDateTime(selectedTime));
+
+    if (newTime != null) {
+      DateTime newDateTime = DateTime(2022, 0, 0, newTime.hour, newTime.minute);
+      // print("${newTime.hour}, ${newTime.minute}");
+      // print(newDateTime);
+      // print(current.getTime(false, false));
+      if (usingStart && current.getTime(false, false).isAfter(newDateTime)) {
+        current.changeStart(newDateTime);
+      } else if (!usingStart &&
+          current.getTime(true, false).isBefore(newDateTime)) {
+        current.changeEnd(newDateTime);
+      }
+
+      setState(() {});
+    }
   }
 
   void removeState() {}

@@ -1,5 +1,7 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:edunciate/color_scheme.dart';
 import 'package:edunciate/font_standards.dart';
+import 'package:edunciate/settings/items/settings_item.dart';
 import 'package:edunciate/settings/res/sizes.dart';
 import 'package:edunciate/settings/res/strings.dart';
 import 'package:flutter/material.dart';
@@ -7,44 +9,59 @@ import 'package:flutter/src/foundation/key.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter/widgets.dart';
 
+enum NotifStates {
+  always,
+  never;
+}
+
 class NotificationStatusSetterApp extends StatefulWidget {
   CustomColorScheme _colorScheme;
-  NotificationStatusSetterApp(this._colorScheme, {Key? key}) : super(key: key);
+  SettingsItem _item;
+  NotificationStatusSetterApp(this._colorScheme, this._item, {Key? key})
+      : super(key: key);
 
   @override
   State<NotificationStatusSetterApp> createState() =>
-      _NotificationStatusSetterAppState(_colorScheme);
+      _NotificationStatusSetterAppState(_colorScheme, _item);
 }
 
 class _NotificationStatusSetterAppState
     extends State<NotificationStatusSetterApp> {
   CustomColorScheme _colorScheme;
+  SettingsItem _settingsItem;
 
-  _NotificationStatusSetterAppState(this._colorScheme);
+  _NotificationStatusSetterAppState(this._colorScheme, this._settingsItem);
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
         home: Scaffold(
-      body: NotificationStatusSetter(_colorScheme),
+      body: NotificationStatusSetter(_colorScheme, _settingsItem),
     ));
   }
 }
 
 class NotificationStatusSetter extends StatefulWidget {
   CustomColorScheme _colorScheme;
-  NotificationStatusSetter(this._colorScheme, {Key? key}) : super(key: key);
+  SettingsItem _settingsItem;
+
+  NotificationStatusSetter(this._colorScheme, this._settingsItem, {Key? key})
+      : super(key: key);
 
   @override
   State<NotificationStatusSetter> createState() =>
-      _NotificationStatusSetterState(_colorScheme);
+      _NotificationStatusSetterState(_colorScheme, _settingsItem);
 }
 
 class _NotificationStatusSetterState extends State<NotificationStatusSetter> {
   CustomColorScheme _colorScheme;
-  bool notificationsAreOn = true;
+  SettingsItem _settingsItem;
 
-  _NotificationStatusSetterState(this._colorScheme);
+  NotifStates _state = NotifStates.never;
+
+  _NotificationStatusSetterState(this._colorScheme, this._settingsItem) {
+    _state = _parseNotifStatus(_settingsItem.getNotifStatus());
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -67,7 +84,7 @@ class _NotificationStatusSetterState extends State<NotificationStatusSetter> {
                 mainAxisSize: MainAxisSize.max,
                 children: [
                   Text(
-                    (notificationsAreOn)
+                    (_state == NotifStates.always)
                         ? StringList.activated
                         : StringList.deactivated,
                     style: FontStandards.getTextStyle(
@@ -85,15 +102,32 @@ class _NotificationStatusSetterState extends State<NotificationStatusSetter> {
                           _colorScheme.getColor(CustomColorScheme.normalText),
                       inactiveTrackColor:
                           _colorScheme.getColor(CustomColorScheme.gray),
-                      value: notificationsAreOn,
-                      onChanged: changedNotificationStatus)
+                      value: _state == NotifStates.always,
+                      onChanged: (isOn) {
+                        if (isOn) {
+                          changedNotificationStatus(NotifStates.always);
+                        } else {
+                          changedNotificationStatus(NotifStates.never);
+                        }
+                      })
                 ],
               ))
         ]);
   }
 
-  void changedNotificationStatus(bool newVal) {
-    notificationsAreOn = newVal;
+  void changedNotificationStatus(NotifStates newState) {
+    _state = newState;
+    _settingsItem.changeNotifStatus(newState.name);
     setState(() {});
+  }
+
+  NotifStates _parseNotifStatus(String notifStatus) {
+    switch (notifStatus) {
+      case "always":
+        return NotifStates.always;
+      case "never":
+      default:
+        return NotifStates.never;
+    }
   }
 }
