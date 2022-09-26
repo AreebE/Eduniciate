@@ -25,12 +25,17 @@ enum Page {
   joinClass,
   homepage,
 <<<<<<< HEAD
+<<<<<<< HEAD
   personalProfile,
   calendar
 =======
   calendar,
   personalProfile
 >>>>>>> 9d2854c (Just fixing some things)
+=======
+  calendar,
+  personalProfile
+>>>>>>> 9d2854c681d68db24daa2c18436b998732bd522b
   // personalInfo
 }
 
