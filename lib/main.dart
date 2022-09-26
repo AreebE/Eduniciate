@@ -24,6 +24,8 @@ enum Page {
   login,
   joinClass,
   homepage,
+  calendar,
+  personalProfile
   // personalInfo
 }
 
@@ -150,26 +152,20 @@ class AddNewTaskbarButton extends StatelessWidget {
       height: 50.0,
       child: OutlinedButton(
         style: OutlinedButton.styleFrom(
-            backgroundColor:
-              CustomColorScheme.defaultColors
-                    .getColor(
-                      (current == Page.homepage)
-                  ? CustomColorScheme.darkPrimary
-                  : CustomColorScheme.backgroundAndHighlightedNormalText)
-                    ,
+            backgroundColor: CustomColorScheme.defaultColors.getColor(
+                (current == Page.homepage)
+                    ? CustomColorScheme.darkPrimary
+                    : CustomColorScheme.backgroundAndHighlightedNormalText),
             side: BorderSide(color: Colors.white)),
         onPressed: () {
           listener.changePage(Page.homepage);
         },
         child: Icon(
           Icons.home,
-          iconColor:
-              CustomColorScheme.defaultColors
-                    .getColor(
-                      (current != Page.homepage)
+          color: CustomColorScheme.defaultColors.getColor(
+              (current != Page.homepage)
                   ? CustomColorScheme.darkPrimary
-                  : CustomColorScheme.backgroundAndHighlightedNormalText)
-                    ,
+                  : CustomColorScheme.backgroundAndHighlightedNormalText),
         ),
       ),
     );
@@ -188,26 +184,20 @@ class HomeTaskbarButton extends StatelessWidget {
       height: 50.0,
       child: OutlinedButton(
         style: OutlinedButton.styleFrom(
-            backgroundColor:
-              CustomColorScheme.defaultColors
-                    .getColor(
-                      (current == Page.calendarPage) // calendarPage needs to be updated
-                  ? CustomColorScheme.darkPrimary
-                  : CustomColorScheme.backgroundAndHighlightedNormalText)
-                    ,
+            backgroundColor: CustomColorScheme.defaultColors.getColor(
+                (current == Page.calendar) // calendarPage needs to be updated
+                    ? CustomColorScheme.darkPrimary
+                    : CustomColorScheme.backgroundAndHighlightedNormalText),
             side: BorderSide(color: Colors.white)),
         onPressed: () {
-          listener.changePage(Page.calendarPage);
+          listener.changePage(Page.calendar);
         },
         child: Icon(
           Icons.calendar_month,
-          iconColor:
-              CustomColorScheme.defaultColors
-                    .getColor(
-                      (current != Page.calendarPage)
+          color: CustomColorScheme.defaultColors.getColor(
+              (current != Page.calendar)
                   ? CustomColorScheme.darkPrimary
-                  : CustomColorScheme.backgroundAndHighlightedNormalText)
-                    ,
+                  : CustomColorScheme.backgroundAndHighlightedNormalText),
         ),
       ),
     );
@@ -227,26 +217,20 @@ class ProfileTaskbarButton extends StatelessWidget {
       height: 50.0,
       child: OutlinedButton(
         style: OutlinedButton.styleFrom(
-            backgroundColor:
-              CustomColorScheme.defaultColors
-                    .getColor(
-                      (current == Page.personalProfile)
-                  ? CustomColorScheme.darkPrimary
-                  : CustomColorScheme.backgroundAndHighlightedNormalText)
-                    ,
+            backgroundColor: CustomColorScheme.defaultColors.getColor(
+                (current == Page.personalProfile)
+                    ? CustomColorScheme.darkPrimary
+                    : CustomColorScheme.backgroundAndHighlightedNormalText),
             side: BorderSide(color: Colors.white)),
         onPressed: () {
           // listener.changePage(Page.personalProfile);
         },
         child: Icon(
           Icons.person,
-          iconColor:
-              CustomColorScheme.defaultColors
-                    .getColor(
-                      (current != Page.personalProfile)
+          color: CustomColorScheme.defaultColors.getColor(
+              (current != Page.personalProfile)
                   ? CustomColorScheme.darkPrimary
-                  : CustomColorScheme.backgroundAndHighlightedNormalText)
-                    ,
+                  : CustomColorScheme.backgroundAndHighlightedNormalText),
         ),
       ),
     );
@@ -265,26 +249,20 @@ class SettingsTaskbarButton extends StatelessWidget {
       height: 50.0,
       child: OutlinedButton(
         style: OutlinedButton.styleFrom(
-            backgroundColor:
-              CustomColorScheme.defaultColors
-                    .getColor(
-                      (current == Page.settings)
-                  ? CustomColorScheme.darkPrimary
-                  : CustomColorScheme.backgroundAndHighlightedNormalText)
-                    ,
+            backgroundColor: CustomColorScheme.defaultColors.getColor(
+                (current == Page.settings)
+                    ? CustomColorScheme.darkPrimary
+                    : CustomColorScheme.backgroundAndHighlightedNormalText),
             side: BorderSide(color: Colors.white)),
         onPressed: () {
           listener.changePage(Page.settings);
         },
         child: Icon(
           Icons.settings,
-          iconColor:
-              CustomColorScheme.defaultColors
-                    .getColor(
-                      (current != Page.settings)
+          color: CustomColorScheme.defaultColors.getColor(
+              (current != Page.settings)
                   ? CustomColorScheme.darkPrimary
-                  : CustomColorScheme.backgroundAndHighlightedNormalText)
-                    ,
+                  : CustomColorScheme.backgroundAndHighlightedNormalText),
         ),
       ),
     );
