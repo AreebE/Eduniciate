@@ -35,7 +35,11 @@ enum Page {
 =======
   calendar,
   personalProfile
+<<<<<<< HEAD
 >>>>>>> 9d2854c (Just fixing some things)
+=======
+>>>>>>> 9d2854c681d68db24daa2c18436b998732bd522b
+>>>>>>> ba67fb864ac497bfff6cfc36879f9acdd7606ad7
   // personalInfo
 }
 
