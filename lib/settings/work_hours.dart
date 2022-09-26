@@ -283,7 +283,45 @@ class _WorkHoursState extends State<WorkHours> {
     TimeRange current = _setRanges[_selectedIndex];
     DateTime selectedTime = current.getTime(usingStart, false);
     TimeOfDay? newTime = await showTimePicker(
-        context: context, initialTime: TimeOfDay.fromDateTime(selectedTime));
+      context: context,
+      initialTime: TimeOfDay.fromDateTime(selectedTime),
+      builder: (context, child) {
+        return TimePickerTheme(
+            data: TimePickerThemeData(
+              hourMinuteTextColor: MaterialStateColor.resolveWith((states) {
+                if (states.contains(MaterialState.selected)) {
+                  return _colorScheme.getColor(
+                      CustomColorScheme.backgroundAndHighlightedNormalText);
+                }
+                return _colorScheme.getColor(CustomColorScheme.normalText);
+              }),
+              hourMinuteColor: MaterialStateColor.resolveWith((states) {
+                if (states.contains(MaterialState.selected)) {
+                  return _colorScheme.getColor(CustomColorScheme.darkPrimary);
+                }
+                return _colorScheme.getColor(CustomColorScheme.gray);
+              }),
+              dialHandColor:
+                  _colorScheme.getColor(CustomColorScheme.darkPrimary),
+              dayPeriodColor: MaterialStateColor.resolveWith((states) {
+                if (states.contains(MaterialState.selected)) {
+                  return _colorScheme.getColor(CustomColorScheme.darkVariant);
+                }
+                return _colorScheme.getColor(CustomColorScheme.gray);
+              }),
+              dayPeriodTextColor: MaterialStateColor.resolveWith((states) {
+                if (states.contains(MaterialState.selected)) {
+                  return _colorScheme.getColor(
+                      CustomColorScheme.backgroundAndHighlightedNormalText);
+                }
+                return _colorScheme.getColor(CustomColorScheme.normalText);
+              }),
+
+              // _colorScheme.getColor(CustomColorScheme.darkPrimary)
+            ),
+            child: child!);
+      },
+    );
 
     if (newTime != null) {
       DateTime newDateTime = DateTime(2022, 0, 0, newTime.hour, newTime.minute);
