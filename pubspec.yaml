@@ -40,10 +40,9 @@ dependencies:
   firebase_storage: ^10.3.3
   cloud_firestore: ^3.4.0
   google_sign_in: ^5.0.1
+  bubble: ^1.2.1
   paginated_search_bar: ^1.1.2
-
-
-
+ 
 dev_dependencies:
   flutter_test:
     sdk: flutter
@@ -66,7 +65,12 @@ flutter:
   # included with your application, so that you can use the icons in
   # the material Icons class.
   uses-material-design: true
-
+  assets: 
+    - assets/images/purpleArt.jpeg
+    - assets/images/google_logo.png
+    - assets/images/purple2.jpeg
+    - assets/images/camera.png
+    - assets/images/grayPlus.png
   fonts: 
     - family: Josefin Sans
       fonts:
@@ -83,6 +87,7 @@ flutter:
     - family: X_Icon
       fonts:
         - asset: assets\icons\X-Icon.ttf
+
   # To add assets to your application, add an assets section, like this:
   # assets:
   #   - images/a_dot_burr.jpeg
@@ -113,3 +118,4 @@ flutter:
   #
   # For details regarding fonts from package dependencies,
   # see https://flutter.dev/custom-fonts/#from-packages
+
