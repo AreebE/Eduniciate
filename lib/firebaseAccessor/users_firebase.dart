@@ -64,4 +64,16 @@ class UsersFirebaseAccessor {
     listener.onSuccess(
         [(await storage.collection(usersCollection).add(userData)).id]);
   }
+
+  Future<void> doesUserExist(String email, FirebaseListener listener) async {
+    QuerySnapshot results = await storage
+        .collection(usersCollection)
+        .where(emailKey, isEqualTo: email)
+        .get();
+    if (results.size != 0) {
+      listener.onSuccess([results.docs.elementAt(0).id]);
+    } else {
+      listener.onFailure("Person not found");
+    }
+  }
 }

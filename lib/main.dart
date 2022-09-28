@@ -54,7 +54,7 @@ class MainDisplay extends StatefulWidget {
 class _MainDisplayState extends State<MainDisplay>
     implements OnPageChangeListener, FirebaseListener {
   Page current = Page.login;
-  Widget body = Homepage(CustomColorScheme.defaultColors);
+  Widget body = RegistrationAlternator();
 
   @override
   Widget build(BuildContext context) {

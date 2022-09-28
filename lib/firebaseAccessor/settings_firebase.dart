@@ -39,9 +39,9 @@ class FirebaseSettingsAccessor {
       "always", // not. status
       [] // work hours
     ];
-    print("EEEEEEEE");
+    // print("EEEEEEEE");
     storage.collection(usersCollection).doc(personID).get().then((value) {
-      print("found");
+      // print("found");
       if (!value.exists) {
         listener.onFailure("Could not find you. :(");
       }
