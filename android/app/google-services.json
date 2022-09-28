@@ -14,6 +14,14 @@
       },
       "oauth_client": [
         {
+          "client_id": "491451399144-0em12j33i01i9c9d5qki8ju75sn63ist.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.edunciate",
+            "certificate_hash": "2f9b832453685b3a6f5fa8a4d7e57028d2045ea1"
+          }
+        },
+        {
           "client_id": "491451399144-ti7lgddet0b75ch259roc6a1foktl9l9.apps.googleusercontent.com",
           "client_type": 3
         }
