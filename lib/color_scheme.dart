@@ -9,6 +9,20 @@ class CustomColorScheme {
 
   static const String hashtag = "#";
 
+  static CustomColorScheme defaultColors = CustomColorScheme([
+    CustomColorScheme.createFromHex("#3A1B67"),
+    CustomColorScheme.createFromHex("#5F379A"),
+    CustomColorScheme.createFromHex("#EBDDFF"),
+    CustomColorScheme.createFromHex("#D4B7FF"),
+    CustomColorScheme.createFromHex("#9461E1"),
+    CustomColorScheme.createFromHex("#000000"),
+    CustomColorScheme.createFromHex("#FFFFFF"),
+    CustomColorScheme.createFromHex("#B90000"),
+    CustomColorScheme.createFromHex("#DDDDDD"),
+    CustomColorScheme.createFromHex("#0244C5"),
+    CustomColorScheme.createFromHex("#5F379A"),
+  ]);
+
   static const List<String> colorNames = [
     "Primary Color",
     "Primary Variant",
@@ -33,6 +47,8 @@ class CustomColorScheme {
   static const int backgroundAndHighlightedNormalText = 6;
   static const int delete = 7;
   static const int change = 8;
+  static const int gray = 8;
+
   static const int links = 9;
   static const int numOfColors = 10;
 

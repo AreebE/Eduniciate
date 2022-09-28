@@ -1,6 +1,11 @@
 // Areeb Emran
 // Work Hours display
 
+// ignore_for_file: no_logic_in_create_state
+
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:edunciate/firebaseAccessor/settings_firebase.dart';
+import 'package:edunciate/settings/items/settings_item.dart';
 import 'package:flutter/material.dart';
 
 import 'package:edunciate/color_scheme.dart';
@@ -9,24 +14,54 @@ import 'package:edunciate/settings/res/sizes.dart';
 import 'package:edunciate/settings/res/strings.dart';
 import 'package:edunciate/settings/items/time_range.dart';
 
-class WorkHours extends StatefulWidget {
-  final CustomColorScheme _colorScheme;
+class WorkHoursApp extends StatefulWidget {
+  CustomColorScheme _colorScheme;
+  SettingsItem _settingsItem;
 
-  const WorkHours(this._colorScheme, {Key? key}) : super(key: key);
+  WorkHoursApp(this._colorScheme, this._settingsItem, {Key? key})
+      : super(key: key);
 
   @override
-  State<WorkHours> createState() => _WorkHoursState(_colorScheme);
+  State<WorkHoursApp> createState() =>
+      _WorkHoursAppState(_colorScheme, _settingsItem);
+}
+
+class _WorkHoursAppState extends State<WorkHoursApp> {
+  CustomColorScheme _colorScheme;
+  SettingsItem _settingsItem;
+
+  _WorkHoursAppState(this._colorScheme, this._settingsItem);
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+        home: Scaffold(
+      body: WorkHours(_colorScheme, _settingsItem),
+    ));
+  }
+}
+
+class WorkHours extends StatefulWidget {
+  final CustomColorScheme _colorScheme;
+  SettingsItem _settingsItem;
+
+  WorkHours(this._colorScheme, this._settingsItem, {Key? key})
+      : super(key: key);
+
+  @override
+  State<WorkHours> createState() =>
+      _WorkHoursState(_colorScheme, _settingsItem);
 }
 
 class _WorkHoursState extends State<WorkHours> {
   int _selectedIndex = 0;
   final CustomColorScheme _colorScheme;
-  List<TimeRange> setRanges = [
-    TimeRange("6:30\nA.M.", "12:30\nP.M."),
-    TimeRange("1:00\nP.M.", "6:00\nP.M."),
-  ];
+  SettingsItem _settingsItem;
+  late List<TimeRange> _setRanges;
 
-  _WorkHoursState(this._colorScheme);
+  _WorkHoursState(this._colorScheme, this._settingsItem) {
+    _setRanges = _settingsItem.getTimeRanges();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -35,6 +70,9 @@ class _WorkHoursState extends State<WorkHours> {
       verticalDirection: VerticalDirection.down,
       children: [
         // Title
+        const FractionallySizedBox(
+          widthFactor: 1,
+        ),
         Padding(
           padding: const EdgeInsets.fromLTRB(
               Sizes.none, Sizes.smallMargin, Sizes.none, Sizes.smallMargin),
@@ -42,7 +80,7 @@ class _WorkHoursState extends State<WorkHours> {
               textDirection: TextDirection.ltr,
               style: FontStandards.getTextStyle(
                 _colorScheme,
-                Style.header,
+                Style.normHeader,
                 FontSize.heading,
               )),
         ),
@@ -59,11 +97,6 @@ class _WorkHoursState extends State<WorkHours> {
               mainAxisSize: MainAxisSize.max,
               textDirection: TextDirection.ltr,
               children: [
-                Text(
-                  StringList.day,
-                  style: FontStandards.getTextStyle(
-                      _colorScheme, Style.darkNorm, FontSize.large),
-                ),
                 const SizedBox(
                   width: Sizes.smallMargin,
                 ),
@@ -71,14 +104,21 @@ class _WorkHoursState extends State<WorkHours> {
                     scrollDirection: Axis.horizontal,
                     itemBuilder: buildDay,
                     shrinkWrap: true,
-                    itemCount: Sizes.numOfDays)
+                    itemCount: Sizes.numOfDays * 2 - 1)
               ],
             ),
           ),
         ),
-        const SizedBox(
-          height: Sizes.smallMargin,
+        Padding(
+          padding: const EdgeInsets.fromLTRB(
+              0, Sizes.smallMargin, 0, Sizes.smallMargin),
+          child: Divider(
+            height: Sizes.dividerHeight,
+            thickness: Sizes.dividerThickness,
+            color: _colorScheme.getColor(CustomColorScheme.gray),
+          ),
         ),
+
         // Day title
         Text(StringList.weekDays.elementAt(_selectedIndex),
             textDirection: TextDirection.ltr,
@@ -93,19 +133,11 @@ class _WorkHoursState extends State<WorkHours> {
         // Range view
         FractionallySizedBox(
             widthFactor: Sizes.largeRowSpace,
-            child: Container(
-                decoration: BoxDecoration(
-                    border: Border.all(
-                        width: Sizes.borderWidth,
-                        color: _colorScheme
-                            .getColor(CustomColorScheme.darkPrimary)),
-                    color:
-                        _colorScheme.getColor(CustomColorScheme.lightPrimary)),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  mainAxisSize: MainAxisSize.max,
-                  children: getRangeDisplay(),
-                ))),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              mainAxisSize: MainAxisSize.max,
+              children: getRangeDisplay(),
+            )),
         const SizedBox(
           height: Sizes.smallSpacerWidth,
         )
@@ -114,6 +146,10 @@ class _WorkHoursState extends State<WorkHours> {
   }
 
   Widget buildDay(BuildContext context, int index) {
+    if (index % 2 == 1) {
+      return const SizedBox(width: Sizes.smallMargin);
+    }
+    index = (index + 1) ~/ 2;
     bool isSelected = index == _selectedIndex;
     return SizedBox(
       width: Sizes.smallButtonWidth,
@@ -122,8 +158,8 @@ class _WorkHoursState extends State<WorkHours> {
           onPressed: () => changeDay(index),
           style: ElevatedButton.styleFrom(
               primary: (isSelected)
-                  ? _colorScheme.getColor(CustomColorScheme.darkVariant)
-                  : _colorScheme.getColor(CustomColorScheme.lightPrimary),
+                  ? _colorScheme.getColor(CustomColorScheme.darkPrimary)
+                  : _colorScheme.getColor(CustomColorScheme.lightSecondVariant),
               shape: BeveledRectangleBorder(
                 side: BorderSide(
                     color: _colorScheme.getColor(CustomColorScheme.darkPrimary),
@@ -134,151 +170,103 @@ class _WorkHoursState extends State<WorkHours> {
           child: Text(
             StringList.weekDays.elementAt(index).substring(0, 2),
             style: FontStandards.getTextStyle(
-                _colorScheme,
-                (isSelected) ? Style.lightBold : Style.darkBold,
-                FontSize.medium),
+                _colorScheme, Style.brightNorm, FontSize.medium),
           )),
     );
   }
 
   List<Widget> getRangeDisplay() {
     List<Widget> widgets = [];
-    for (int i = 0; i < setRanges.length * 2 + 1; i++) {
-      if (i % 2 == 1) {
-        widgets.add(Divider(
-          height: Sizes.dividerHeight,
-          thickness: Sizes.dividerThickness,
-          color: _colorScheme.getColor(CustomColorScheme.lightSecondVariant),
-        ));
-      } else if ((i / 2).round() >= setRanges.length) {
-        widgets.add(
-          Padding(
-              padding: const EdgeInsets.all(Sizes.smallMargin),
-              child: ElevatedButton.icon(
-                style: ElevatedButton.styleFrom(
-                    shape: RoundedRectangleBorder(
-                        borderRadius:
-                            BorderRadius.circular(Sizes.extremeRoundedBorder)),
-                    primary:
-                        _colorScheme.getColor(CustomColorScheme.normalText)),
-                onPressed: addState,
-                icon: Stack(
-                  alignment: Alignment.center,
-                  children: [
-                    Icon(
-                      Icons.circle,
-                      size: Sizes.addSize,
-                      color: _colorScheme.getColor(
-                          CustomColorScheme.backgroundAndHighlightedNormalText),
-                    ),
-                    Icon(
-                      Icons.add_outlined,
-                      size: Sizes.plusSize,
-                      color:
-                          _colorScheme.getColor(CustomColorScheme.normalText),
-                    ),
-                  ],
-                ),
-                label: Text(
-                  StringList.addRange,
-                  textAlign: TextAlign.center,
-                  style: FontStandards.getTextStyle(
-                      _colorScheme, Style.brightNorm, FontSize.medium),
-                ),
-              )),
-        );
-      } else {
-        widgets.add(buildRange((i / 2).round()));
-      }
-    }
-    widgets.insert(
-        0,
-        Divider(
-          height: Sizes.dividerHeight,
-          thickness: Sizes.dividerThickness,
-          color: _colorScheme.getColor(CustomColorScheme.lightSecondVariant),
-        ));
-    widgets.insert(
-      0,
-      Text(
-        StringList.titleOfRanges,
-        textAlign: TextAlign.center,
-        style: FontStandards.getTextStyle(
-            _colorScheme, Style.darkBold, FontSize.title),
-      ),
-    );
+
+    widgets.add(buildRange());
+    // widgets.add(
+    //   Padding(
+    //       padding: const EdgeInsets.all(Sizes.smallMargin),
+    //       child: ElevatedButton.icon(
+    //         style: ElevatedButton.styleFrom(
+    //             shape: RoundedRectangleBorder(
+    //                 borderRadius:
+    //                     BorderRadius.circular(Sizes.extremeRoundedBorder)),
+    //             primary: _colorScheme.getColor(CustomColorScheme.darkPrimary)),
+    //         onPressed: () => {changeState(true)},
+    //         icon: Icon(
+    //           Icons.timer,
+    //           size: Sizes.addSize,
+    //           color: _colorScheme.getColor(
+    //               CustomColorScheme.backgroundAndHighlightedNormalText),
+    //         ),
+    //         label: Text(
+    //           StringList.change,
+    //           textAlign: TextAlign.center,
+    //           style: FontStandards.getTextStyle(
+    //               _colorScheme, Style.brightNorm, FontSize.medium),
+    //         ),
+    //       )),
+    // );
     return widgets;
   }
 
-  Widget buildRange(int position) {
-    TimeRange current = setRanges.elementAt(position);
+  Widget buildRange() {
+    TimeRange current = _setRanges.elementAt(_selectedIndex);
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       mainAxisSize: MainAxisSize.max,
       children: [
         const SizedBox(),
         // The start time
-        Container(
-          color: _colorScheme.getColor(CustomColorScheme.lightVariant),
-          padding: const EdgeInsets.all(Sizes.smallMargin),
-          margin: const EdgeInsets.fromLTRB(
-              Sizes.none, Sizes.smallMargin, Sizes.none, Sizes.smallMargin),
-          child: Text(
-            current.getStart(),
-            textAlign: TextAlign.center,
-            style: FontStandards.getTextStyle(
-                _colorScheme, Style.darkBold, FontSize.medium),
-          ),
-        ),
+        ElevatedButton(
+            onPressed: () => {changeState(true)},
+            style: ElevatedButton.styleFrom(
+                fixedSize: const Size(Sizes.timeSize, Sizes.timeSize),
+                primary:
+                    _colorScheme.getColor(CustomColorScheme.lightSecondVariant),
+                shadowColor:
+                    _colorScheme.getColor(CustomColorScheme.darkPrimary),
+                shape: const CircleBorder()),
+            child: Text(
+              current.getStart(),
+              textAlign: TextAlign.center,
+              style: FontStandards.getTextStyle(
+                  _colorScheme, Style.brightNorm, FontSize.medium),
+            )),
+
         // to transition
         Text(
           StringList.to,
           textAlign: TextAlign.center,
           style: FontStandards.getTextStyle(
-              _colorScheme, Style.darkVarBold, FontSize.small),
+              _colorScheme, Style.norm, FontSize.medium),
         ),
-        // End time
-        Container(
-          color: _colorScheme.getColor(CustomColorScheme.lightVariant),
-          padding: const EdgeInsets.all(Sizes.smallMargin),
-          margin: const EdgeInsets.fromLTRB(
-              Sizes.none, Sizes.smallMargin, Sizes.none, Sizes.smallMargin),
-          child: Text(
-            current.getEnd(),
-            textAlign: TextAlign.center,
-            style: FontStandards.getTextStyle(
-                _colorScheme, Style.darkBold, FontSize.medium),
-          ),
-        ),
-        // Change button
         ElevatedButton(
-          style: ElevatedButton.styleFrom(
-              primary: _colorScheme.getColor(CustomColorScheme.change),
-              shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(Sizes.roundedBorder))),
-          onPressed: changeState,
-          child: Text(
-            StringList.change,
-            textAlign: TextAlign.center,
-            style: FontStandards.getTextStyle(
-                _colorScheme, Style.darkBold, FontSize.small),
-          ),
-        ),
-        // Deny button
-        Material(
-          shape: const CircleBorder(),
-          color: _colorScheme.getColor(CustomColorScheme.delete),
-          child: IconButton(
-            onPressed: changeState,
-            padding: EdgeInsets.zero,
-            icon: Icon(
-              Icons.delete,
-              size: Sizes.addSize,
-              color: _colorScheme.getColor(
-                  CustomColorScheme.backgroundAndHighlightedNormalText),
-            ),
-          ),
-        ),
+            onPressed: () => {changeState(false)},
+            style: ElevatedButton.styleFrom(
+                fixedSize: const Size(Sizes.timeSize, Sizes.timeSize),
+                primary:
+                    _colorScheme.getColor(CustomColorScheme.lightSecondVariant),
+                shadowColor:
+                    _colorScheme.getColor(CustomColorScheme.darkPrimary),
+                shape: const CircleBorder()),
+            child: Text(
+              current.getEnd(),
+              textAlign: TextAlign.center,
+              style: FontStandards.getTextStyle(
+                  _colorScheme, Style.brightNorm, FontSize.medium),
+            )),
+
+        // // Change button
+        // ElevatedButton(
+        //   style: ElevatedButton.styleFrom(
+        //       primary: _colorScheme.getColor(CustomColorScheme.change),
+        //       shape: RoundedRectangleBorder(
+        //           borderRadius: BorderRadius.circular(Sizes.roundedBorder))),
+        //   onPressed: changeState,
+        //   child: Text(
+        //     StringList.change,
+        //     textAlign: TextAlign.center,
+        //     style: FontStandards.getTextStyle(
+        //         _colorScheme, Style.darkBold, FontSize.medium),
+        //   ),
+        // ),
         const SizedBox(),
       ],
     );
@@ -291,7 +279,67 @@ class _WorkHoursState extends State<WorkHours> {
 
   void addState() {}
 
-  void changeState() {}
+  Future<void> changeState(bool usingStart) async {
+    TimeRange current = _setRanges[_selectedIndex];
+    DateTime selectedTime = current.getTime(usingStart, false);
+    TimeOfDay? newTime = await showTimePicker(
+      context: context,
+      initialTime: TimeOfDay.fromDateTime(selectedTime),
+      builder: (context, child) {
+        return TimePickerTheme(
+            data: TimePickerThemeData(
+              hourMinuteTextColor: MaterialStateColor.resolveWith((states) {
+                if (states.contains(MaterialState.selected)) {
+                  return _colorScheme.getColor(
+                      CustomColorScheme.backgroundAndHighlightedNormalText);
+                }
+                return _colorScheme.getColor(CustomColorScheme.normalText);
+              }),
+              hourMinuteColor: MaterialStateColor.resolveWith((states) {
+                if (states.contains(MaterialState.selected)) {
+                  return _colorScheme.getColor(CustomColorScheme.darkPrimary);
+                }
+                return _colorScheme.getColor(CustomColorScheme.gray);
+              }),
+              dialHandColor:
+                  _colorScheme.getColor(CustomColorScheme.darkPrimary),
+              dayPeriodColor: MaterialStateColor.resolveWith((states) {
+                if (states.contains(MaterialState.selected)) {
+                  return _colorScheme.getColor(CustomColorScheme.darkVariant);
+                }
+                return _colorScheme.getColor(CustomColorScheme.gray);
+              }),
+              dayPeriodTextColor: MaterialStateColor.resolveWith((states) {
+                if (states.contains(MaterialState.selected)) {
+                  return _colorScheme.getColor(
+                      CustomColorScheme.backgroundAndHighlightedNormalText);
+                }
+                return _colorScheme.getColor(CustomColorScheme.normalText);
+              }),
+
+              // _colorScheme.getColor(CustomColorScheme.darkPrimary)
+            ),
+            child: child!);
+      },
+    );
+
+    if (newTime != null) {
+      DateTime newDateTime = DateTime(2022, 0, 0, newTime.hour, newTime.minute);
+      // print("${newTime.hour}, ${newTime.minute}");
+      // print(newDateTime);
+      // print(current.getTime(false, false));
+      if (usingStart && current.getTime(false, false).isAfter(newDateTime)) {
+        current.changeStart(newDateTime);
+      } else if (!usingStart &&
+          current.getTime(true, false).isBefore(newDateTime)) {
+        current.changeEnd(newDateTime);
+      }
+
+      setState(() {});
+    }
+  }
 
   void removeState() {}
+
+  void confirmChanges(bool willChange) {}
 }

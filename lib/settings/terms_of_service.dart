@@ -8,6 +8,29 @@ import 'package:edunciate/settings/res/sizes.dart';
 import 'package:edunciate/settings/res/strings.dart';
 import 'package:flutter/material.dart';
 
+class TermsOfServiceApp extends StatefulWidget {
+  CustomColorScheme _colorScheme;
+  TermsOfServiceApp(this._colorScheme, {Key? key}) : super(key: key);
+
+  @override
+  State<TermsOfServiceApp> createState() =>
+      _TermsOfServiceAppState(_colorScheme);
+}
+
+class _TermsOfServiceAppState extends State<TermsOfServiceApp> {
+  CustomColorScheme _colorScheme;
+
+  _TermsOfServiceAppState(this._colorScheme);
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+        home: Scaffold(
+      body: TermsOfService(_colorScheme),
+    ));
+  }
+}
+
 class TermsOfService extends StatefulWidget {
   final CustomColorScheme colorScheme;
 
@@ -39,35 +62,30 @@ class _TermsOfServiceState extends State<TermsOfService> {
               textDirection: TextDirection.ltr,
               style: FontStandards.getTextStyle(
                 colorScheme,
-                Style.header,
+                Style.normHeader,
                 FontSize.heading,
               )),
+        ),
+        const FractionallySizedBox(
+          widthFactor: 1,
         ),
         const SizedBox(
           height: Sizes.smallSpacerWidth,
         ),
-        Container(
-          decoration: BoxDecoration(
-              color: colorScheme.getColor(CustomColorScheme.lightPrimary),
-              border: Border.all(
-                  width: Sizes.borderWidth,
-                  color: colorScheme.getColor(CustomColorScheme.darkPrimary))),
-          child: FractionallySizedBox(
-            widthFactor: Sizes.largeRowSpace,
-            alignment: Alignment.center,
-            child: Column(
-              children: [
-                Padding(
-                  padding: const EdgeInsets.all(Sizes.smallMargin),
-                  child: Text(
-                    StringList.permissionsEnabled,
-                    style: FontStandards.getTextStyle(
-                        colorScheme, Style.darkBold, FontSize.large),
-                  ),
+        FractionallySizedBox(
+          widthFactor: Sizes.largeRowSpace,
+          alignment: Alignment.center,
+          child: Column(
+            children: [
+              Padding(
+                padding: const EdgeInsets.all(Sizes.smallMargin),
+                child: Text(
+                  StringList.currentTermsOfService,
+                  style: FontStandards.getTextStyle(
+                      colorScheme, Style.norm, FontSize.medium),
                 ),
-                getPermissionDisplay()
-              ],
-            ),
+              ),
+            ],
           ),
         ),
         const SizedBox(
@@ -76,80 +94,4 @@ class _TermsOfServiceState extends State<TermsOfService> {
       ],
     );
   }
-
-  static const int _name = 0;
-  static const int _link = 1;
-  static const int _deny = 2;
-  static const int _numOfElements = 3;
-
-  Row getPermissionDisplay() {
-    List<Widget> children = [];
-    for (int i = 0; i < _numOfElements; i++) {
-      children.add(getPermissionItem(i));
-    }
-    return Row(
-      mainAxisSize: MainAxisSize.min,
-      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-      children: children,
-    );
-  }
-
-  Widget getPermissionItem(int type) {
-    List<Widget> children = [];
-    for (int i = 0; i < enabledPermissions.length; i++) {
-      bool useDarkerVersion = i % 2 == 0;
-      Style fontStyle = (useDarkerVersion) ? Style.darkBold : Style.darkVarBold;
-      Color background = colorScheme.getColor((useDarkerVersion)
-          ? CustomColorScheme.lightVariant
-          : CustomColorScheme.lightPrimary);
-      Permission current = enabledPermissions.elementAt(i);
-      Widget child = const Text("");
-      switch (type) {
-        case _name:
-          child = Text(
-            current.getName(),
-            style: FontStandards.getTextStyle(
-                colorScheme, fontStyle, FontSize.medium),
-          );
-          break;
-        case _link:
-          child = ElevatedButton(
-              onPressed: () => openLink(current.getLink()),
-              style: ElevatedButton.styleFrom(
-                  primary: colorScheme.getColor(CustomColorScheme.change)),
-              child: Text(
-                StringList.moreInfo,
-                style: FontStandards.getTextStyle(
-                    colorScheme, Style.norm, FontSize.small),
-              ));
-          break;
-        case _deny:
-          child = ElevatedButton(
-              onPressed: () => removePermission(current.getName()),
-              style: ElevatedButton.styleFrom(
-                  primary: colorScheme.getColor(CustomColorScheme.delete)),
-              child: Text(
-                StringList.deny,
-                style: FontStandards.getTextStyle(
-                    colorScheme, Style.brightNorm, FontSize.small),
-              ));
-          break;
-      }
-      children.add(Container(
-          color: background,
-          height: Sizes.permissionHeight,
-          padding: const EdgeInsets.all(Sizes.smallMargin),
-          child: child));
-    }
-    return IntrinsicWidth(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: children,
-      ),
-    );
-  }
-
-  void openLink(String link) {}
-
-  void removePermission(String name) {}
 }

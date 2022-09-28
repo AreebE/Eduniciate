@@ -1,6 +1,8 @@
 // Areeb Emran
 // List of size resources for the settings menu
 
+// ignore_for_file: prefer_typing_uninitialized_variables
+
 class Sizes {
   static const double none = 0;
 
@@ -19,6 +21,7 @@ class Sizes {
   static const double rowSpace = 0.75;
   static const double largeRowSpace = 0.95;
   static const double spacerWidth = 80;
+  static const double timeSize = 100;
 
   static const double smallSpacerWidth = 20;
   static const double fineSpacerWidth = 1;
@@ -47,4 +50,16 @@ class Sizes {
   static const double colorNameHeight = 70;
   static const double outerRadius = 55;
   static const double innerRadius = 50;
+
+  static const double smallRowSpace = 0.5;
+  static const double largeColumnSpace = 0.4;
+
+  static const int permissionsTile = 0;
+  static const int languageTile = 1;
+  static const int notificationsTile = 2;
+  static const int termsOfServiceTile = 3;
+  static const int textSizeTile = 4;
+  static const int workHoursTile = 5;
+
+  static const double iconSize = 30;
 }

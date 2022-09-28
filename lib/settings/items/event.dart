@@ -1,3 +1,5 @@
+// ignore_for_file: prefer_final_fields
+
 class Event {
   String _message;
   int _dayOfMonth;
