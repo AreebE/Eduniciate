@@ -2,8 +2,6 @@
 // import 'package:flutter/material.dart';
 // import 'package:bubble/bubble.dart';
 
-
-
 // class MyApp extends StatelessWidget {
 //   const MyApp({Key? key}) : super(key: key);
 
@@ -105,7 +103,6 @@
 // //   );
 // // }
 
-
 import 'dart:convert';
 import 'dart:io';
 
@@ -120,8 +117,6 @@ import 'package:intl/date_symbol_data_local.dart';
 import 'package:mime/mime.dart';
 import 'package:open_file/open_file.dart';
 import 'package:path_provider/path_provider.dart';
-import 'package:uuid/uuid.dart';
-
 
 class messagingPage extends StatelessWidget {
   const messagingPage({super.key});
@@ -221,7 +216,7 @@ class _ChatPageState extends State<ChatPage> {
       final message = types.FileMessage(
         author: _user,
         createdAt: DateTime.now().millisecondsSinceEpoch,
-        id: const Uuid().v4(),
+        id: "",
         mimeType: lookupMimeType(result.files.single.path!),
         name: result.files.single.name,
         size: result.files.single.size,
@@ -247,7 +242,7 @@ class _ChatPageState extends State<ChatPage> {
         author: _user,
         createdAt: DateTime.now().millisecondsSinceEpoch,
         height: image.height.toDouble(),
-        id: const Uuid().v4(),
+        id: "",
         name: result.name,
         size: bytes.length,
         uri: result.path,
@@ -321,7 +316,7 @@ class _ChatPageState extends State<ChatPage> {
     final textMessage = types.TextMessage(
       author: _user,
       createdAt: DateTime.now().millisecondsSinceEpoch,
-      id: const Uuid().v4(),
+      id: "",
       text: message.text,
     );
 

@@ -153,6 +153,8 @@ Future<bool> passwordReset(BuildContext context, String email) async {
   return true;
 }
 
+void showAlertDialog(BuildContext context, String s, String t) {}
+
 forgotPasswordDialog(BuildContext context) {
   final emailController = TextEditingController();
 
