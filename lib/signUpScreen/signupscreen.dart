@@ -14,7 +14,7 @@ class SignUpScreen extends StatelessWidget {
     return MaterialApp(
         title: 'Flutter Demo',
         home: Scaffold(
-          body: MyCustomForm(),
+          body: MyCustomForm(listener),
         ));
   }
 }
