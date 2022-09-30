@@ -4,7 +4,7 @@ import 'package:edunciate/firebaseAccessor/firebase_listener.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 
-class ConversationFirebase {
+class IndivConversationFirebase {
   static const String messageCollection = "Messages";
   static const String contentKey = "content";
   static const String senderKey = "sender";
@@ -19,7 +19,7 @@ class ConversationFirebase {
 
   late FirebaseFirestore _storage;
 
-  ConversationFirebase() {
+  IndivConversationFirebase() {
     _storage = FirebaseFirestore.instance;
   }
 

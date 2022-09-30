@@ -8,6 +8,7 @@ class CalendarFirebaseAccessor {
 
   static const String classesCollection = "Classes";
   static const String eventsKey = "events";
+  static const String nameKey = "name";
 
   static const String eventsCollection = "Absences";
   static const String timestampKey = "date";
@@ -19,7 +20,7 @@ class CalendarFirebaseAccessor {
     _storage = FirebaseFirestore.instance;
   }
 
-  Future<void> getEvents(String personID, FirebaseListener listener) async {
+  Future<void> getUserEvents(String personID, FirebaseListener listener) async {
     List<Event> userEvents = [];
     DocumentSnapshot personInfo =
         await _storage.collection(usersCollection).doc(personID).get();
@@ -36,9 +37,26 @@ class CalendarFirebaseAccessor {
             .doc(events.elementAt(i).id)
             .get();
         DateTime time = (event.get(timestampKey) as Timestamp).toDate();
-        userEvents
-            .add(Event(event.get(reasonKey), time.day, time.month, time.year));
+        userEvents.add(Event(event.get(reasonKey), time.day, time.month,
+            time.year, classInfo.get(nameKey)));
       }
+    }
+    listener.onSuccess(userEvents);
+  }
+
+  Future<void> getClassEvents(String classID, FirebaseListener listener) async {
+    List<Event> userEvents = [];
+    DocumentSnapshot classInfo =
+        await _storage.collection(classesCollection).doc(classID).get();
+    List<DocumentReference> events = classInfo.get(eventsKey);
+    for (int j = 0; j < events.length; j++) {
+      DocumentSnapshot event = await _storage
+          .collection(eventsCollection)
+          .doc(events.elementAt(j).id)
+          .get();
+      DateTime time = (event.get(timestampKey) as Timestamp).toDate();
+      userEvents.add(Event(event.get(reasonKey), time.day, time.month,
+          time.year, event.get(classInfo.get(nameKey))));
     }
     listener.onSuccess(userEvents);
   }
@@ -47,6 +65,8 @@ class CalendarFirebaseAccessor {
     Map<String, dynamic> data = Map();
     data.putIfAbsent(timestampKey,
         () => DateTime(e.getYear(), e.getMonth(), e.getDayOfMonth()));
+    data.putIfAbsent(nameKey, () => e.getClassName());
+    data.putIfAbsent(reasonKey, () => e.getMessage());
     DocumentReference eventRef =
         await _storage.collection(eventsCollection).add(data);
     DocumentSnapshot<Map<String, dynamic>> classInfo =

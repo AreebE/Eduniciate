@@ -71,7 +71,7 @@ class PersonalProfileFirebaseAccessor {
 
   void updatePhoto(String id, MemoryImage newImage) {
     Map<String, dynamic> newData = Map();
-    newData.putIfAbsent(photoKey, () => newImage);
+    newData.putIfAbsent(photoKey, () => newImage.bytes);
     _storage.collection(usersCollection).doc(id).update(newData);
   }
 

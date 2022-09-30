@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:edunciate/firebaseAccessor/firebase_listener.dart';
 import 'package:edunciate/settings/items/time_range.dart';
+import 'package:edunciate/user_info_item.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 
@@ -75,5 +76,11 @@ class UsersFirebaseAccessor {
     } else {
       listener.onFailure("Person not found");
     }
+  }
+
+  Future<void> getUserRole(String userID, FirebaseListener listener) async {
+    DocumentSnapshot user =
+        await storage.collection(usersCollection).doc(userID).get();
+    listener.onSuccess([UserRole.getRole(user.get(typeKey))]);
   }
 }

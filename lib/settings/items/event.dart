@@ -5,9 +5,11 @@ class Event {
   int _dayOfMonth;
   int _month;
   int _year;
+  String _className;
 
 // Testing the settings
-  Event(this._message, this._dayOfMonth, this._month, this._year);
+  Event(this._message, this._dayOfMonth, this._month, this._year,
+      this._className);
 
   String getMessage() {
     return _message;
@@ -23,5 +25,9 @@ class Event {
 
   int getYear() {
     return _year;
+  }
+
+  String getClassName() {
+    return _className;
   }
 }

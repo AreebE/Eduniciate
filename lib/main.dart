@@ -30,6 +30,8 @@ enum Page {
 }
 
 class BlankListener extends FirebaseListener {
+  BlankListener() : super((items) {}, (message) {});
+
   @override
   void onSuccess(List items) {
     // print(items);

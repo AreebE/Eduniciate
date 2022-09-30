@@ -29,10 +29,10 @@ class _CalendarState extends State<Calendar> {
   final CustomColorScheme colorScheme;
 
   List<Event> events = [
-    Event("Testing", 7, 7, 2022),
-    Event("Test222222", 10, 7, 2022),
-    Event("Test444444", 20, 7, 2022),
-    Event("Test444444", 22, 7, 2022),
+    Event("Testing", 7, 7, 2022, "Red"),
+    Event("Test222222", 10, 7, 2022, "red"),
+    Event("Test444444", 20, 7, 2022, "ish"),
+    Event("Test444444", 22, 7, 2022, "BLU"),
   ];
 
   int _selectedYear = DateTime.now().year;
