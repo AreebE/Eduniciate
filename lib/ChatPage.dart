@@ -25,6 +25,7 @@ class _ChatPageState extends State<ChatPage> {
     ChatUsers(name: "Jacob Pena", lastmessageText: "will update you in evening",  time: "17 Mar"),
     ChatUsers(name: "Andrey Jones", lastmessageText: "Can you please share the file?",  time: "24 Feb"),
     ChatUsers(name: "John Wick", lastmessageText: "How are you?",  time: "18 Feb"),
+    ChatUsers(name: "Jany Wick", lastmessageText: "How are you?",  time: "18 Feb"),
   ];
 
   @override
