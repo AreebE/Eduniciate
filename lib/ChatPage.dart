@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:edunciate/models/chatUserModels.dart';
+import 'package:edunciate/chatUserModels.dart';
 import 'dart:collection';
 import 'package:paginated_search_bar/paginated_search_bar.dart';
-import 'package:edunciate/widgets/conversationlist.dart';
+import 'package:edunciate/conversationlist.dart';
 
 import 'package:flutter/material.dart';
 
@@ -44,10 +44,12 @@ class _ChatPageState extends State<ChatPage> {
                         required searchQuery,
                       }) async {
                         // Call your search API to return a list of items
-                        
-                        return [
-                          
-                        ];
+                        List<ExampleItem> users = [];
+                        for(int i = 0; i < chatUsers.length; i++) {
+                          ExampleItem n = new ExampleItem(chatUsers[i].name.toString());
+                          users.add(n);
+                        }                          
+                        return users;
                       },
                       itemBuilder: (
                         context, {
@@ -82,9 +84,9 @@ class _ChatPageState extends State<ChatPage> {
 class ExampleItem {
   final String title;
 
-  ExampleItem({
-    required this.title,
-  });
+  ExampleItem(
+ this.title,
+  );
 }
 
 
