@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:edunciate/chatUserModels.dart';
+import 'package:edunciate/individualMessagesScreen.dart';
 import 'dart:collection';
 import 'package:paginated_search_bar/paginated_search_bar.dart';
 import 'package:edunciate/conversationlist.dart';
@@ -46,9 +47,12 @@ class _ChatPageState extends State<ChatPage> {
                         // Call your search API to return a list of items
                         List<ExampleItem> users = [];
                         for(int i = 0; i < chatUsers.length; i++) {
-                          ExampleItem n = new ExampleItem(chatUsers[i].name.toString());
-                          users.add(n);
+                          if(chatUsers[i].name.toString().contains(searchQuery)) {
+                            ExampleItem n = new ExampleItem(chatUsers[i].name.toString(), chatUsers[i]);
+                            users.add(n);
+                          }
                         }                          
+
                         return users;
                       },
                       itemBuilder: (
@@ -56,10 +60,19 @@ class _ChatPageState extends State<ChatPage> {
                         required item,
                         required index,
                       }) {
-                        return Text(item.title);
-                      },
-                    ),
-                    ),
+                        return Align (alignment: Alignment.centerLeft,
+                          child: Container( 
+                            height: 40,
+                            child: TextButton (
+                            onPressed: () {
+                              Navigator.push(context, MaterialPageRoute(builder: (context) =>  MessagesScreen()),);},
+                          child: Text(item.title, style: TextStyle(color: Colors.black),textAlign: TextAlign.left,)
+                          )
+                        )
+                      );
+                },
+              ),
+            ),
             ListView.builder(
               itemCount: chatUsers.length,
               shrinkWrap: true,
@@ -83,10 +96,10 @@ class _ChatPageState extends State<ChatPage> {
 
 class ExampleItem {
   final String title;
+  final ChatUsers n;
+  
 
   ExampleItem(
- this.title,
+    this.title, this.n
   );
 }
-
-
