@@ -3,11 +3,11 @@
 
 // ignore_for_file: use_key_in_widget_constructors, non_constant_identifier_names, prefer_const_constructors, prefer_const_literals_to_create_immutables
 
+import 'package:edunciate/classroom/announcements/announcements.dart';
 import 'package:flutter/material.dart';
-import 'updates_page.dart';
+import 'members/people_page.dart';
 import 'messages_page.dart';
-import 'people_page.dart';
-import 'details_page.dart';
+import 'details/details_page.dart';
 
 class TopNavBar extends StatelessWidget {
   static String Organization = "Organization";
@@ -52,7 +52,7 @@ class TopNavBar extends StatelessWidget {
             ),
           ),
           body: TabBarView(children: [
-            UpdatesPage(),
+            AnnouncementsScreen(),
             MessagesPage(),
             PeoplePage(),
             DetailsPage()

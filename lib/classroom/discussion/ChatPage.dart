@@ -1,5 +1,6 @@
 import 'package:edunciate/classroom/discussion/chatUserModels.dart';
 import 'package:edunciate/classroom/discussion/conversationlist.dart';
+import 'package:edunciate/individualMessagesScreen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'dart:collection';
@@ -44,6 +45,8 @@ class _ChatPageState extends State<ChatPage> {
         time: "24 Feb"),
     ChatUsers(
         name: "John Wick", lastmessageText: "How are you?", time: "18 Feb"),
+    ChatUsers(
+        name: "Jany Wick", lastmessageText: "How are you?", time: "18 Feb"),
   ];
 
   @override
@@ -71,15 +74,39 @@ class _ChatPageState extends State<ChatPage> {
                   required searchQuery,
                 }) async {
                   // Call your search API to return a list of items
+                  List<ExampleItem> users = [];
+                  for (int i = 0; i < chatUsers.length; i++) {
+                    if (chatUsers[i].name.toString().contains(searchQuery)) {
+                      ExampleItem n = new ExampleItem(
+                          chatUsers[i].name.toString(), chatUsers[i]);
+                      users.add(n);
+                    }
+                  }
 
-                  return [];
+                  return users;
                 },
                 itemBuilder: (
                   context, {
                   required item,
                   required index,
                 }) {
-                  return Text(item.title);
+                  return Align(
+                      alignment: Alignment.centerLeft,
+                      child: Container(
+                          height: 40,
+                          child: TextButton(
+                              onPressed: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => MessagesScreen()),
+                                );
+                              },
+                              child: Text(
+                                item.title,
+                                style: TextStyle(color: Colors.black),
+                                textAlign: TextAlign.left,
+                              ))));
                 },
               ),
             ),
@@ -106,8 +133,7 @@ class _ChatPageState extends State<ChatPage> {
 
 class ExampleItem {
   final String title;
+  final ChatUsers n;
 
-  ExampleItem({
-    required this.title,
-  });
+  ExampleItem(this.title, this.n);
 }

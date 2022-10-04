@@ -4,8 +4,8 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'members/title_block.dart';
 import 'message_bubble.dart';
-import 'title_block.dart';
 
 void main() {
   runApp(MessagesPage());

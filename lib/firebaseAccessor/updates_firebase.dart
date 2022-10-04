@@ -1,5 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:edunciate/announcement_item.dart';
+import 'package:edunciate/classroom/announcements/announcement_item.dart';
 import 'package:edunciate/firebaseAccessor/firebase_listener.dart';
 
 class UpdatesFirebaseAccessor {

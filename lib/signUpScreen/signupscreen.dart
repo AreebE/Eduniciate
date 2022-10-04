@@ -12,6 +12,10 @@ import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 
+import '../firebaseAccessor/homepage_firebase.dart';
+import '../homepage/class_list_tile.dart';
+import '../homepage/items/class_item.dart';
+
 class ClickListener {
   createUserPopup(UserCredential info) {}
 }
@@ -27,7 +31,7 @@ class SignUpScreen extends StatelessWidget {
       //     userID, "EEEEEEEE", FirebaseListener((items) {}, (message) {}));
     });
     return MaterialApp(
-        title: 'Flutter Demo',
+        title: 'LEAP',
         home: Scaffold(
           body: MyCustomForm(listener),
         ));
@@ -131,12 +135,25 @@ class _MyCustomFormState extends State<MyCustomForm> implements ClickListener {
           pronouns,
           info.user!.displayName!,
           FirebaseListener((id) {
-            Navigator.push(context, MaterialPageRoute(builder: ((context) {
-              return MainDisplay(id[0], UserRole.student);
-            }))).then((value) {
-              GoogleSignIn().disconnect();
-              FirebaseAuth.instance.signOut();
-            });
+            HomepageFirebaseAccessor().getClasses(
+                id[0],
+                FirebaseListener((classes) {
+                  List<ClassList> items = [];
+                  for (int i = 0; i < classes.length; i++) {
+                    ClassItem item = classes[i] as ClassItem;
+                    items.insert(
+                        0,
+                        ClassList(item.getClassName(), item.getID(),
+                            item.getDesc(), item.getImage()));
+                  }
+                  Navigator.push(context,
+                      MaterialPageRoute(builder: ((context) {
+                    return MainDisplay(items, id[0], UserRole.student);
+                  }))).then((value) {
+                    GoogleSignIn().disconnect();
+                    FirebaseAuth.instance.signOut();
+                  });
+                }, (message) {}));
           }, (message) {}));
     });
   }
@@ -164,14 +181,26 @@ class AlternateButtons extends StatelessWidget {
                       if (result.isEmpty) {
                         listener.createUserPopup(value);
                       } else {
-                        Navigator.push(context,
-                            MaterialPageRoute(builder: ((context) {
-                          return MainDisplay(
-                              result[0], UserRole.getRole(result[1]));
-                        }))).then((value) {
-                          GoogleSignIn().disconnect();
-                          FirebaseAuth.instance.signOut();
-                        });
+                        HomepageFirebaseAccessor().getClasses(
+                            result[0],
+                            FirebaseListener((classes) {
+                              List<ClassList> items = [];
+                              for (int i = 0; i < classes.length; i++) {
+                                ClassItem item = classes[i] as ClassItem;
+                                items.insert(
+                                    0,
+                                    ClassList(item.getClassName(), item.getID(),
+                                        item.getDesc(), item.getImage()));
+                              }
+                              Navigator.push(context,
+                                  MaterialPageRoute(builder: ((context) {
+                                return MainDisplay(items, result[0],
+                                    UserRole.getRole(result[1]));
+                              }))).then((value) {
+                                GoogleSignIn().disconnect();
+                                FirebaseAuth.instance.signOut();
+                              });
+                            }, (message) {}));
                       }
                     }, (message) {}));
               });

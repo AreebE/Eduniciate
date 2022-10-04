@@ -3,7 +3,6 @@ import 'dart:typed_data';
 import 'dart:ui';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:edunciate/classroom/people_page.dart';
 import 'package:edunciate/firebaseAccessor/firebase_listener.dart';
 import 'package:edunciate/homepage/items/class_item.dart';
 import 'package:edunciate/user_info_item.dart';
@@ -124,8 +123,8 @@ class HomepageFirebaseAccessor {
     listener.onSuccess([member.id]);
   }
 
-  Future<void> createClass(
-      String userID, String name, FirebaseListener listener) async {
+  Future<void> createClass(String userID, String name, String desc,
+      bool isPrivate, FirebaseListener listener) async {
     Map<String, dynamic> memberData = Map<String, dynamic>();
     memberData.putIfAbsent(personIDKey, () => userID);
     memberData.putIfAbsent(roleKey, () => ClassRole.owner.name);
@@ -138,8 +137,8 @@ class HomepageFirebaseAccessor {
     ByteData data = await rootBundle.load("assets/images/basicProfile.png");
     newData.putIfAbsent(photoKey, () => data.buffer.asUint8List());
     newData.putIfAbsent(nameKey, () => name);
-    newData.putIfAbsent(isPrivateKey, () => true);
-    newData.putIfAbsent(descriptionKey, () => "");
+    newData.putIfAbsent(isPrivateKey, () => isPrivate);
+    newData.putIfAbsent(descriptionKey, () => desc);
     newData.putIfAbsent(codeKey, () => _generateRandomCode());
     newData.putIfAbsent(discussionsKey, () => <DocumentReference>[]);
     newData.putIfAbsent(announcementsKey, () => <DocumentReference>[]);
@@ -148,9 +147,20 @@ class HomepageFirebaseAccessor {
         membersKey, () => <DocumentReference>[memberIncompleteInfo]);
     DocumentReference classInfo =
         await _storage.collection(classesCollection).add(newData);
+    DocumentSnapshot userData =
+        await _storage.collection(usersCollection).doc(userID).get();
+    List<DocumentReference> classList =
+        (userData.get(classesKey) as List).cast<DocumentReference>();
+    classList.add(classInfo);
+    Map<String, dynamic> newInfo = Map<String, dynamic>();
+    newInfo.putIfAbsent(classKey, () => classList);
+    _storage.collection(usersCollection).doc(userID).update(newInfo);
 
     memberData.putIfAbsent(classKey, () => classInfo);
-    await _storage.collection(membersCollection).add(memberData);
+    await _storage
+        .collection(membersCollection)
+        .doc(memberIncompleteInfo.id)
+        .update(memberData);
 
     listener.onSuccess([classInfo.id]);
   }
