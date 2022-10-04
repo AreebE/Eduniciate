@@ -1,33 +1,39 @@
 // Tanya Bhandari
 // Join a Class and/or Create a new class page
 //ignore_for_file: prefer_const_constructors, unused_import, must_be_immutable
+import 'dart:typed_data';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:edunciate/calendar/calendar.dart';
+import 'package:edunciate/calendar/custom_calendar_event_data.dart';
 import 'package:edunciate/classroom/top_nav_bar.dart';
+import 'package:edunciate/firebaseAccessor/calendar_firebase.dart';
+import 'package:edunciate/firebaseAccessor/details_firebase.dart';
 import 'package:edunciate/firebaseAccessor/firebase_listener.dart';
+import 'package:edunciate/firebaseAccessor/homepage_firebase.dart';
+import 'package:edunciate/firebaseAccessor/personal_profile_firebase.dart';
 import 'package:edunciate/firebaseAccessor/settings_firebase.dart';
 import 'package:edunciate/firebaseAccessor/users_firebase.dart';
+import 'package:edunciate/homepage/class_list_tile.dart';
 import 'package:edunciate/homepage/homepage.dart';
+import 'package:edunciate/homepage/items/class_item.dart';
 import 'package:edunciate/joinAndCreateClass/class_alternator_screen.dart';
 import 'package:edunciate/joinAndCreateClass/join_and_create_start_screen.dart';
+import 'package:edunciate/calendar/firebase_event.dart';
+import 'package:edunciate/personal_profile/profile_page.dart';
 import 'package:edunciate/settings/items/settings_item.dart';
 import 'package:edunciate/settings/items/time_range.dart';
 import 'package:edunciate/settings/settings.dart';
 import 'package:edunciate/signUpScreen/registration_alternator.dart';
-import 'package:edunciate/signUpScreen/loginscreen.dart';
 import 'package:edunciate/signUpScreen/signupscreen.dart';
+import 'package:edunciate/user_info_item.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import 'color_scheme.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
-enum Page {
-  settings,
-  login,
-  joinClass,
-  homepage,
-
-  calendar,
-  personalProfile
-}
+enum Page { settings, homepage, calendar, personalProfile }
 
 class BlankListener extends FirebaseListener {
   BlankListener() : super((items) {}, (message) {});
@@ -43,28 +49,34 @@ class OnPageChangeListener {
 }
 
 void main() {
-  runApp(MainDisplay());
+  runApp(RegistrationAlternator());
 }
 
 class MainDisplay extends StatefulWidget {
-  const MainDisplay({Key? key}) : super(key: key);
+  String _userID;
+  UserRole _userRole;
+
+  MainDisplay(this._userID, this._userRole, {Key? key}) : super(key: key);
 
   @override
-  State<MainDisplay> createState() => _MainDisplayState();
+  State<MainDisplay> createState() => _MainDisplayState(_userID, _userRole);
 }
 
 class _MainDisplayState extends State<MainDisplay>
     implements OnPageChangeListener, FirebaseListener {
-  Page current = Page.login;
-  Widget body = RegistrationAlternator();
+  Page current = Page.homepage;
+  late Widget body = Text("EEEEEE");
+  String _userID;
+  UserRole _userRole;
+
+  _MainDisplayState(
+    this._userID,
+    this._userRole,
+  ) {}
 
   @override
   Widget build(BuildContext context) {
     // print("started");
-    Firebase.initializeApp().whenComplete(() {
-      // UsersFirebaseAccessor().createNewUser("1054159@apps.nsd.org",
-      // "425-236-3911", "he/him", "Areeb;Emran", BlankListener());
-    });
 
     return MaterialApp(
         home: Scaffold(
@@ -89,27 +101,22 @@ class _MainDisplayState extends State<MainDisplay>
   void setBody() {
     switch (current) {
       case Page.homepage:
-        body = Homepage(CustomColorScheme.defaultColors);
-
-        break;
-      case Page.joinClass:
-        body = ClassAlternator();
-        break;
-      case Page.login:
-        body = RegistrationAlternator();
+        HomepageFirebaseAccessor().getClasses(_userID, this);
         break;
       case Page.settings:
-        print("calling this");
-        FirebaseSettingsAccessor()
-            .getSettingsInfo("uSDrCPEvRKmTQHPrbP5N", this);
+        FirebaseSettingsAccessor().getSettingsInfo(_userID, this);
         break;
-      // case Page.personalInfo:
-      // return PersonalInfoPage();
+      case Page.calendar:
+        CalendarFirebaseAccessor().getUserEvents(_userID, this);
+        break;
+      case Page.personalProfile:
+        PersonalProfileFirebaseAccessor().getUserInfo(_userID, this);
     }
   }
 
   @override
   void changePage(Page newPage) {
+    print("called");
     if (newPage != current) {
       current = newPage;
       setBody();
@@ -118,15 +125,36 @@ class _MainDisplayState extends State<MainDisplay>
   }
 
   @override
-  void onFailure(String reason) {
-    // TODO: implement onFailure
-  }
+  void onFailure(String reason) {}
 
   @override
   void onSuccess(List objects) {
     switch (current) {
+      case Page.homepage:
+        List<ClassList> items = [];
+        for (int i = 0; i < objects.length; i++) {
+          ClassItem item = objects[i] as ClassItem;
+          items.insert(
+              0,
+              ClassList(item.getClassName(), item.getID(), item.getDesc(),
+                  item.getImage()));
+        }
+        body = ClassBody(items);
+        setState(() {});
+        break;
+      case Page.personalProfile:
+        UserInfoItem user = UserInfoItem(
+            id: objects[PersonalProfileFirebaseAccessor.idArrayKey],
+            imageBytes: Uint8List.fromList(
+                objects[PersonalProfileFirebaseAccessor.photoArrayKey]),
+            name: objects[PersonalProfileFirebaseAccessor.nameArrayKey],
+            pronouns: objects[PersonalProfileFirebaseAccessor.pronounsArrayKey],
+            email: objects[PersonalProfileFirebaseAccessor.emailArrayKey],
+            about: objects[PersonalProfileFirebaseAccessor.bioArrayKey]);
+        body = ProfilePage(user);
+        setState(() {});
+        break;
       case Page.settings:
-        print(objects);
         SettingsItem item = SettingsItem(
             objects[FirebaseSettingsAccessor.notifStatusArrayKey],
             objects[FirebaseSettingsAccessor.textArrayKey],
@@ -137,6 +165,16 @@ class _MainDisplayState extends State<MainDisplay>
         body = SettingsPage(
             settingsItem: item, colorScheme: CustomColorScheme.defaultColors);
         setState(() {});
+        break;
+
+      case Page.calendar:
+        List<CustomCalendarEventData> events = [];
+        for (dynamic o in objects) {
+          events.insert(0, (o as FirebaseEvent).toCustomCalendarEvent());
+        }
+        body = CalendarPage(events);
+        setState(() {});
+        return;
     }
   }
 }
@@ -225,7 +263,7 @@ class ProfileTaskbarButton extends StatelessWidget {
                     : CustomColorScheme.backgroundAndHighlightedNormalText),
             side: BorderSide(color: Colors.white)),
         onPressed: () {
-          // listener.changePage(Page.personalProfile);
+          listener.changePage(Page.personalProfile);
         },
         child: Icon(
           Icons.person,

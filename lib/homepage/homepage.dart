@@ -1,77 +1,78 @@
-// ignore_for_file: unnecessary_import, implementation_imports, prefer_final_fields, no_logic_in_create_state, must_be_immutable
-
-import 'package:edunciate/color_scheme.dart';
-import 'package:edunciate/homepage/school_search_view.dart';
-import 'package:edunciate/homepage/res/sizes.dart';
-import 'package:edunciate/homepage/searchbar.dart';
-import 'package:edunciate/settings/res/sizes.dart';
+import 'package:edunciate/homepage/class_list_tile.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/src/foundation/key.dart';
-import 'package:flutter/src/widgets/framework.dart';
-import 'package:flutter/widgets.dart';
+import 'package:paginated_search_bar/paginated_search_bar.dart';
 
-import 'class_view.dart';
+class ClassBody extends StatefulWidget {
+  List<ClassList> _items;
 
-class Homepage extends StatefulWidget {
-  CustomColorScheme _customColors;
-
-  Homepage(this._customColors, {Key? key}) : super(key: key);
+  ClassBody(this._items, {Key? key}) : super(key: key);
 
   @override
-  State<Homepage> createState() => _HomepageState(_customColors);
+  State<ClassBody> createState() => _ClassBodyState(_items);
 }
 
-class _HomepageState extends State<Homepage> {
-  CustomColorScheme _colorScheme;
+class _ClassBodyState extends State<ClassBody> {
+  List<ClassList> _items;
+  late List<ClassList> _displayedItems;
 
-  _HomepageState(this._colorScheme);
+  _ClassBodyState(this._items) {
+    _displayedItems = _items.toList();
+  }
 
   @override
   Widget build(BuildContext context) {
-    return FractionallySizedBox(
-        widthFactor: Sizes.largeRowSpace,
-        heightFactor: Sizes.largeColumnSpace,
-        child: Container(
-          alignment: Alignment.center,
-          color: _colorScheme
-              .getColor(CustomColorScheme.backgroundAndHighlightedNormalText),
-          child: ListView.builder(
-            scrollDirection: Axis.vertical,
-            itemBuilder: _getItem,
-            itemCount: Numbers.numOfElements,
-          ),
-        ));
-  }
+    return MaterialApp(
+        home: Scaffold(
+            body: Column(children: [
+      (SingleChildScrollView(
+          child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+            SizedBox(height: 10),
+            Container(
+              child: PaginatedSearchBar<ClassList>(
+                hintText: 'Search for a group to join here.',
+                onSearch: ({
+                  required pageIndex,
+                  required pageSize,
+                  required searchQuery,
+                }) async {
+                  // Call your search API to return a list of items
+                  _displayedItems = [];
+                  for (int i = 0; i < _items.length; i++) {
+                    ClassList current = _items.elementAt(i);
+                    if (current.title.contains(searchQuery)) {
+                      _displayedItems.add(current);
+                    }
+                  }
 
-  Widget _getItem(BuildContext context, int index) {
-    // print(index);
-    switch (index) {
-      case 0:
-        return SearchBar(_colorScheme);
-      case 1:
-      case 3:
-        return const SizedBox(
-          height: Numbers.mediumSpacer,
-        );
-      case 2:
-        return FractionallySizedBox(
-            widthFactor: Numbers.longRow,
-            child: Container(
-              height: Numbers.schoolViewHeight,
-              alignment: Alignment.center,
-              color: _colorScheme.getColor(CustomColorScheme.lightPrimary),
-              child: SchoolDisplay(_colorScheme),
-            ));
-      case 4:
-        return FractionallySizedBox(
-            widthFactor: Numbers.longRow,
-            child: Container(
-              alignment: Alignment.center,
-              height: Numbers.classViewHeight,
-              color: _colorScheme.getColor(CustomColorScheme.lightPrimary),
-              child: ClassDisplay(_colorScheme),
-            ));
-    }
-    return Container();
+                  return _displayedItems;
+                },
+                itemBuilder: (
+                  context, {
+                  required item,
+                  required index,
+                }) {
+                  return Text(item.title);
+                },
+              ),
+            ),
+          ]))),
+
+      /*bottomNavigationBar: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            crossAxisAlignment: CrossAxisAlignment.end,
+            children: []),*/
+      Column(
+        children: _displayedItems,
+      )
+    ])));
   }
+}
+
+class ExampleItem {
+  final String title;
+  ExampleItem(
+    this.title,
+  );
 }
