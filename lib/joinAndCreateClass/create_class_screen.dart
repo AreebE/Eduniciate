@@ -46,6 +46,10 @@ class _MyClassCreate extends State<MyClassCreate>{
   @override
   Widget build(BuildContext context) {
     String code = "";
+    bool privateClass = true;
+    String finalClassName = "";
+    String finalClassDescription = "";
+
     return Scaffold(
       resizeToAvoidBottomInset:  false,
       body: SingleChildScrollView (
@@ -66,7 +70,9 @@ class _MyClassCreate extends State<MyClassCreate>{
           ),
           SizedBox(height:  MediaQuery. of(context). size.height * 0.01),
           ElevatedButton(
-            onPressed: () {}, 
+            onPressed: () {
+
+            }, 
             style: ElevatedButton.styleFrom(primary: Theme.of(context).scaffoldBackgroundColor, elevation: 0.0, shadowColor: Colors.transparent),
             child: Text("Edit Profile Picture", style: TextStyle(fontSize : 17, fontFamily: 'Lato', color: Colors.black)),
           ),
@@ -101,25 +107,55 @@ class _MyClassCreate extends State<MyClassCreate>{
             )
            
           ),
-          SizedBox(height:  MediaQuery. of(context). size.height * 0.05),
+          Container(height:  MediaQuery. of(context). size.height * 0.05, decoration: BoxDecoration(color: Theme.of(context).scaffoldBackgroundColor) ),
           Container (
             color: Colors.white,
-            child: ElevatedButton(
+            child: TextButton(
               onPressed: (){
-                code = codeGenerator();
-              }, 
-              child: Text ("Make Private Class") 
+                if((className.text.length >= 1 && className.text.length < 15) && (description.text.length >= 1 && description.text.length < 300)){
+                  code = codeGenerator();
+                  showDialog(
+                    context: context,
+                    builder: (context) {
+                      return AlertDialog(
+                        title: Text("The code for your private class is: " + code),
+                        content: Text("Make sure to copy the code!"),
+                      );
+                    }
+                  );
+                } else {
+                  showDialog(
+                    context: context,
+                    builder: (context) {
+                      return AlertDialog(
+                        title: Text("Input Problems"),
+                        content: Text("Please make sure that title and description are fileld out and that the title is <15 characters and the description is <300."),
+                      );
+                    }
+                  );
+                }
+              },
+              style: ElevatedButton.styleFrom(primary: Theme.of(context).scaffoldBackgroundColor, elevation: 0.0, shadowColor: Colors.transparent),
+              child: Text ("Make Private Class", style: TextStyle(color: Colors.deepPurple) ) 
             )
           ),
-          SizedBox(height: 10),
+          Container(height:  10, decoration: BoxDecoration(color: Theme.of(context).scaffoldBackgroundColor) ),
           Container (
             color: Colors.white,
             child: ElevatedButton(
-              onPressed: (){
-                
-              }, 
-              child: Text ("Make Public Class") 
-            )
+              onPressed: () {
+                showDialog(
+                  context: context,
+                  builder: (context) {
+                  return AlertDialog(
+                    title: Text("Your class has been created!")
+              );
+            },
+          );
+              },
+              style: ElevatedButton.styleFrom(primary: Theme.of(context).scaffoldBackgroundColor, elevation: 0.0, shadowColor: Colors.transparent),
+              child: Text ("Make Public Class", style: TextStyle(color: Colors.deepPurple) ) 
+            ),
           ),
         ]
         )
@@ -127,6 +163,7 @@ class _MyClassCreate extends State<MyClassCreate>{
     );
   }
 }
+
 
 
 
@@ -139,9 +176,17 @@ Container displayCodeLetter(String codeLetter){
 }
 
 String codeGenerator() {
-  String code = "";
+  String code = ""; //have to save in firebase
+  String alphabet = "abcdefghijklmnopqrstuvwxyz";
+  Random random = new Random();
   for(int num = 0; num < 8; num++) {
-
+    if(num%2 ==1) {
+      code += alphabet[random.nextInt(26)];
+    }
+    else {    
+      int randomNumber = random.nextInt(10);  
+      code += randomNumber.toString();
+    }
   }
   return code;
 }
