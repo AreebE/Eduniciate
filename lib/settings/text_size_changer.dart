@@ -1,5 +1,6 @@
 import 'package:edunciate/color_scheme.dart';
 import 'package:edunciate/font_standards.dart';
+import 'package:edunciate/personal_profile/profile_page.dart';
 import 'package:edunciate/settings/items/settings_item.dart';
 import 'package:edunciate/settings/res/sizes.dart';
 import 'package:edunciate/settings/res/strings.dart';
@@ -30,6 +31,7 @@ class _TextSizeChangerAppState extends State<TextSizeChangerApp> {
   Widget build(BuildContext context) {
     return MaterialApp(
         home: Scaffold(
+      appBar: buildAppBar(context),
       body: TextSizeChanger(_colorScheme, _settingsItem),
     ));
   }

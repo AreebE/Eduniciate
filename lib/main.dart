@@ -55,24 +55,26 @@ void main() {
 class MainDisplay extends StatefulWidget {
   String _userID;
   UserRole _userRole;
+  List<ClassList> _userItems;
 
-  MainDisplay(this._userID, this._userRole, {Key? key}) : super(key: key);
+  MainDisplay(this._userItems, this._userID, this._userRole, {Key? key})
+      : super(key: key);
 
   @override
-  State<MainDisplay> createState() => _MainDisplayState(_userID, _userRole);
+  State<MainDisplay> createState() =>
+      _MainDisplayState(_userID, _userRole, _userItems);
 }
 
 class _MainDisplayState extends State<MainDisplay>
     implements OnPageChangeListener, FirebaseListener {
   Page current = Page.homepage;
-  late Widget body = Text("EEEEEE");
+  late Widget body;
   String _userID;
   UserRole _userRole;
 
-  _MainDisplayState(
-    this._userID,
-    this._userRole,
-  ) {}
+  _MainDisplayState(this._userID, this._userRole, List<ClassList> items) {
+    body = ClassBody(items, _userID, _userRole);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -139,7 +141,7 @@ class _MainDisplayState extends State<MainDisplay>
               ClassList(item.getClassName(), item.getID(), item.getDesc(),
                   item.getImage()));
         }
-        body = ClassBody(items);
+        body = ClassBody(items, this._userID, this._userRole);
         setState(() {});
         break;
       case Page.personalProfile:

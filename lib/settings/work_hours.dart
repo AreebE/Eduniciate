@@ -14,6 +14,8 @@ import 'package:edunciate/settings/res/sizes.dart';
 import 'package:edunciate/settings/res/strings.dart';
 import 'package:edunciate/settings/items/time_range.dart';
 
+import '../personal_profile/profile_page.dart';
+
 class WorkHoursApp extends StatefulWidget {
   CustomColorScheme _colorScheme;
   SettingsItem _settingsItem;
@@ -36,6 +38,7 @@ class _WorkHoursAppState extends State<WorkHoursApp> {
   Widget build(BuildContext context) {
     return MaterialApp(
         home: Scaffold(
+      appBar: buildAppBar(context),
       body: WorkHours(_colorScheme, _settingsItem),
     ));
   }
@@ -334,7 +337,7 @@ class _WorkHoursState extends State<WorkHours> {
           current.getTime(true, false).isBefore(newDateTime)) {
         current.changeEnd(newDateTime);
       }
-
+      FirebaseSettingsAccessor().updateWorkHours(current);
       setState(() {});
     }
   }

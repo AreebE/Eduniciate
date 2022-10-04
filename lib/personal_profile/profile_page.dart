@@ -31,7 +31,8 @@ class _ProfilePageState extends State<ProfilePage> {
                       CustomColorScheme.backgroundAndHighlightedNormalText)),
               child: Image(image: _user.image),
               onPressed: () {
-                Navigator.of(context).push(
+                Navigator.push(
+                  context,
                   MaterialPageRoute(
                       builder: (context) => EditProfilePage(_user)),
                 );
@@ -91,7 +92,11 @@ Widget buildAbout(UserInfoItem user) => Container(
 
 AppBar buildAppBar(BuildContext context) {
   return AppBar(
-      leading: BackButton(),
+      leading: BackButton(
+        onPressed: () {
+          Navigator.pop(context);
+        },
+      ),
       elevation: 0,
       backgroundColor: Color.fromARGB(255, 58, 27, 103),
       actions: []);

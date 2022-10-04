@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:edunciate/color_scheme.dart';
 import 'package:edunciate/font_standards.dart';
+import 'package:edunciate/personal_profile/profile_page.dart';
 import 'package:edunciate/settings/items/settings_item.dart';
 import 'package:edunciate/settings/res/sizes.dart';
 import 'package:edunciate/settings/res/strings.dart';
@@ -36,6 +37,7 @@ class _NotificationStatusSetterAppState
   Widget build(BuildContext context) {
     return MaterialApp(
         home: Scaffold(
+      appBar: buildAppBar(context),
       body: NotificationStatusSetter(_colorScheme, _settingsItem),
     ));
   }

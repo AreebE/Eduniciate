@@ -1,6 +1,7 @@
 // Areeb Emran
 // Terms of Service display
 
+import 'package:edunciate/personal_profile/profile_page.dart';
 import 'package:edunciate/settings/items/permission.dart';
 import 'package:edunciate/color_scheme.dart';
 import 'package:edunciate/font_standards.dart';
@@ -26,6 +27,7 @@ class _TermsOfServiceAppState extends State<TermsOfServiceApp> {
   Widget build(BuildContext context) {
     return MaterialApp(
         home: Scaffold(
+      appBar: buildAppBar(context),
       body: TermsOfService(_colorScheme),
     ));
   }

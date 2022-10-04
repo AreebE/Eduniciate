@@ -3,6 +3,7 @@
 
 // ignore_for_file: no_logic_in_create_state, unused_element, avoid_print
 
+import 'package:edunciate/personal_profile/profile_page.dart';
 import 'package:edunciate/settings/items/settings_item.dart';
 import 'package:flutter/material.dart';
 import 'package:edunciate/font_standards.dart';
@@ -61,6 +62,7 @@ class _LanguageAppState extends State<LanguageApp> {
   Widget build(BuildContext context) {
     return MaterialApp(
         home: Scaffold(
+      appBar: buildAppBar(context),
       body: Language(_colorScheme, _settingsItem),
     ));
   }

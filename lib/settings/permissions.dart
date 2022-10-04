@@ -1,5 +1,6 @@
 import 'package:edunciate/color_scheme.dart';
 import 'package:edunciate/font_standards.dart';
+import 'package:edunciate/personal_profile/profile_page.dart';
 import 'package:edunciate/settings/res/strings.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/src/foundation/key.dart';
@@ -27,6 +28,7 @@ class _PermissionsAppState extends State<PermissionsApp> {
   Widget build(BuildContext context) {
     return MaterialApp(
         home: Scaffold(
+      appBar: buildAppBar(context),
       body: Permissions(_colorScheme),
     ));
   }
