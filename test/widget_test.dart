@@ -7,6 +7,7 @@
 
 // ignore_for_file: prefer_const_constructors
 
+import 'package:edunciate/signUpScreen/registration_alternator.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -15,7 +16,7 @@ import 'package:edunciate/main.dart';
 void main() {
   testWidgets('Counter increments smoke test', (WidgetTester tester) async {
     // Build our app and trigger a frame.
-    await tester.pumpWidget(MainDisplay());
+    await tester.pumpWidget(RegistrationAlternator());
 
     // Verify that our counter starts at 0.
     expect(find.text('0'), findsOneWidget);

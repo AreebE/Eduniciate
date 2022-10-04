@@ -3,7 +3,7 @@ import 'package:edunciate/firebaseAccessor/calendar_firebase.dart';
 import 'package:edunciate/firebaseAccessor/firebase_listener.dart';
 import 'package:edunciate/homepage/items/class_item.dart';
 import 'package:edunciate/member_item.dart';
-import 'package:edunciate/settings/items/event.dart';
+import 'package:edunciate/calendar/firebase_event.dart';
 
 class MembersFirebaseAccessor {
   static const String usersCollection = "Users";

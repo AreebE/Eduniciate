@@ -1,40 +1,52 @@
+import 'dart:typed_data';
+
+import 'package:edunciate/color_scheme.dart';
+import 'package:edunciate/personal_profile/edit_profile_page.dart';
 import 'package:flutter/material.dart';
-import 'edit_profile_page.dart';
 
 class ProfilePage extends StatefulWidget {
+  UserInfoItem _user;
+
+  ProfilePage(this._user);
   @override
-  _ProfilePageState createState() => _ProfilePageState();
+  _ProfilePageState createState() => _ProfilePageState(_user);
 }
 
 class _ProfilePageState extends State<ProfilePage> {
+  UserInfoItem _user;
+
+  _ProfilePageState(this._user);
+
   @override
   Widget build(BuildContext context) {
-    final user = UserPreferences.myUser;
-
     return Scaffold(
         appBar: buildAppBar(context),
         body: ListView(
           physics: BouncingScrollPhysics(),
           children: [
             SizedBox(height: 10, width: 10),
-            ProfileWidget(
-              imagePath: user.imagePath,
-              onClicked: () {
+            ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                  primary: CustomColorScheme.defaultColors.getColor(
+                      CustomColorScheme.backgroundAndHighlightedNormalText)),
+              child: Image(image: _user.image),
+              onPressed: () {
                 Navigator.of(context).push(
-                  MaterialPageRoute(builder: (context) => EditProfilePage()),
+                  MaterialPageRoute(
+                      builder: (context) => EditProfilePage(_user)),
                 );
               },
             ),
             const SizedBox(height: 24),
-            buildName(user),
+            buildName(_user),
             const SizedBox(height: 24),
-            buildAbout(user),
+            buildAbout(_user),
           ],
         ));
   }
 }
 
-Widget buildName(User user) => Column(children: [
+Widget buildName(UserInfoItem user) => Column(children: [
       Text(user.name,
           style: TextStyle(
             fontWeight: FontWeight.bold,
@@ -43,11 +55,6 @@ Widget buildName(User user) => Column(children: [
             fontSize: 24.0,
           )),
       const SizedBox(height: 4),
-      Text(user.grade,
-          style: TextStyle(
-            color: Colors.grey,
-            fontFamily: 'Lato',
-          )),
       const SizedBox(height: 4),
       Text(user.pronouns,
           style: TextStyle(
@@ -62,7 +69,7 @@ Widget buildName(User user) => Column(children: [
           )),
     ]);
 
-Widget buildAbout(User user) => Container(
+Widget buildAbout(UserInfoItem user) => Container(
     padding: EdgeInsets.symmetric(horizontal: 48),
     child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
       Text('About',
@@ -90,34 +97,24 @@ AppBar buildAppBar(BuildContext context) {
       actions: []);
 }
 
-class User {
-  final String imagePath;
-  final String name;
-  final String grade;
-  final String pronouns;
-  final String email;
-  final String about;
+class UserInfoItem {
+  late MemoryImage image;
+  String id;
+  String name;
+  String pronouns;
+  String email;
+  String about;
 
-  const User({
-    required this.imagePath,
+  UserInfoItem({
+    required Uint8List imageBytes,
+    required this.id,
     required this.name,
-    required this.grade,
     required this.pronouns,
     required this.email,
     required this.about,
-  });
-}
-
-class UserPreferences {
-  static const myUser = User(
-      imagePath:
-          'https://docs.flutter.dev/assets/images/dash/dash-fainting.gif',
-      name: "Yelena Belova",
-      grade: "12th grade",
-      pronouns: "she/her/hers",
-      email: "yelenabelova@gmail.com",
-      about:
-          "A cool person. I am a former assasin. Well, formerly not on my own terms, the assasin part is debatable. My sister is Natasha Romanoff, and for a while, my sworn enemy was Clint Barton.");
+  }) {
+    image = MemoryImage(imageBytes);
+  }
 }
 
 class ProfileWidget extends StatelessWidget {

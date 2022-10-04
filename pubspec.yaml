@@ -81,6 +81,7 @@ flutter:
     - assets/images/purple2.jpeg
     - assets/images/camera.png
     - assets/images/grayPlus.png
+    - assets/images/basicProfile.png
   fonts: 
     - family: Josefin Sans
       fonts:

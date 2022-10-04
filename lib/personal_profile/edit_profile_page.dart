@@ -1,13 +1,20 @@
+import 'package:edunciate/firebaseAccessor/personal_profile_firebase.dart';
 import 'package:flutter/material.dart';
 import 'profile_page.dart';
 
 class EditProfilePage extends StatefulWidget {
+  UserInfoItem _user;
+
+  EditProfilePage(this._user);
+
   @override
-  _EditProfilePageState createState() => _EditProfilePageState();
+  _EditProfilePageState createState() => _EditProfilePageState(_user);
 }
 
 class _EditProfilePageState extends State<EditProfilePage> {
-  User user = UserPreferences.myUser;
+  UserInfoItem _user;
+
+  _EditProfilePageState(this._user);
 
   @override
   Widget build(BuildContext context) => Scaffold(
@@ -17,17 +24,26 @@ class _EditProfilePageState extends State<EditProfilePage> {
         physics: BouncingScrollPhysics(),
         children: [
           SizedBox(height: 10, width: 10),
-          ProfileWidget(
-              imagePath: user.imagePath, isEdit: true, onClicked: () async {}),
+          Image(
+            image: _user.image,
+          ),
           const SizedBox(height: 24),
           TextFieldWidget(
-              label: 'Pronouns', text: user.pronouns, onChanged: (pronouns) {}),
+              label: 'Pronouns',
+              text: _user.pronouns,
+              onChanged: (pronouns) {
+                PersonalProfileFirebaseAccessor()
+                    .updatePronouns(_user.id, pronouns);
+                _user.pronouns = pronouns;
+              }),
           const SizedBox(height: 24),
           TextFieldWidget(
               label: 'About',
-              text: user.about,
+              text: _user.about,
               maxLines: 5,
-              onChanged: (about) {})
+              onChanged: (about) {
+                PersonalProfileFirebaseAccessor().updateBio(_user.id, about);
+              })
         ],
       ));
 }
@@ -36,7 +52,7 @@ class TextFieldWidget extends StatefulWidget {
   final int maxLines;
   final String label;
   final String text;
-  final ValueChanged<String> onChanged;
+  final Function(String) onChanged;
 
   const TextFieldWidget(
       {Key? key,
@@ -47,11 +63,14 @@ class TextFieldWidget extends StatefulWidget {
       : super(key: key);
 
   @override
-  _TextFieldWidgetState createState() => _TextFieldWidgetState();
+  _TextFieldWidgetState createState() => _TextFieldWidgetState(onChanged);
 }
 
 class _TextFieldWidgetState extends State<TextFieldWidget> {
   late final TextEditingController controller;
+  Function(String) onChanged;
+
+  _TextFieldWidgetState(this.onChanged);
 
   @override
   void initState() {
@@ -85,6 +104,7 @@ class _TextFieldWidgetState extends State<TextFieldWidget> {
                 borderRadius: BorderRadius.circular(12),
               ),
             ),
+            onChanged: onChanged,
             maxLines: widget.maxLines,
           ),
         ],

@@ -1,3 +1,5 @@
+import 'package:edunciate/calendar/custom_calendar_event_data.dart';
+import 'package:edunciate/calendar/events_list.dart';
 import 'package:flutter/material.dart';
 import 'package:calendar_view/calendar_view.dart';
 
@@ -6,13 +8,17 @@ DateTime get _now => DateTime.now();
 //DateTime get _now => DateTime.now();
 
 void main() {
-  runApp(CalendarPage());
+  // runApp(MonthPage());
 }
 
 class CalendarPage extends StatelessWidget {
+  List<CustomCalendarEventData> _events;
+
+  CalendarPage(this._events);
+
   final event = CalendarEventData(
     title: "Regionals",
-    date: DateTime(2022, 9, 10),
+    date: DateTime(2022, 10, 10),
     event: "Regionals",
   );
 
@@ -26,60 +32,9 @@ class CalendarPage extends StatelessWidget {
       fontSize: 15.0,
     ));
 
-    return MaterialApp(
-        debugShowCheckedModeBanner: false,
-        theme: ThemeData(
-          primarySwatch: Colors.deepPurple,
-        ),
-        home: Scaffold(
-            body: Center(
-                child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            ElevatedButton(
-              child: Text(
-                "Day View",
-                style: TextStyle(fontSize: 20),
-              ),
-              onPressed: () {
-                Navigator.of(context).push(
-                  MaterialPageRoute(builder: (context) => DayPage()),
-                );
-              },
-            ),
-            SizedBox(
-              height: 24,
-            ),
-            ElevatedButton(
-              child: Text(
-                "Week View",
-                style: TextStyle(fontSize: 20),
-              ),
-              onPressed: () {
-                Navigator.of(context).push(
-                  MaterialPageRoute(builder: (context) => WeekPage()),
-                );
-              },
-            ),
-            SizedBox(
-              height: 24,
-            ),
-            ElevatedButton(
-              child: Text(
-                "Month View",
-                style: TextStyle(fontSize: 20),
-              ),
-              onPressed: () {
-                Navigator.of(context).push(
-                  MaterialPageRoute(builder: (context) => MonthPage()),
-                );
-              },
-            ),
-            SizedBox(
-              height: 24,
-            ),
-          ],
-        ))));
+    return Scaffold(
+      body: MonthPage(_events),
+    );
   }
 }
 
@@ -104,10 +59,7 @@ class DayPage extends StatelessWidget {
                   ]),
               body: DayView(
                 controller: EventController(),
-                eventTileBuilder: (date, events, boundry, start, end) {
-                  // Return your widget to display as event tile.
-                  return Container();
-                },
+
                 showVerticalLine:
                     true, // To display live time line in day view.
                 showLiveTimeLineInAllDays:
@@ -182,56 +134,81 @@ class WeekPage extends StatelessWidget {
   }
 }
 
-class MonthPage extends StatelessWidget {
+class MonthPage extends StatefulWidget {
+  List<CustomCalendarEventData> _events;
+  MonthPage(this._events, {Key? key}) : super(key: key);
+
+  @override
+  State<MonthPage> createState() => _MonthPageState(_events);
+}
+
+class _MonthPageState extends State<MonthPage> {
+  int selectedYear = DateTime.now().year;
+  int selectedMonth = DateTime.now().month;
+  int selectedDay = DateTime.now().day;
+
+  List<CustomCalendarEventData> _allEvents;
+  late List<CustomCalendarEventData> _currentEvents;
+
+  _MonthPageState(this._allEvents) {
+    _currentEvents = [];
+  }
+
   @override
   Widget build(BuildContext context) {
+    EventList dayEventDisplay = EventList(_currentEvents);
+
+    MonthView monthView = MonthView(
+      borderColor: Colors.deepPurple,
+      borderSize: 0.2,
+      controller: EventController()..addAll(_allEvents),
+      // to provide custom UI for month cells.
+      minMonth: DateTime(1990),
+      maxMonth: DateTime(2050),
+      initialMonth: DateTime(selectedYear, selectedMonth),
+      cellAspectRatio: 1,
+      onPageChange: (date, pageIndex) {
+        selectedMonth = date.month;
+        selectedYear = date.year;
+      },
+      onCellTap: (events, date) {
+        // Implement callback when user taps on a cell.
+        selectedDay = date.day;
+        selectedMonth = date.month;
+        _currentEvents = events.cast<CustomCalendarEventData>();
+        print(_currentEvents.toString() + ", " + events.toString());
+        setState(() {});
+      },
+      startDay: WeekDays.sunday, // To change the first day of the week.
+      // This callback will only work if cellBuilder is null.
+      onEventTap: (event, date) {},
+      onDateLongPress: (date) => print(date),
+    );
+    print("iiiii");
     return CalendarControllerProvider(
-        controller: EventController(),
-        child: MaterialApp(
-            debugShowCheckedModeBanner: false,
-            home: Scaffold(
-              appBar: AppBar(
-                  title: const Text('Leap'),
-                  backgroundColor: Colors.deepPurple,
-                  actions: <Widget>[
-                    IconButton(
-                      icon: const Icon(Icons.change_circle),
-                      onPressed: () {
-                        Navigator.pop(context);
-                      },
-                    )
-                  ]),
-              body: MonthView(
-                borderColor: Colors.deepPurple,
-                borderSize: 0.2,
-                controller: EventController(),
-                // to provide custom UI for month cells.
-                cellBuilder: (date, events, isToday, isInMonth) {
-                  // Return your widget to display as month cell.
-                  return Container();
-                },
-                minMonth: DateTime(1990),
-                maxMonth: DateTime(2050),
-                initialMonth: DateTime(2021),
-                cellAspectRatio: 1,
-                onPageChange: (date, pageIndex) => print("$date, $pageIndex"),
-                onCellTap: (events, date) {
-                  // Implement callback when user taps on a cell.
-                  print(events);
-                },
-                startDay:
-                    WeekDays.sunday, // To change the first day of the week.
-                // This callback will only work if cellBuilder is null.
-                onEventTap: (event, date) => print(event),
-                onDateLongPress: (date) => print(date),
+        controller: EventController()..addAll(_allEvents),
+        child: Scaffold(
+            appBar: AppBar(
+              title: const Text('Leap'),
+              backgroundColor: Colors.deepPurple,
+            ),
+            body: Column(children: [
+              Flexible(
+                child: monthView,
+                flex: 3,
               ),
-              floatingActionButton: FloatingActionButton(
-                onPressed: () {
-                  // Add your onPressed code here!
-                },
-                backgroundColor: Colors.deepPurple,
-                child: const Icon(Icons.add),
-              ),
+              Flexible(child: dayEventDisplay)
+            ]),
+            floatingActionButton: FloatingActionButton(
+              onPressed: () {
+                // monthView.controller!.add(CalendarEventData(
+                //   title: "Regionals",
+                //   date: DateTime(2022, 10, 10),
+                //   event: "Regionals",
+                // ));
+              },
+              backgroundColor: Colors.deepPurple,
+              child: const Icon(Icons.add),
             )));
   }
 }

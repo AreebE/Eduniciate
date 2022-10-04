@@ -5,7 +5,7 @@
 import 'package:flutter/material.dart';
 import 'title_block.dart';
 import 'people_tile.dart';
-import 'profile_page.dart';
+import '../personal_profile/profile_page.dart';
 
 void main() {
   runApp(PeoplePage());

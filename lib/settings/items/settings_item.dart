@@ -6,7 +6,7 @@ import 'package:edunciate/firebaseAccessor/settings_firebase.dart';
 import 'package:edunciate/settings/items/permission.dart';
 import 'package:edunciate/settings/items/time_range.dart';
 
-import 'event.dart';
+import '../../calendar/firebase_event.dart';
 
 class SettingsItem {
   late FirebaseSettingsAccessor _firebaseSettingsAccessor;

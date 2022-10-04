@@ -15,7 +15,6 @@ import 'package:edunciate/settings/work_hours.dart';
 import 'package:edunciate/settings/language.dart';
 import 'package:edunciate/settings/res/sizes.dart';
 import 'package:edunciate/settings/terms_of_service.dart';
-import 'package:edunciate/settings/calendar.dart';
 
 import '../color_scheme.dart';
 

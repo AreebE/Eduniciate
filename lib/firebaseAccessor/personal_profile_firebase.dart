@@ -33,23 +33,26 @@ class PersonalProfileFirebaseAccessor {
   static const int pronounsArrayKey = 5;
   static const int typeArrayKey = 6;
   static const int workHoursArrayKey = 7;
+  static const int idArrayKey = 8;
 
   Future<void> getUserInfo(String id, FirebaseListener listener) async {
-    List returnValues = List.filled(8, null);
+    List returnValues = List.filled(9, null);
     DocumentSnapshot<Map<String, dynamic>> user =
         await _storage.collection(usersCollection).doc(id).get();
 
     returnValues[bioArrayKey] = user.get(bioKey);
     returnValues[emailArrayKey] = user.get(emailKey);
     returnValues[nameArrayKey] = user.get(nameKey);
+    returnValues[pronounsArrayKey] = user.get(pronounsKey);
     returnValues[phoneNumArrayKey] = user.get(phoneNumberKey);
-    returnValues[photoArrayKey] = user.get(photoKey);
+    returnValues[photoArrayKey] = (user.get(photoKey) as List).cast<int>();
     returnValues[typeArrayKey] = user.get(typeKey);
     returnValues[workHoursArrayKey] = user.get(workHoursKey);
-
+    returnValues[idArrayKey] = user.id;
     List<TimeRange> ranges =
         List.filled(7, TimeRange("", Timestamp(0, 0), Timestamp(0, 0)));
-    List<DocumentReference> workHoursIDs = user.get(workHoursKey);
+    List<DocumentReference> workHoursIDs =
+        (user.get(workHoursKey) as List).cast<DocumentReference>();
     for (int i = 0; i < workHoursIDs.length; i++) {
       DocumentSnapshot<Map<String, dynamic>> workHourInfo = await _storage
           .collection(rangeCollections)

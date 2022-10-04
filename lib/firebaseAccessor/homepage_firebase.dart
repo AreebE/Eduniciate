@@ -1,10 +1,14 @@
 import 'dart:math';
 import 'dart:typed_data';
+import 'dart:ui';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:edunciate/classroom/people_page.dart';
 import 'package:edunciate/firebaseAccessor/firebase_listener.dart';
 import 'package:edunciate/homepage/items/class_item.dart';
 import 'package:edunciate/user_info_item.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 class HomepageFirebaseAccessor {
   static const String usersCollection = "Users";
@@ -40,33 +44,36 @@ class HomepageFirebaseAccessor {
     _storage = FirebaseFirestore.instance;
   }
 
-  Future<void> getUserClasses(String userID, FirebaseListener listener) async {
-    DocumentSnapshot user =
-        await _storage.collection(usersCollection).doc(userID).get();
-    List<DocumentReference> userClasses = user.get(classesKey);
+  Future<void> getClasses(String userID, FirebaseListener listener) async {
+    QuerySnapshot allClasses =
+        await _storage.collection(classesCollection).get();
     List returnValues = [];
-    for (int i = 0; i < userClasses.length; i++) {
-      String classID = userClasses.elementAt(i).id;
-      DocumentSnapshot classInfo =
-          await _storage.collection(classesCollection).doc(classID).get();
-      QuerySnapshot memberInfo = (await _storage
-          .collection(membersCollection)
-          .where(personIDKey, isEqualTo: userID)
-          .where(classKey, isEqualTo: classID)
-          .get());
-
+    for (QueryDocumentSnapshot snap in allClasses.docs) {
+      print(snap.data());
       ClassRole role = ClassRole.nonMember;
-      if (memberInfo.docs.length != 0) {
+      QuerySnapshot memberInfo = await _storage
+          .collection(membersCollection)
+          .where(classKey, isEqualTo: snap.id)
+          .where(personIDKey, isEqualTo: userID)
+          .get();
+      if (memberInfo.docs.isNotEmpty) {
         role = ClassRole.getRole(memberInfo.docs.elementAt(0).get(roleKey));
       }
-
-      returnValues.add(ClassItem((classInfo.get(photoKey) as List).cast<int>(),
-          classInfo.get(nameKey), role));
+      returnValues.insert(
+          (role == ClassRole.nonMember && returnValues.isNotEmpty)
+              ? returnValues.length - 1
+              : 0,
+          ClassItem((snap.get(photoKey) as List).cast<int>(), snap.get(nameKey),
+              role, snap.get(descriptionKey), snap.id));
     }
     listener.onSuccess(returnValues);
   }
 
-  void isClassPrivate(String classID) {}
+  Future<void> isClassPrivate(String classID, FirebaseListener listener) async {
+    DocumentSnapshot classInfo =
+        await _storage.collection(classesCollection).doc(classID).get();
+    listener.onSuccess([classInfo.get(isPrivateKey)]);
+  }
 
   Future<void> joinClass(String userID, String classID, String code,
       UserRole userRole, FirebaseListener listener) async {
@@ -128,7 +135,8 @@ class HomepageFirebaseAccessor {
         await _storage.collection(membersCollection).add(memberData);
 
     Map<String, dynamic> newData = Map<String, dynamic>();
-    newData.putIfAbsent(photoKey, () => [0]);
+    ByteData data = await rootBundle.load("assets/images/basicProfile.png");
+    newData.putIfAbsent(photoKey, () => data.buffer.asUint8List());
     newData.putIfAbsent(nameKey, () => name);
     newData.putIfAbsent(isPrivateKey, () => true);
     newData.putIfAbsent(descriptionKey, () => "");

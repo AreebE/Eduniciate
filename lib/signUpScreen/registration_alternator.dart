@@ -1,6 +1,5 @@
 // ignore_for_file: implementation_imports, unnecessary_import
 
-import 'package:edunciate/signUpScreen/loginscreen.dart';
 import 'package:edunciate/signUpScreen/signupscreen.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/src/foundation/key.dart';
@@ -25,9 +24,7 @@ class _RegistrationAlternatorState extends State<RegistrationAlternator>
 
   @override
   Widget build(BuildContext context) {
-    Widget body = (current == RegistrationState.signUp)
-        ? SignUpScreen(this)
-        : LogInScreen(this);
+    Widget body = SignUpScreen(this);
     return body;
   }
 

@@ -25,9 +25,12 @@ enum ClassRole {
 class ClassItem {
   late MemoryImage _icon;
   String _className;
+  String _id;
+  String _desc;
   ClassRole _role;
 
-  ClassItem(List<int> imageBytes, this._className, this._role) {
+  ClassItem(
+      List<int> imageBytes, this._className, this._role, this._desc, this._id) {
     Uint8List imageList = Uint8List.fromList(imageBytes);
     _icon = MemoryImage(imageList);
   }
@@ -42,5 +45,13 @@ class ClassItem {
 
   ClassRole getRole() {
     return _role;
+  }
+
+  String getID() {
+    return _id;
+  }
+
+  String getDesc() {
+    return _desc;
   }
 }

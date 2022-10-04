@@ -12,5 +12,3 @@ enum UserRole {
     }
   }
 }
-
-class UserInfoItem {}

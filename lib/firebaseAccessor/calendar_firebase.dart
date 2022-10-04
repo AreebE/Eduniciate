@@ -1,6 +1,8 @@
+import 'dart:typed_data';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:edunciate/firebaseAccessor/firebase_listener.dart';
-import 'package:edunciate/settings/items/event.dart';
+import 'package:edunciate/calendar/firebase_event.dart';
 
 class CalendarFirebaseAccessor {
   static const String usersCollection = "Users";
@@ -9,6 +11,7 @@ class CalendarFirebaseAccessor {
   static const String classesCollection = "Classes";
   static const String eventsKey = "events";
   static const String nameKey = "name";
+  static const String photoKey = "photo";
 
   static const String eventsCollection = "Absences";
   static const String timestampKey = "date";
@@ -21,31 +24,41 @@ class CalendarFirebaseAccessor {
   }
 
   Future<void> getUserEvents(String personID, FirebaseListener listener) async {
-    List<Event> userEvents = [];
+    List<FirebaseEvent> userEvents = [];
     DocumentSnapshot personInfo =
         await _storage.collection(usersCollection).doc(personID).get();
-    List<DocumentReference> classes = personInfo.get(classesKey);
+    // print(personInfo.get(classesKey));
+    List<DocumentReference> classes =
+        (personInfo.get(classesKey) as List).cast<DocumentReference>();
+    // print("classes = " + classes.toString());
     for (int i = 0; i < classes.length; i++) {
       DocumentSnapshot classInfo = await _storage
           .collection(classesCollection)
           .doc(classes.elementAt(i).id)
           .get();
-      List<DocumentReference> events = classInfo.get(eventsKey);
+      List<DocumentReference> events =
+          (classInfo.get(eventsKey) as List).cast<DocumentReference>();
+      // print("events = " + events.toString());
       for (int j = 0; j < events.length; j++) {
         DocumentSnapshot event = await _storage
             .collection(eventsCollection)
             .doc(events.elementAt(i).id)
             .get();
         DateTime time = (event.get(timestampKey) as Timestamp).toDate();
-        userEvents.add(Event(event.get(reasonKey), time.day, time.month,
-            time.year, classInfo.get(nameKey)));
+        userEvents.add(FirebaseEvent(
+            event.get(reasonKey),
+            time.day,
+            time.month,
+            time.year,
+            classInfo.get(nameKey),
+            Uint8List.fromList((classInfo.get(photoKey) as List).cast<int>())));
       }
     }
     listener.onSuccess(userEvents);
   }
 
   Future<void> getClassEvents(String classID, FirebaseListener listener) async {
-    List<Event> userEvents = [];
+    List<FirebaseEvent> userEvents = [];
     DocumentSnapshot classInfo =
         await _storage.collection(classesCollection).doc(classID).get();
     List<DocumentReference> events = classInfo.get(eventsKey);
@@ -55,18 +68,24 @@ class CalendarFirebaseAccessor {
           .doc(events.elementAt(j).id)
           .get();
       DateTime time = (event.get(timestampKey) as Timestamp).toDate();
-      userEvents.add(Event(event.get(reasonKey), time.day, time.month,
-          time.year, event.get(classInfo.get(nameKey))));
+      userEvents.add(FirebaseEvent(
+          event.get(reasonKey),
+          time.day,
+          time.month,
+          time.year,
+          event.get(classInfo.get(nameKey)),
+          classInfo.get(photoKey)));
     }
     listener.onSuccess(userEvents);
   }
 
-  Future<void> addEvent(String classID, Event e) async {
+  Future<void> addEvent(String classID, FirebaseEvent e) async {
     Map<String, dynamic> data = Map();
     data.putIfAbsent(timestampKey,
         () => DateTime(e.getYear(), e.getMonth(), e.getDayOfMonth()));
     data.putIfAbsent(nameKey, () => e.getClassName());
     data.putIfAbsent(reasonKey, () => e.getMessage());
+    data.putIfAbsent(photoKey, () => e.getImage().bytes);
     DocumentReference eventRef =
         await _storage.collection(eventsCollection).add(data);
     DocumentSnapshot<Map<String, dynamic>> classInfo =

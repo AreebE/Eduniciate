@@ -4,6 +4,7 @@ import 'package:edunciate/settings/items/time_range.dart';
 import 'package:edunciate/user_info_item.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 class UsersFirebaseAccessor {
   static const String usersCollection = "Users";
@@ -48,6 +49,11 @@ class UsersFirebaseAccessor {
           await storage.collection(rangeCollections).add(items);
       workHours.add(reference);
     }
+    List<int> photoBytes =
+        (await rootBundle.load("assets/images/basicProfile.png"))
+            .buffer
+            .asUint8List()
+            .toList();
     Map<String, dynamic> userData = Map();
     userData.putIfAbsent(bioKey, () => "");
     userData.putIfAbsent(classesKey, () => []);
@@ -56,7 +62,7 @@ class UsersFirebaseAccessor {
     userData.putIfAbsent(nameKey, () => name);
     userData.putIfAbsent(notificationStatusKey, () => "always");
     userData.putIfAbsent(phoneNumberKey, () => phoneNumber);
-    userData.putIfAbsent(photoKey, () => []);
+    userData.putIfAbsent(photoKey, () => photoBytes);
     userData.putIfAbsent(pronounsKey, () => pronouns);
     userData.putIfAbsent(textSizesKey, () => 12);
     userData.putIfAbsent(typeKey, () => "student");
@@ -72,9 +78,12 @@ class UsersFirebaseAccessor {
         .where(emailKey, isEqualTo: email)
         .get();
     if (results.size != 0) {
-      listener.onSuccess([results.docs.elementAt(0).id]);
+      listener.onSuccess([
+        results.docs.elementAt(0).id,
+        results.docs.elementAt(0).get(typeKey)
+      ]);
     } else {
-      listener.onFailure("Person not found");
+      listener.onSuccess([]);
     }
   }
 

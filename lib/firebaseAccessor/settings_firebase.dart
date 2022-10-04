@@ -3,7 +3,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:edunciate/color_scheme.dart';
 import 'package:edunciate/firebaseAccessor/firebase_listener.dart';
-import 'package:edunciate/settings/items/event.dart';
+import 'package:edunciate/calendar/firebase_event.dart';
 import 'package:edunciate/settings/items/permission.dart';
 import 'package:edunciate/settings/items/settings_item.dart';
 import 'package:edunciate/settings/items/time_range.dart';
