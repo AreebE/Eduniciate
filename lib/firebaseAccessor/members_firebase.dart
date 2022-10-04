@@ -55,4 +55,5 @@ class MembersFirebaseAccessor {
     newData.putIfAbsent(roleKey, () => newRole.name);
     _storage.collection(membersCollection).doc(memberID).update(newData);
   }
+
 }

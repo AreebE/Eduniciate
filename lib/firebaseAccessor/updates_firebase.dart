@@ -70,3 +70,4 @@ class UpdatesFirebaseAccessor {
         .update(classInfo.data()!.cast<String, Object?>());
   }
 }
+/

@@ -11,8 +11,8 @@ void main() {
 }
 
 class DetailsPage extends StatefulWidget {
-  static String className = 'Class Name';
-  static String organization = 'Organization';
+  String className = 'Class Name';
+  String organization = 'Organization';
 
   DetailsPage({Key? key}) : super(key: key);
 
@@ -23,14 +23,22 @@ class DetailsPage extends StatefulWidget {
 class _DetailsPageState extends State<DetailsPage> {
   //define variables here
   String bullet = "•";
-  String classInfo = 'Class Details';
-  final _textController1 = TextEditingController();
+    String classID;
+  String classDesc = "";
+  String className = "";  
+    String organization = "";
+
+    _DetailsPageState(this.classID, this.classDesc, this.className)
+    final _textController1 = TextEditingController();
   final _textController2 = TextEditingController();
 
   void submit1() {
     Navigator.of(context).pop();
     setState(() {
-      DetailsPage.className = _textController1.text;
+      className = _textController1.text;
+        ClassDetailsFirebaseAccessor()
+        .updateName(classID, className);
+
     });
     _textController1.clear();
   }
@@ -39,6 +47,8 @@ class _DetailsPageState extends State<DetailsPage> {
     Navigator.of(context).pop();
     setState(() {
       classInfo = _textController2.text;
+        ClassDetailsFirebaseAccessor()
+            .updateDesc(classID, classInfo);
     });
     _textController2.clear();
   }
@@ -46,7 +56,7 @@ class _DetailsPageState extends State<DetailsPage> {
   void submit3() {
     Navigator.of(context).pop();
     setState(() {
-      DetailsPage.organization = _DropdownState().selectedValue;
+      organization = _DropdownState().selectedValue;
     });
   }
 
@@ -95,7 +105,7 @@ class _DetailsPageState extends State<DetailsPage> {
                   controller: _textController2,
                   style: TextStyle(
                     color: Color.fromARGB(255, 0, 0, 0),
-                    //fontWeight: FontWeight.bold,
+                     //fontWeight: FontWeight.bold,
                     fontFamily: 'Lato',
                     fontSize: 16.0,
                   ),
@@ -121,11 +131,11 @@ class _DetailsPageState extends State<DetailsPage> {
   Future openDialog3() => showDialog(
       context: context,
       builder: (context) => AlertDialog(
-              title: AppTitle('Select School', 20.0),
-              content: Dropdown(),
+              title: AppTitle('Code', 20.0),
+              content: Text(classCode, ),
               actions: [
                 TextButton(
-                  child: AppTitle("SUBMIT", 10.0),
+                  child: AppTitle("Finished Viewing", 10.0),
                   onPressed: submit3,
                 ),
               ]));

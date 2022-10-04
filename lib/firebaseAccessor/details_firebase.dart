@@ -142,6 +142,16 @@ class ClassDetailsFirebaseAccessor {
     _storage.collection(classesCollection).doc(classID).update(newData);
   }
 
+    Future<void> getName(String classID, FirebaseListener listener) async 
+    {
+        listener.onSuccess([(await _storage.collection(classesCollection).doc(classID).get()).get(nameKey)]);    
+    }
+
+    Future<void> getPhoto(String classID, FirebaseListener listener) async 
+    {
+        listener.onSuccess([(await _storage.collection(classesCollection).doc(classID).get()).get(photoKey)]);    
+    }
+    
   Future<void> findSelf(
       String userID, String classID, FirebaseListener listener) async {
     QueryDocumentSnapshot member = (await _storage

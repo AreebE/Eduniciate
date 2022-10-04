@@ -92,4 +92,9 @@ class UsersFirebaseAccessor {
         await storage.collection(usersCollection).doc(userID).get();
     listener.onSuccess([UserRole.getRole(user.get(typeKey))]);
   }
+
+    Future<void> getName(String userID, FirebaseListener listener) async 
+    {
+        listener.onSuccess([(await storage.collection(usersCollection).doc(userID).get()).get(nameKey)]);    
+    }
 }

@@ -9,6 +9,7 @@ import 'package:edunciate/firebaseAccessor/updates_firebase.dart';
 import 'package:edunciate/homepage/items/class_item.dart';
 import 'package:flutter/material.dart';
 import '../color_scheme.dart';
+import '../firebaseAccessor/members_firebase.dart';
 import 'members/people_page.dart';
 import 'messages_page.dart';
 import 'details/details_page.dart';
@@ -27,23 +28,28 @@ class OnClassPageChangeListener {
 
 class ClassPageContainer extends StatefulWidget {
   String classID;
+    String className;
   ClassRole thisMemberRole;
-  ClassPageContainer(this.classID, this.thisMemberRole, {Key? key})
+  String thisMemberID;
+    
+  ClassPageContainer(this.classID, this.className, this.thisMemberRole, this.thisMemberID, {Key? key})
       : super(key: key);
 
   @override
   State<ClassPageContainer> createState() =>
-      _ClassPageContainerState(classID, thisMemberRole);
-}
+      _ClassPageContainerState(className, classID, thisMemberRole, thisMemberID);
+} 
 
 class _ClassPageContainerState extends State<ClassPageContainer>
     implements OnClassPageChangeListener, FirebaseListener {
   ClassPage currentPage = ClassPage.announcements;
   String classID;
+    String className;
   ClassRole thisMemberRole;
+  String thisMemberID;
   late Widget body;
 
-  _ClassPageContainerState(this.classID, this.thisMemberRole) {}
+  _ClassPageContainerState(this.className, this.classID, this.thisMemberRole, this.thisMemberID) {}
 
   static const double fontSize = 15.0;
 
@@ -59,39 +65,39 @@ class _ClassPageContainerState extends State<ClassPageContainer>
               Expanded(child: CalendarTaskbarButton(this, currentPage)),
               Expanded(child: ClassDetailsTaskbarButton(this, currentPage)),
             ]),
-            // appBar: AppBar(
-            //   backgroundColor: Colors.white,
-            //   elevation: 10,
-            //   title: Column(children: [
-            //     SizedBox(height: 10.0),
-            //     Align(
-            //       alignment: Alignment.topLeft,
-            //       child: AppTitle(DetailsPage.className, 19.0),
-            //     ),
-            //     Row(
-            //       //mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            //       children: [
-            //         Align(
-            //           alignment: Alignment.topLeft,
-            //           child: AppTitle(Organization, 19.0),
-            //         ),
+            appBar: AppBar(
+              backgroundColor: Colors.white,
+              elevation: 10,
+              title: Column(children: [
+                SizedBox(height: 10.0),
+                Align(
+                  alignment: Alignment.topLeft,
+                  child: AppTitle(className, 19.0),
+                ),
+              //   Row(
+              //     //mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              //     children: [
+              //       Align(
+              //         alignment: Alignment.topLeft,
+              //         child: AppTitle(Organization, 19.0),
+              //       ),
 
-            //         //Button to lead back to list of class pages
-            //         IconButton(
-            //             color: Color.fromARGB(255, 58, 27, 103),
-            //             icon: const Icon(Icons.arrow_back),
-            //             onPressed: () {}),
-            //       ],
-            //     ),
-            //   ]),
-            //   bottom: PreferredSize(
-            //     preferredSize: _tabBar.preferredSize,
-            //     child: Material(
-            //       color: Color.fromARGB(225, 148, 97, 225),
-            //       child: _tabBar,
-            //     ),
-            //   ),
-            // ),
+              //       //Button to lead back to list of class pages
+              //       IconButton(
+              //           color: Color.fromARGB(255, 58, 27, 103),
+              //           icon: const Icon(Icons.arrow_back),
+              //           onPressed: () {}),
+              //     ],
+              //   ),
+              ]),
+              // bottom: PreferredSize(
+              //   preferredSize: _tabBar.preferredSize,
+              //   child: Material(
+              //     color: Color.fromARGB(225, 148, 97, 225),
+              //     child: _tabBar,
+              //   ),
+              // ),
+            ),
             body: body));
   }
 
@@ -151,12 +157,16 @@ class _ClassPageContainerState extends State<ClassPageContainer>
         UpdatesFirebaseAccessor().getAnnouncements(classID, this);
         break;
       case ClassPage.calendar:
+        CalendarFirebaseAccessor().getClassEvents(classID, this);
         break;
       case ClassPage.details:
+        DetailsFirebaseAccessor().getClassInfo(classID, this);
         break;
       case ClassPage.discussions:
+        DiscussionsFirebaseAccessor().getAllDiscussions(thisMemberID, this);
         break;
       case ClassPage.members:
+        MembersFirebaseAccessor().getMembers(classID, this);
         break;
     }
   }
@@ -168,14 +178,24 @@ class _ClassPageContainerState extends State<ClassPageContainer>
   void onSuccess(List objects) {
     switch (currentPage) {
       case ClassPage.announcements:
+            
+        body = AnnouncementsPage();
         break;
       case ClassPage.calendar:
+
+            body = CalendarPage();
         break;
       case ClassPage.details:
+
+            body = ClassDetailsPage();
         break;
       case ClassPage.discussions:
+
+            body = DiscussionsPage();
         break;
       case ClassPage.members:
+
+            body = MembersPage();
         break;
     }
     setState(() {});
@@ -201,7 +221,7 @@ class AnnouncementsTaskButton extends StatelessWidget {
           listener.changePage(ClassPage.announcements);
         },
         child: Icon(
-          Icons.home,
+          Icons.add_alert,
           color: CustomColorScheme.defaultColors.getColor(
               (current != ClassPage.announcements)
                   ? CustomColorScheme.darkPrimary
@@ -267,7 +287,7 @@ class DiscussionsTaskbarButton extends StatelessWidget {
           listener.changePage(ClassPage.discussions);
         },
         child: Icon(
-          Icons.person,
+          Icons.add_comment,
           color: CustomColorScheme.defaultColors.getColor(
               (current != ClassPage.discussions)
                   ? CustomColorScheme.darkPrimary
@@ -299,7 +319,7 @@ class MembersTaskbarButton extends StatelessWidget {
           listener.changePage(ClassPage.members);
         },
         child: Icon(
-          Icons.settings,
+          Icons.group,
           color: CustomColorScheme.defaultColors.getColor(
               (current != ClassPage.members)
                   ? CustomColorScheme.darkPrimary

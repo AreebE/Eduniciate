@@ -1,5 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
+import '../discussion/chatUserModels.dart';
+
 class AnnouncementItem {
   String _content;
   String _senderName;
@@ -7,9 +9,12 @@ class AnnouncementItem {
   String _senderID;
   String _title;
   String _classID;
+  late ChatUser sender;
 
   AnnouncementItem(this._content, this._senderName, this._sendTime,
-      this._senderID, this._title, this._classID) {}
+      this._senderID, this._title, this._classID) {
+      sender = ChatUser(id: _senderID, firstName: _senderName.split(" ")[0], lastName: _senderName.split(" ")[1]);
+      }
 
   String getContent() {
     return _content;
@@ -34,4 +39,13 @@ class AnnouncementItem {
   String getClassID() {
     return _classID;
   }
+
+    ChatMessage toMessage() 
+    {
+        return ChatMessage(
+            user: sender,
+            createdAt: _sendTime,
+            text: _content
+        );
+    }
 }

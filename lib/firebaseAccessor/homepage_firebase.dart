@@ -9,6 +9,8 @@ import 'package:edunciate/user_info_item.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
+import '../homepage/items/class_item.dart';
+
 class HomepageFirebaseAccessor {
   static const String usersCollection = "Users";
   static const String usernameKey = "name";
@@ -71,7 +73,12 @@ class HomepageFirebaseAccessor {
   Future<void> isClassPrivate(String classID, FirebaseListener listener) async {
     DocumentSnapshot classInfo =
         await _storage.collection(classesCollection).doc(classID).get();
-    listener.onSuccess([classInfo.get(isPrivateKey)]);
+    List values = [];
+    if (classInfo.get(isPrivateKey))
+    {
+        values.add(classInfo.get(codeKey));
+    }
+    listener.onSuccess(values);
   }
 
   Future<void> joinClass(String userID, String classID, String code,
@@ -165,6 +172,19 @@ class HomepageFirebaseAccessor {
     listener.onSuccess([classInfo.id]);
   }
 
+    Future<void> isAMember(String userID, String classID, FirebaseListener listener) async
+    {
+        QuerySnapshot<Map<String, dynamic>> potentialMemberInfo = await _storage
+            .collection(membersCollection)
+            .where(personIDKey, isEqualTo: userID)
+            .where(classKey, isEqualTo: classID)
+            .get();
+        listener.onSuccess([
+            potentialMemberInfo.docs.isNotEmpty &&
+            potentialMemberInfo.docs.elementAt(0).get(roleKey) as String != ClassRole.nonMember.name
+        ]);
+    }
+    
   String _generateRandomCode() {
     String characterSource =
         "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz1234567890!@#\$%^&*()";

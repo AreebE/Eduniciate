@@ -1,0 +1,16 @@
+run = "dart ios/Runner/Base.lproj/Main.storyboard"
+
+[packager]
+language = "dart-pub"
+
+[packager.features]
+packageSearch = true
+
+[languages.dart]
+pattern = "**/*.dart"
+
+[languages.dart.languageServer]
+start = ["dart", "language-server"]
+
+[nix]
+channel = "stable-21_11"

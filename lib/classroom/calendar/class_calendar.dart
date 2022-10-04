@@ -2,6 +2,8 @@ import 'package:edunciate/calendar/events_list.dart';
 import 'package:flutter/material.dart';
 import 'package:calendar_view/calendar_view.dart';
 
+import '../../calendar/firebase_event.dart';
+
 DateTime get _now => DateTime.now();
 
 //DateTime get _now => DateTime.now();
@@ -10,10 +12,13 @@ void main() {
   // runApp(MonthPage());
 }
 
-class CalendarPage extends StatelessWidget {
+class ClassCalendarPage extends StatelessWidget {
+    String classID;
+    String className;
+    MemoryImage classPhoto;
   List<CustomCalendarEventData> _events;
 
-  CalendarPage(this._events);
+  ClassCalendarPage(this._events, this.classPhoto, this.classID, this.className);
 
   final event = CalendarEventData(
     title: "Regionals",
@@ -32,7 +37,7 @@ class CalendarPage extends StatelessWidget {
     ));
 
     return Scaffold(
-      body: MonthPage(_events),
+      body: MonthPage(_events, classID, className, classPhoto),
     );
   }
 }
@@ -45,17 +50,6 @@ class DayPage extends StatelessWidget {
         child: MaterialApp(
             debugShowCheckedModeBanner: false,
             home: Scaffold(
-              appBar: AppBar(
-                  title: const Text('Leap'),
-                  backgroundColor: Colors.deepPurple,
-                  actions: <Widget>[
-                    IconButton(
-                      icon: const Icon(Icons.change_circle),
-                      onPressed: () {
-                        Navigator.pop(context);
-                      },
-                    )
-                  ]),
               body: DayView(
                 controller: EventController(),
 
@@ -135,6 +129,7 @@ class WeekPage extends StatelessWidget {
 
 class MonthPage extends StatefulWidget {
   List<CustomCalendarEventData> _events;
+
   MonthPage(this._events, {Key? key}) : super(key: key);
 
   @override
@@ -147,9 +142,13 @@ class _MonthPageState extends State<MonthPage> {
   int selectedDay = DateTime.now().day;
 
   List<CustomCalendarEventData> _allEvents;
+      String classID;
+    String className;
+    MemoryImage classPhoto;
+    
   late List<CustomCalendarEventData> _currentEvents;
 
-  _MonthPageState(this._allEvents) {
+  _MonthPageState(this._allEvents, this.classID, this.className, this.classPhoto) {
     _currentEvents = [];
   }
 
@@ -200,6 +199,64 @@ class _MonthPageState extends State<MonthPage> {
             ]),
             floatingActionButton: FloatingActionButton(
               onPressed: () {
+                  showDatePicker(
+                                context: context,
+                                initialDate: DateTime.now(),
+                                firstDate: DateTime.now(),
+                                lastDate: DateTime(2050))
+                      .then((date) {
+                                            String details = "";
+
+                  showDialog(
+        context: context,
+        builder: (context) {
+          return AlertDialog(
+            actions: [
+              TextButton(
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
+                  child: Text("Confirm"))
+            ],
+            content: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(
+                  "Now, add your event details.",
+                  style: FontStandards.getTextStyle(
+                      CustomColorScheme.defaultColors,
+                      Style.normHeader,
+                      FontSize.medium),
+                ),
+                SizedBox(
+                  height: 25,
+                ),
+                TextField(
+                  onChanged: ((value) {
+                    details = value;
+                  }),
+                  decoration: InputDecoration(
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                  ),
+                  maxLines: 1,
+                ),
+              ],
+            ),
+          );
+        }).then((value) {
+            FirebaseEvent fe = FirebaseEvent(details, date.dayOfMonth, date.month, date.year,
+                                 className, classPhoto.bytes);
+            _allEvents.add(fe);
+            CalendarFirebaseAccessor()
+                .addEvent(
+                    FirebaseEvent(details, date.dayOfMonth, date.month, date.year,
+                                 className, classPhoto.bytes)
+                );
+            setState(() {});
+        });
+                      });
                 // monthView.controller!.add(CalendarEventData(
                 //   title: "Regionals",
                 //   date: DateTime(2022, 10, 10),

@@ -1,36 +1,36 @@
 import 'package:dash_chat_2/dash_chat_2.dart';
 import 'package:flutter/material.dart';
 
+import '../../homepage/items/class_item.dart';
+import 'announcement_item.dart';
+
 class AnnouncementsScreen extends StatefulWidget {
+    List<ChatMessage> _messages;
+    ChatUser _thisUser;
+    ClassRole _role;
+    String _classID;
+    String _userID;
+    
+    AnnouncementsScreen(this._messages, this._thisUser, this._role, this._classID, this._userID);
+    
   @override
-  State createState() => _AnnouncementsScreenState();
+  State createState() => _AnnouncementsScreenState(_members, _messages, this._thisUser, this._role, this._classID, this._userID);
 }
 
 class _AnnouncementsScreenState extends State<AnnouncementsScreen> {
-  ChatUser thisUser = ChatUser(
-    id: '1',
-    firstName: 'Charles',
-    lastName: 'Leclerc',
-  );
+    List<ChatMessage> _messages;
+    ChatUser _thisUser;
+    ClassRole _role;
+    String _classID;
+    String _userID;
+    
+    _AnnouncementsScreenState(this._messages, this._thisUser, this._role, this._classID, this._userID);
+    
 
-  ChatUser oppositeUser = ChatUser(
-    id: '2',
-    firstName: 'Cool',
-    lastName: 'Kid',
-  );
-
-  late List<ChatMessage> messages = <ChatMessage>[
-    ChatMessage(text: 'Hi!', user: oppositeUser, createdAt: DateTime.now())
-  ];
 
   @override
   Widget build(BuildContext context) {
-    String title = "";
-    if (oppositeUser.firstName != null && oppositeUser != null) {
-      title = oppositeUser.firstName.toString() +
-          " " +
-          oppositeUser.lastName.toString();
-    }
+    String title = "Announcements";
 
     return Scaffold(
       appBar: AppBar(
@@ -38,14 +38,25 @@ class _AnnouncementsScreenState extends State<AnnouncementsScreen> {
         title: Text(title),
       ),
       body: DashChat(
-        readOnly: true,
-        currentUser: thisUser,
+        readOnly: _role == ClassRole.member,
+        currentUser: _thisUser,
         onSend: (ChatMessage m) {
           setState(() {
-            messages.insert(0, m);
+            _messages.insert(0, m);
+            AnnouncementItem item = AnnouncementItem(
+                m.text, 
+                m.user.firstName + " " + m.user.lastName,
+                m.timeCreated,
+                _userID, 
+                "",
+                _classID
+            );
+            _UpdatesFirebaseAccessor()
+                .addAnnouncement(item);
           });
         },
-        messages: messages,
+          
+        messages: _messages,
       ),
     );
   }
