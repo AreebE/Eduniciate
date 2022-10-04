@@ -1,6 +1,6 @@
 import 'package:edunciate/classroom/discussion/chatUserModels.dart';
 import 'package:edunciate/classroom/discussion/conversationlist.dart';
-import 'package:edunciate/individualMessagesScreen.dart';
+import 'package:edunciate/classroom/discussion/individualMessagesScreen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'dart:collection';
