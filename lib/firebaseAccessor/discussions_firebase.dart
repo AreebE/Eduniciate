@@ -1,3 +1,5 @@
+import 'dart:typed_data';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:edunciate/discussion_item.dart';
 import 'package:edunciate/firebaseAccessor/firebase_listener.dart';
@@ -33,14 +35,17 @@ class ClassDiscussionsFirebase {
         ClassRole.getRole(thisUserInfo.get(roleKey).toString());
 
     Map<String, Timestamp> convosLastSeen =
-        thisUserInfo.get(conversationLastSeenKey);
+        (thisUserInfo.get(conversationLastSeenKey) as Map)
+            .cast<String, Timestamp>();
     Iterable<String> convos = convosLastSeen.keys;
     List availableConvos = [];
 
     for (String convoID in convos) {
       DocumentSnapshot convoInfo =
           await _storage.collection(discussionsCollection).doc(convoID).get();
-      List<DocumentReference> memberIDs = convoInfo.get(discussionMembersKey);
+      List<DocumentReference> memberIDs =
+          (convoInfo.get(discussionMembersKey) as List)
+              .cast<DocumentReference>();
 
       DocumentReference otherPerson =
           (memberIDs.first.id == memberID) ? memberIDs.last : memberIDs.first;
@@ -49,31 +54,36 @@ class ClassDiscussionsFirebase {
           .doc(otherPerson.id)
           .get();
 
-      if (userRole == ClassRole.owner ||
-          ClassRole.getRole(otherMemberInfo.get(roleKey)) == ClassRole.owner) {
+      ClassRole otherRole = ClassRole.getRole(otherMemberInfo.get(roleKey));
+
+      if ((userRole == ClassRole.owner || otherRole == ClassRole.owner) &&
+          otherRole != ClassRole.nonMember &&
+          userRole != ClassRole.nonMember) {
         DocumentSnapshot otherUserInfo = await _storage
             .collection(usersCollection)
             .doc(otherMemberInfo.get(personIDKey))
             .get();
-        availableConvos.add(DiscussionItem(convoID, convoInfo.get(nameKey),
-            convoInfo.get(mostRecentUpdateKey), otherUserInfo.get(photoKey)));
+        availableConvos.add(DiscussionItem(
+            convoID,
+            convoInfo.get(nameKey),
+            convoInfo.get(mostRecentUpdateKey),
+            Uint8List.fromList(
+                (otherUserInfo.get(photoKey) as List).cast<int>())));
       }
     }
     listener.onSuccess(availableConvos);
   }
 
-  Future<void> onDiscussionOpened(MemberItem item, String discussionID) async {
-    item.getConvoTimestamps()[discussionID] = Timestamp.now();
-    DocumentSnapshot<Map<String, dynamic>> memberInfo = await _storage
-        .collection(membersCollection)
-        .doc(item.getUserID())
-        .get();
+  Future<void> onDiscussionOpened(String memberID, String discussionID) async {
+    DocumentSnapshot memberInfo =
+        await _storage.collection(membersCollection).doc(memberID).get();
     Map<String, Timestamp> convosLastSeen =
-        memberInfo.get(conversationLastSeenKey);
+        (memberInfo.get(conversationLastSeenKey) as Map)
+            .cast<String, Timestamp>();
     convosLastSeen[discussionID] = Timestamp.now();
     _storage
         .collection(membersCollection)
         .doc(memberInfo.id)
-        .update(memberInfo.data()!);
+        .update({conversationLastSeenKey: convosLastSeen});
   }
 }

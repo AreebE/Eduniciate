@@ -1,20 +1,24 @@
 import 'package:edunciate/firebaseAccessor/personal_profile_firebase.dart';
+import 'package:edunciate/main.dart';
 import 'package:flutter/material.dart';
 import 'profile_page.dart';
 
 class EditProfilePage extends StatefulWidget {
   UserInfoItem _user;
+  DisplayWidgetListener widgetListener;
 
-  EditProfilePage(this._user);
+  EditProfilePage(this._user, this.widgetListener);
 
   @override
-  _EditProfilePageState createState() => _EditProfilePageState(_user);
+  _EditProfilePageState createState() =>
+      _EditProfilePageState(_user, widgetListener);
 }
 
 class _EditProfilePageState extends State<EditProfilePage> {
   UserInfoItem _user;
+  DisplayWidgetListener widgetListener;
 
-  _EditProfilePageState(this._user);
+  _EditProfilePageState(this._user, this.widgetListener);
 
   @override
   Widget build(BuildContext context) => Scaffold(

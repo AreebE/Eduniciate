@@ -1,47 +1,36 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dash_chat_2/dash_chat_2.dart';
+import 'package:edunciate/classroom/items/message_item.dart';
+import 'package:edunciate/color_scheme.dart';
+import 'package:edunciate/firebaseAccessor/indiv_conversation_firebase.dart';
 import 'package:flutter/material.dart';
 
 class MessagesScreen extends StatefulWidget {
+  ChatUser thisUser;
+  ChatUser otherUser;
+  String discussionID;
+  List<ChatMessage> messages;
+
+  MessagesScreen(
+      this.thisUser, this.otherUser, this.discussionID, this.messages);
+
   @override
-  _MessagesScreen createState() => _MessagesScreen();
+  _MessagesScreenState createState() =>
+      _MessagesScreenState(thisUser, otherUser, discussionID, messages);
 }
 
-class _MessagesScreen extends State<MessagesScreen> {
- 
- ChatUser thisUser = ChatUser(
-      id: '1',
-      firstName: 'Charles',
-      lastName: 'Leclerc',
-    );
+class _MessagesScreenState extends State<MessagesScreen> {
+  ChatUser thisUser;
+  ChatUser otherUser;
+  String discussionID;
+  List<ChatMessage> messages;
 
-    ChatUser oppositeUser = ChatUser(
-      id: '2',
-      firstName: 'Cool',
-      lastName: 'Kid',
-    );
-
-  late List<ChatMessage> messages = <ChatMessage>[
-      ChatMessage(
-        text: 'Hey!',
-        user: thisUser,
-        createdAt: DateTime.now(),
-      ),
-      ChatMessage(
-        text: 'Hi!',
-        user: oppositeUser,
-        createdAt:DateTime.now()
-      )
-    ];
-  
-  
-  
+  _MessagesScreenState(
+      this.thisUser, this.otherUser, this.discussionID, this.messages);
 
   @override
   Widget build(BuildContext context) {
-    String title = "";
-    if(oppositeUser.firstName != null && oppositeUser != null) {
-      title = oppositeUser.firstName.toString() + " " + oppositeUser.lastName.toString();
-    }
+    String title = otherUser.firstName! + " " + otherUser.lastName!;
 
     return Scaffold(
       appBar: AppBar(
@@ -49,10 +38,16 @@ class _MessagesScreen extends State<MessagesScreen> {
         title: Text(title),
       ),
       body: DashChat(
+        messageOptions: MessageOptions(
+            currentUserContainerColor: CustomColorScheme.defaultColors
+                .getColor(CustomColorScheme.darkPrimary)),
         currentUser: thisUser,
         onSend: (ChatMessage m) {
           setState(() {
             messages.insert(0, m);
+            MessageItem item = MessageItem(
+                Timestamp.fromDate(m.createdAt), thisUser.id, m.text);
+            IndivConversationFirebase().addMessage(discussionID, item);
           });
         },
         messages: messages,

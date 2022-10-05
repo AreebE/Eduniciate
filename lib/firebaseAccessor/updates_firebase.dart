@@ -25,7 +25,8 @@ class UpdatesFirebaseAccessor {
       String classID, FirebaseListener listener) async {
     DocumentSnapshot<Map<String, dynamic>> classInfo =
         await _storage.collection(classesCollection).doc(classID).get();
-    List<DocumentReference> announcementIDs = classInfo.get(announcementsKey);
+    List<DocumentReference> announcementIDs =
+        (classInfo.get(announcementsKey) as List).cast<DocumentReference>();
     List announcements = [];
     for (int i = 0; i < announcementIDs.length; i++) {
       DocumentSnapshot<Map<String, dynamic>> announcementInfo = await _storage
@@ -34,7 +35,7 @@ class UpdatesFirebaseAccessor {
           .get();
       DocumentSnapshot<Map<String, dynamic>> senderInfo = await _storage
           .collection(usersCollection)
-          .doc((announcementInfo.get(senderIDKey) as DocumentReference).id)
+          .doc(announcementInfo.get(senderIDKey))
           .get();
       AnnouncementItem item = AnnouncementItem(
           announcementInfo.get(contentKey),
@@ -62,12 +63,14 @@ class UpdatesFirebaseAccessor {
         .collection(classesCollection)
         .doc(item.getClassID())
         .get();
-    List<DocumentReference> announcementIDs = classInfo.get(announcementsKey);
+    List<DocumentReference> announcementIDs =
+        (classInfo.get(announcementsKey) as List).cast<DocumentReference>();
     announcementIDs.insert(0, announcementID);
+    Map<String, dynamic> objects = Map<String, dynamic>();
+    objects[announcementsKey] = announcementIDs;
     _storage
         .collection(classesCollection)
         .doc(item.getClassID())
-        .update(classInfo.data()!.cast<String, Object?>());
+        .update(objects);
   }
 }
-/

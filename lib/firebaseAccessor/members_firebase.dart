@@ -27,12 +27,13 @@ class MembersFirebaseAccessor {
   Future<void> getMembers(String classID, FirebaseListener listener) async {
     DocumentSnapshot classInfo =
         await _storage.collection(classesCollection).doc(classID).get();
-    List<DocumentReference> members = classInfo.get(membersKey);
+    List<DocumentReference> members =
+        (classInfo.get(membersKey) as List).cast<DocumentReference>();
     List membersList = [];
     for (int i = 0; i < members.length; i++) {
       DocumentSnapshot memberInfo = await _storage
           .collection(membersCollection)
-          .doc(members.elementAt(0).id)
+          .doc(members.elementAt(i).id)
           .get();
       DocumentSnapshot userInfo = await _storage
           .collection(usersCollection)
@@ -44,10 +45,19 @@ class MembersFirebaseAccessor {
               userInfo.get(nameKey),
               userInfo.id,
               memberInfo.id,
-              ClassRole.getRole(userInfo.get(roleKey)),
+              ClassRole.getRole(memberInfo.get(roleKey)),
               (userInfo.get(photoKey) as List).cast<int>(),
-              userInfo.get(conversationLastSeenKey)));
+              (memberInfo.get(conversationLastSeenKey) as Map)
+                  .cast<String, Timestamp>()));
     }
+    listener.onSuccess(membersList);
+  }
+
+  Future<void> getResponsesToConvos(
+      String memberID, FirebaseListener listener) async {
+    DocumentSnapshot memberInfo =
+        await _storage.collection(membersCollection).doc(memberID).get();
+    listener.onSuccess([memberInfo.get(conversationLastSeenKey)]);
   }
 
   void updateRole(String memberID, ClassRole newRole) {
@@ -56,4 +66,5 @@ class MembersFirebaseAccessor {
     _storage.collection(membersCollection).doc(memberID).update(newData);
   }
 
+  void getToUserInfo(String thisMemberID, FirebaseListener firebaseListener) {}
 }

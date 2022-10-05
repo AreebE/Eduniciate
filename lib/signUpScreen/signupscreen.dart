@@ -46,7 +46,8 @@ class MyCustomForm extends StatefulWidget {
   State<MyCustomForm> createState() => _MyCustomFormState();
 }
 
-class _MyCustomFormState extends State<MyCustomForm> implements ClickListener {
+class _MyCustomFormState extends State<MyCustomForm>
+    implements ClickListener, DisplayWidgetListener {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -82,7 +83,7 @@ class _MyCustomFormState extends State<MyCustomForm> implements ClickListener {
                                 fontWeight: FontWeight.w600),
                             textAlign: TextAlign.left)),
                     SizedBox(height: MediaQuery.of(context).size.height * 0.01),
-                    AlternateButtons('Sign up with Google', this),
+                    AlternateButtons('Sign up with Google', this, this),
                     SizedBox(height: MediaQuery.of(context).size.height * 0.06),
                   ])))
         ]));
@@ -143,8 +144,14 @@ class _MyCustomFormState extends State<MyCustomForm> implements ClickListener {
                     ClassItem item = classes[i] as ClassItem;
                     items.insert(
                         0,
-                        ClassList(item.getClassName(), item.getID(),
-                            item.getDesc(), item.getImage()));
+                        ClassList(
+                            item.getClassName(),
+                            item.getDesc(),
+                            item.getID(),
+                            id[0],
+                            UserRole.student,
+                            item.getImage(),
+                            this));
                   }
                   Navigator.push(context,
                       MaterialPageRoute(builder: ((context) {
@@ -157,13 +164,19 @@ class _MyCustomFormState extends State<MyCustomForm> implements ClickListener {
           }, (message) {}));
     });
   }
+
+  @override
+  BuildContext getContext() {
+    return context;
+  }
 }
 
 class AlternateButtons extends StatelessWidget {
   final String buttonText;
   ClickListener listener;
+  DisplayWidgetListener widgetListener;
 
-  AlternateButtons(this.buttonText, this.listener);
+  AlternateButtons(this.buttonText, this.listener, this.widgetListener);
 
   @override
   Widget build(BuildContext context) {
@@ -189,8 +202,14 @@ class AlternateButtons extends StatelessWidget {
                                 ClassItem item = classes[i] as ClassItem;
                                 items.insert(
                                     0,
-                                    ClassList(item.getClassName(), item.getID(),
-                                        item.getDesc(), item.getImage()));
+                                    ClassList(
+                                        item.getClassName(),
+                                        item.getDesc(),
+                                        item.getID(),
+                                        result[0],
+                                        UserRole.student,
+                                        item.getImage(),
+                                        widgetListener));
                               }
                               Navigator.push(context,
                                   MaterialPageRoute(builder: ((context) {

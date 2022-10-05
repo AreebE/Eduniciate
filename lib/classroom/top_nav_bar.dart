@@ -3,10 +3,28 @@
 
 // ignore_for_file: use_key_in_widget_constructors, non_constant_identifier_names, prefer_const_constructors, prefer_const_literals_to_create_immutables
 
+import 'dart:typed_data';
+
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:dash_chat_2/dash_chat_2.dart';
+import 'package:edunciate/calendar/calendar.dart';
+import 'package:edunciate/calendar/custom_calendar_event_data.dart';
+import 'package:edunciate/calendar/firebase_event.dart';
+import 'package:edunciate/class_details_item.dart';
+import 'package:edunciate/classroom/announcements/announcement_item.dart';
 import 'package:edunciate/classroom/announcements/announcements.dart';
+import 'package:edunciate/classroom/calendar/class_calendar.dart';
+import 'package:edunciate/classroom/discussion/ChatPage.dart';
+import 'package:edunciate/classroom/members/people_tile.dart';
+import 'package:edunciate/discussion_item.dart';
+import 'package:edunciate/firebaseAccessor/calendar_firebase.dart';
+import 'package:edunciate/firebaseAccessor/details_firebase.dart';
+import 'package:edunciate/firebaseAccessor/discussions_firebase.dart';
 import 'package:edunciate/firebaseAccessor/firebase_listener.dart';
 import 'package:edunciate/firebaseAccessor/updates_firebase.dart';
 import 'package:edunciate/homepage/items/class_item.dart';
+import 'package:edunciate/main.dart';
+import 'package:edunciate/member_item.dart';
 import 'package:flutter/material.dart';
 import '../color_scheme.dart';
 import '../firebaseAccessor/members_firebase.dart';
@@ -28,28 +46,62 @@ class OnClassPageChangeListener {
 
 class ClassPageContainer extends StatefulWidget {
   String classID;
-    String className;
+  String className;
+  String thisUserID;
+
   ClassRole thisMemberRole;
   String thisMemberID;
-    
-  ClassPageContainer(this.classID, this.className, this.thisMemberRole, this.thisMemberID, {Key? key})
+  String username;
+  List<ChatMessage> messages;
+
+  ClassPageContainer(this.classID, this.className, this.thisUserID,
+      this.thisMemberRole, this.thisMemberID, this.username, this.messages,
+      {Key? key})
       : super(key: key);
 
   @override
-  State<ClassPageContainer> createState() =>
-      _ClassPageContainerState(className, classID, thisMemberRole, thisMemberID);
-} 
+  State<ClassPageContainer> createState() => _ClassPageContainerState(
+      className,
+      classID,
+      this.thisUserID,
+      thisMemberRole,
+      thisMemberID,
+      username,
+      this.messages);
+}
 
 class _ClassPageContainerState extends State<ClassPageContainer>
-    implements OnClassPageChangeListener, FirebaseListener {
+    implements
+        OnClassPageChangeListener,
+        FirebaseListener,
+        DisplayWidgetListener {
   ClassPage currentPage = ClassPage.announcements;
   String classID;
-    String className;
+  String className;
   ClassRole thisMemberRole;
   String thisMemberID;
+  String thisUserID;
+  String username;
   late Widget body;
 
-  _ClassPageContainerState(this.className, this.classID, this.thisMemberRole, this.thisMemberID) {}
+  _ClassPageContainerState(
+      this.className,
+      this.classID,
+      this.thisUserID,
+      this.thisMemberRole,
+      this.thisMemberID,
+      this.username,
+      List<ChatMessage> messages) {
+    body = AnnouncementsScreen(
+        messages,
+        ChatUser(
+            id: thisUserID,
+            firstName: username.split(" ").first,
+            lastName: username.split(" ").last),
+        thisMemberRole,
+        classID,
+        thisUserID);
+  }
 
   static const double fontSize = 15.0;
 
@@ -74,21 +126,21 @@ class _ClassPageContainerState extends State<ClassPageContainer>
                   alignment: Alignment.topLeft,
                   child: AppTitle(className, 19.0),
                 ),
-              //   Row(
-              //     //mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              //     children: [
-              //       Align(
-              //         alignment: Alignment.topLeft,
-              //         child: AppTitle(Organization, 19.0),
-              //       ),
+                //   Row(
+                //     //mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                //     children: [
+                //       Align(
+                //         alignment: Alignment.topLeft,
+                //         child: AppTitle(Organization, 19.0),
+                //       ),
 
-              //       //Button to lead back to list of class pages
-              //       IconButton(
-              //           color: Color.fromARGB(255, 58, 27, 103),
-              //           icon: const Icon(Icons.arrow_back),
-              //           onPressed: () {}),
-              //     ],
-              //   ),
+                //       //Button to lead back to list of class pages
+                //       IconButton(
+                //           color: Color.fromARGB(255, 58, 27, 103),
+                //           icon: const Icon(Icons.arrow_back),
+                //           onPressed: () {}),
+                //     ],
+                //   ),
               ]),
               // bottom: PreferredSize(
               //   preferredSize: _tabBar.preferredSize,
@@ -152,6 +204,8 @@ class _ClassPageContainerState extends State<ClassPageContainer>
 
   @override
   changePage(ClassPage newPage) {
+    currentPage = newPage;
+    print("newPage " + newPage.name);
     switch (newPage) {
       case ClassPage.announcements:
         UpdatesFirebaseAccessor().getAnnouncements(classID, this);
@@ -160,10 +214,10 @@ class _ClassPageContainerState extends State<ClassPageContainer>
         CalendarFirebaseAccessor().getClassEvents(classID, this);
         break;
       case ClassPage.details:
-        DetailsFirebaseAccessor().getClassInfo(classID, this);
+        ClassDetailsFirebaseAccessor().getClassInfo(classID, this);
         break;
       case ClassPage.discussions:
-        DiscussionsFirebaseAccessor().getAllDiscussions(thisMemberID, this);
+        ClassDiscussionsFirebase().getAllDiscussions(thisMemberID, this);
         break;
       case ClassPage.members:
         MembersFirebaseAccessor().getMembers(classID, this);
@@ -176,29 +230,74 @@ class _ClassPageContainerState extends State<ClassPageContainer>
 
   @override
   void onSuccess(List objects) {
+    print("finished with " + currentPage.name);
     switch (currentPage) {
       case ClassPage.announcements:
-            
-        body = AnnouncementsPage();
+        List<ChatMessage> messages = [];
+        for (int i = 0; i < objects.length; i++) {
+          messages.insert(
+              0, (objects.elementAt(i) as AnnouncementItem).toMessage());
+        }
+        body = AnnouncementsScreen(messages, ChatUser(id: thisUserID),
+            thisMemberRole, classID, thisUserID);
         break;
       case ClassPage.calendar:
-
-            body = CalendarPage();
-        break;
+        List<CustomCalendarEventData> events = [];
+        for (int i = 0; i < objects.length; i++) {
+          events.add(
+              (objects.elementAt(i) as FirebaseEvent).toCustomCalendarEvent());
+        }
+        ClassDetailsFirebaseAccessor().getClassInfo(
+            classID,
+            FirebaseListener((photo) {
+              ClassDetailsItem classDetailsItem = photo[0];
+              body = ClassCalendarPage(events, classDetailsItem.getPhoto(),
+                  classID, className, this);
+              setState(() {});
+            }, (message) {}));
+        return;
       case ClassPage.details:
-
-            body = ClassDetailsPage();
+        ClassDetailsItem details = objects[0];
+        body = DetailsPage(
+            details.getName(),
+            details.getDesc(),
+            details.getID(),
+            details.getCode(),
+            details.getPhoto(),
+            thisMemberID,
+            thisMemberRole);
         break;
       case ClassPage.discussions:
-
-            body = DiscussionsPage();
-        break;
+        MembersFirebaseAccessor().getResponsesToConvos(
+            thisMemberID,
+            FirebaseListener((mapOfValues) {
+              Map<String, Timestamp> userInfo =
+                  (mapOfValues[0] as Map).cast<String, Timestamp>();
+              body = ChatPage(objects.cast<DiscussionItem>(), userInfo,
+                  thisMemberID, thisUserID, this);
+              setState(() {});
+            }, (message) {}));
+        return;
       case ClassPage.members:
-
-            body = MembersPage();
+        List<PeopleTile> people = [];
+        for (int i = 0; i < objects.length; i++) {
+          MemberItem item = objects.elementAt(i) as MemberItem;
+          people.insert(
+              0,
+              PeopleTile(item.getName(), item.getRole() == ClassRole.owner,
+                  item.getPicture(), thisMemberRole, item.getMemberID(), this));
+        }
+        body = PeoplePage(people);
+        setState(() {});
         break;
     }
     setState(() {});
+  }
+
+  @override
+  BuildContext getContext() {
+    // TODO: implement getContext
+    return context;
   }
 }
 

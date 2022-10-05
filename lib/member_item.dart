@@ -42,6 +42,10 @@ class MemberItem {
     return _convoTimestamps;
   }
 
+  String getMemberID() {
+    return _memberID;
+  }
+
   void updateRole(ClassRole newRole) {
     _role = newRole;
     membersAccessor.updateRole(_memberID, newRole);

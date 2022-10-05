@@ -9,8 +9,6 @@ import 'package:edunciate/user_info_item.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
-import '../homepage/items/class_item.dart';
-
 class HomepageFirebaseAccessor {
   static const String usersCollection = "Users";
   static const String usernameKey = "name";
@@ -73,12 +71,11 @@ class HomepageFirebaseAccessor {
   Future<void> isClassPrivate(String classID, FirebaseListener listener) async {
     DocumentSnapshot classInfo =
         await _storage.collection(classesCollection).doc(classID).get();
-    List values = [];
-    if (classInfo.get(isPrivateKey))
-    {
-        values.add(classInfo.get(codeKey));
+    List potentialCode = [];
+    if (classInfo.get(isPrivateKey)) {
+      potentialCode.add(classInfo.get(codeKey));
     }
-    listener.onSuccess(values);
+    listener.onSuccess(potentialCode);
   }
 
   Future<void> joinClass(String userID, String classID, String code,
@@ -107,6 +104,7 @@ class HomepageFirebaseAccessor {
       _storage.collection(membersCollection).doc(memberID.id).update(oldData);
     } else {
       Map<String, dynamic> newData = Map<String, dynamic>();
+      print("classID");
       newData.putIfAbsent(personIDKey, () => userID);
       newData.putIfAbsent(classKey, () => classID);
       newData.putIfAbsent(roleKey, () => classRole);
@@ -118,8 +116,11 @@ class HomepageFirebaseAccessor {
         await _storage.collection(membersCollection).doc(memberID.id).get();
     Map<String, dynamic> classData = classInfo.data()!;
 
-    List<DocumentReference> listOfCurrentMembers = classData[membersKey];
+    List<DocumentReference> listOfCurrentMembers =
+        (classData[membersKey] as List).cast<DocumentReference>();
+    print(listOfCurrentMembers.toString() + " == members");
     for (int i = 0; i < listOfCurrentMembers.length; i++) {
+      print("creating discussions");
       createDiscussion(memberID, listOfCurrentMembers[i], classID);
     }
 
@@ -127,7 +128,7 @@ class HomepageFirebaseAccessor {
         .cast<DocumentReference>()
         .add(member.reference);
     await _storage.collection(classesCollection).doc(classID).update(classData);
-    listener.onSuccess([member.id]);
+    listener.onSuccess([member.id, member.get(roleKey)]);
   }
 
   Future<void> createClass(String userID, String name, String desc,
@@ -160,10 +161,10 @@ class HomepageFirebaseAccessor {
         (userData.get(classesKey) as List).cast<DocumentReference>();
     classList.add(classInfo);
     Map<String, dynamic> newInfo = Map<String, dynamic>();
-    newInfo.putIfAbsent(classKey, () => classList);
+    newInfo.putIfAbsent(classesKey, () => classList);
     _storage.collection(usersCollection).doc(userID).update(newInfo);
 
-    memberData.putIfAbsent(classKey, () => classInfo);
+    memberData.putIfAbsent(classKey, () => classInfo.id);
     await _storage
         .collection(membersCollection)
         .doc(memberIncompleteInfo.id)
@@ -172,19 +173,6 @@ class HomepageFirebaseAccessor {
     listener.onSuccess([classInfo.id]);
   }
 
-    Future<void> isAMember(String userID, String classID, FirebaseListener listener) async
-    {
-        QuerySnapshot<Map<String, dynamic>> potentialMemberInfo = await _storage
-            .collection(membersCollection)
-            .where(personIDKey, isEqualTo: userID)
-            .where(classKey, isEqualTo: classID)
-            .get();
-        listener.onSuccess([
-            potentialMemberInfo.docs.isNotEmpty &&
-            potentialMemberInfo.docs.elementAt(0).get(roleKey) as String != ClassRole.nonMember.name
-        ]);
-    }
-    
   String _generateRandomCode() {
     String characterSource =
         "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz1234567890!@#\$%^&*()";
@@ -198,14 +186,19 @@ class HomepageFirebaseAccessor {
 
   Future<void> createDiscussion(DocumentReference firstMemberID,
       DocumentReference secondMemberID, String classID) async {
-    if ((await _storage
-            .collection(discussionsCollection)
-            .where(discussionMembersKey, arrayContains: firstMemberID)
-            .where(discussionMembersKey, arrayContains: secondMemberID)
-            .get())
-        .docs
-        .isNotEmpty) {
-      return;
+    QuerySnapshot firstMemberDocs = await _storage
+        .collection(discussionsCollection)
+        .where(discussionMembersKey, arrayContains: firstMemberID)
+        .get();
+    if (firstMemberDocs.docs.isNotEmpty) {
+      for (QueryDocumentSnapshot firstMemberInfo in firstMemberDocs.docs) {
+        List<DocumentReference> memberIDs =
+            (firstMemberInfo.get(discussionMembersKey) as List)
+                .cast<DocumentReference>();
+        if (memberIDs[0] == secondMemberID || memberIDs[1] == secondMemberID) {
+          return;
+        }
+      }
     }
     DocumentSnapshot<Map<String, dynamic>> firstMemberInfo = await _storage
         .collection(membersCollection)
@@ -226,9 +219,9 @@ class HomepageFirebaseAccessor {
         .get();
 
     String firstUsername =
-        firstUserInfo.get(usernameKey).toString().split(";").first;
+        firstUserInfo.get(usernameKey).toString().split(" ").first;
     String secondUsername =
-        secondUserInfo.get(usernameKey).toString().split(";").first;
+        secondUserInfo.get(usernameKey).toString().split(" ").first;
 
     String convoName = firstUsername + " and " + secondUsername;
     Map<String, dynamic> newConvoData = Map<String, dynamic>();
@@ -241,27 +234,49 @@ class HomepageFirebaseAccessor {
         await _storage.collection(discussionsCollection).add(newConvoData);
 
     Map<String, Timestamp> firstMembersConvos =
-        firstMemberInfo.get(conversationLastSeenKey);
+        (firstMemberInfo.get(conversationLastSeenKey) as Map)
+            .cast<String, Timestamp>();
     firstMembersConvos.putIfAbsent(convoRef.id, () => Timestamp.now());
     Map<String, Timestamp> secondMembersConvos =
-        secondMemberInfo.get(conversationLastSeenKey);
+        (secondMemberInfo.get(conversationLastSeenKey) as Map)
+            .cast<String, Timestamp>();
     secondMembersConvos.putIfAbsent(convoRef.id, () => Timestamp.now());
     _storage
         .collection(membersCollection)
         .doc(firstMemberID.id)
-        .update(firstMemberInfo.data()!);
+        .update({conversationLastSeenKey: firstMembersConvos});
     _storage
         .collection(membersCollection)
         .doc(secondMemberID.id)
-        .update(secondMemberInfo.data()!);
+        .update({conversationLastSeenKey: secondMembersConvos});
 
     DocumentSnapshot<Map<String, dynamic>> classesInfo =
         await _storage.collection(classesCollection).doc(classID).get();
-    List<DocumentReference> discussions = classesInfo.get(discussionsKey);
+    List<DocumentReference> discussions =
+        (classesInfo.get(discussionsKey) as List).cast<DocumentReference>();
     discussions.add(convoRef);
     _storage
         .collection(classesCollection)
         .doc(classID)
-        .update(classesInfo.data()!);
+        .update({discussionsKey: discussions});
+  }
+
+  Future<void> isAMember(
+      String userId, String classId, FirebaseListener firebaseListener) async {
+    QuerySnapshot memberInfo = await _storage
+        .collection(membersCollection)
+        .where(personIDKey, isEqualTo: userId)
+        .where(classKey, isEqualTo: classId)
+        .get();
+
+    List returnValues = [];
+    if (memberInfo.docs.isNotEmpty) {
+      if (ClassRole.getRole(memberInfo.docs[0].get(roleKey)) !=
+          ClassRole.nonMember) {
+        returnValues.add(memberInfo.docs.first.id);
+        returnValues.add(memberInfo.docs.first.get(roleKey));
+      }
+    }
+    firebaseListener.onSuccess(returnValues);
   }
 }

@@ -1,21 +1,24 @@
 import 'dart:typed_data';
 
 import 'package:edunciate/color_scheme.dart';
+import 'package:edunciate/main.dart';
 import 'package:edunciate/personal_profile/edit_profile_page.dart';
 import 'package:flutter/material.dart';
 
 class ProfilePage extends StatefulWidget {
   UserInfoItem _user;
+  DisplayWidgetListener widgetListener;
 
-  ProfilePage(this._user);
+  ProfilePage(this._user, this.widgetListener);
   @override
-  _ProfilePageState createState() => _ProfilePageState(_user);
+  _ProfilePageState createState() => _ProfilePageState(_user, widgetListener);
 }
 
 class _ProfilePageState extends State<ProfilePage> {
   UserInfoItem _user;
+  DisplayWidgetListener widgetListener;
 
-  _ProfilePageState(this._user);
+  _ProfilePageState(this._user, this.widgetListener);
 
   @override
   Widget build(BuildContext context) {
@@ -32,9 +35,10 @@ class _ProfilePageState extends State<ProfilePage> {
               child: Image(image: _user.image),
               onPressed: () {
                 Navigator.push(
-                  context,
+                  widgetListener.getContext(),
                   MaterialPageRoute(
-                      builder: (context) => EditProfilePage(_user)),
+                      builder: (context) =>
+                          EditProfilePage(_user, widgetListener)),
                 );
               },
             ),

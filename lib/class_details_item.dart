@@ -35,6 +35,10 @@ class ClassDetailsItem {
     return _photo;
   }
 
+  String getID() {
+    return _classID;
+  }
+
   String getCode() {
     return _code;
   }

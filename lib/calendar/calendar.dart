@@ -1,3 +1,4 @@
+import 'package:edunciate/calendar/custom_calendar_event_data.dart';
 import 'package:edunciate/calendar/events_list.dart';
 import 'package:flutter/material.dart';
 import 'package:calendar_view/calendar_view.dart';

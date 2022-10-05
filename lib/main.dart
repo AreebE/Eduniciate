@@ -52,6 +52,10 @@ void main() {
   runApp(RegistrationAlternator());
 }
 
+abstract class DisplayWidgetListener {
+  BuildContext getContext();
+}
+
 class MainDisplay extends StatefulWidget {
   String _userID;
   UserRole _userRole;
@@ -66,14 +70,14 @@ class MainDisplay extends StatefulWidget {
 }
 
 class _MainDisplayState extends State<MainDisplay>
-    implements OnPageChangeListener, FirebaseListener {
+    implements OnPageChangeListener, FirebaseListener, DisplayWidgetListener {
   Page current = Page.homepage;
   late Widget body;
   String _userID;
   UserRole _userRole;
 
   _MainDisplayState(this._userID, this._userRole, List<ClassList> items) {
-    body = ClassBody(items, _userID, _userRole);
+    body = ClassBody(items, _userID, _userRole, this);
   }
 
   @override
@@ -138,10 +142,10 @@ class _MainDisplayState extends State<MainDisplay>
           ClassItem item = objects[i] as ClassItem;
           items.insert(
               0,
-              ClassList(item.getClassName(), item.getID(), item.getDesc(),
-                  item.getImage()));
+              ClassList(item.getClassName(), item.getDesc(), item.getID(),
+                  _userID, _userRole, item.getImage(), this));
         }
-        body = ClassBody(items, this._userID, this._userRole);
+        body = ClassBody(items, this._userID, this._userRole, this);
         setState(() {});
         break;
       case Page.personalProfile:
@@ -153,7 +157,7 @@ class _MainDisplayState extends State<MainDisplay>
             pronouns: objects[PersonalProfileFirebaseAccessor.pronounsArrayKey],
             email: objects[PersonalProfileFirebaseAccessor.emailArrayKey],
             about: objects[PersonalProfileFirebaseAccessor.bioArrayKey]);
-        body = ProfilePage(user);
+        body = ProfilePage(user, this);
         setState(() {});
         break;
       case Page.settings:
@@ -164,7 +168,7 @@ class _MainDisplayState extends State<MainDisplay>
                 .cast<TimeRange>(),
             objects[FirebaseSettingsAccessor.langArrayKey],
             "uSDrCPEvRKmTQHPrbP5N");
-        body = SettingsPage(
+        body = SettingsPage(this,
             settingsItem: item, colorScheme: CustomColorScheme.defaultColors);
         setState(() {});
         break;
@@ -178,6 +182,11 @@ class _MainDisplayState extends State<MainDisplay>
         setState(() {});
         return;
     }
+  }
+
+  @override
+  BuildContext getContext() {
+    return context;
   }
 }
 

@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:dash_chat_2/dash_chat_2.dart';
 
 import '../discussion/chatUserModels.dart';
 
@@ -13,8 +14,11 @@ class AnnouncementItem {
 
   AnnouncementItem(this._content, this._senderName, this._sendTime,
       this._senderID, this._title, this._classID) {
-      sender = ChatUser(id: _senderID, firstName: _senderName.split(" ")[0], lastName: _senderName.split(" ")[1]);
-      }
+    sender = ChatUser(
+        id: _senderID,
+        firstName: _senderName.split(" ")[0],
+        lastName: _senderName.split(" ")[1]);
+  }
 
   String getContent() {
     return _content;
@@ -40,12 +44,8 @@ class AnnouncementItem {
     return _classID;
   }
 
-    ChatMessage toMessage() 
-    {
-        return ChatMessage(
-            user: sender,
-            createdAt: _sendTime,
-            text: _content
-        );
-    }
+  ChatMessage toMessage() {
+    return ChatMessage(
+        user: sender, createdAt: _sendTime.toDate().toLocal(), text: _content);
+  }
 }

@@ -38,11 +38,11 @@ class CalendarFirebaseAccessor {
           .get();
       List<DocumentReference> events =
           (classInfo.get(eventsKey) as List).cast<DocumentReference>();
-      // print("events = " + events.toString());
+      print("class events = " + events.length.toString());
       for (int j = 0; j < events.length; j++) {
         DocumentSnapshot event = await _storage
             .collection(eventsCollection)
-            .doc(events.elementAt(i).id)
+            .doc(events.elementAt(j).id)
             .get();
         DateTime time = (event.get(timestampKey) as Timestamp).toDate();
         userEvents.add(FirebaseEvent(
@@ -61,7 +61,9 @@ class CalendarFirebaseAccessor {
     List<FirebaseEvent> userEvents = [];
     DocumentSnapshot classInfo =
         await _storage.collection(classesCollection).doc(classID).get();
-    List<DocumentReference> events = classInfo.get(eventsKey);
+    List<DocumentReference> events =
+        (classInfo.get(eventsKey) as List).cast<DocumentReference>();
+    print(events);
     for (int j = 0; j < events.length; j++) {
       DocumentSnapshot event = await _storage
           .collection(eventsCollection)
@@ -73,8 +75,8 @@ class CalendarFirebaseAccessor {
           time.day,
           time.month,
           time.year,
-          event.get(classInfo.get(nameKey)),
-          classInfo.get(photoKey)));
+          classInfo.get(nameKey),
+          Uint8List.fromList((classInfo.get(photoKey) as List).cast<int>())));
     }
     listener.onSuccess(userEvents);
   }
@@ -90,7 +92,8 @@ class CalendarFirebaseAccessor {
         await _storage.collection(eventsCollection).add(data);
     DocumentSnapshot<Map<String, dynamic>> classInfo =
         await _storage.collection(classesCollection).doc(classID).get();
-    List<DocumentReference> events = classInfo.get(eventsKey);
+    List<DocumentReference> events =
+        (classInfo.get(eventsKey) as List).cast<DocumentReference>();
     events.add(eventRef);
     Map<String, dynamic> newData = Map();
     newData.putIfAbsent(eventsKey, () => events);

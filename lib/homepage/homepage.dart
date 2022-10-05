@@ -1,6 +1,7 @@
 import 'package:edunciate/color_scheme.dart';
 import 'package:edunciate/homepage/class_list_tile.dart';
 import 'package:edunciate/joinAndCreateClass/create_class_screen.dart';
+import 'package:edunciate/main.dart';
 import 'package:edunciate/user_info_item.dart';
 import 'package:flutter/material.dart';
 import 'package:paginated_search_bar/paginated_search_bar.dart';
@@ -9,21 +10,26 @@ class ClassBody extends StatefulWidget {
   List<ClassList> _items;
   String userID;
   UserRole role;
+  DisplayWidgetListener widgetListener;
 
-  ClassBody(this._items, this.userID, this.role, {Key? key}) : super(key: key);
+  ClassBody(this._items, this.userID, this.role, this.widgetListener,
+      {Key? key})
+      : super(key: key);
 
   @override
-  State<ClassBody> createState() => _ClassBodyState(_items, role, userID);
+  State<ClassBody> createState() =>
+      _ClassBodyState(_items, role, userID, widgetListener);
 }
 
 class _ClassBodyState extends State<ClassBody> {
   List<ClassList> _items;
   UserRole role;
   String userID;
+  DisplayWidgetListener widgetListener;
 
   late List<ClassList> _displayedItems;
 
-  _ClassBodyState(this._items, this.role, this.userID) {
+  _ClassBodyState(this._items, this.role, this.userID, this.widgetListener) {
     _displayedItems = _items.toList();
   }
 
@@ -34,7 +40,7 @@ class _ClassBodyState extends State<ClassBody> {
             floatingActionButton: FloatingActionButton(
               onPressed: () {
                 if (role == UserRole.owner) {
-                  Navigator.push(context,
+                  Navigator.push(widgetListener.getContext(),
                       MaterialPageRoute<String>(builder: (context) {
                     return CreateClassScreen(userID);
                   }));

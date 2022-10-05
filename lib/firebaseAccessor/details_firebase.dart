@@ -37,13 +37,8 @@ class ClassDetailsFirebaseAccessor {
     DocumentSnapshot<Map<String, dynamic>> classInfo =
         await _storage.collection(classesCollection).doc(classID).get();
 
-    QueryDocumentSnapshot memberInfo = (await _storage
-            .collection(membersCollection)
-            .where(personIDKey, isEqualTo: memberID)
-            .where(classIDKey, isEqualTo: classID)
-            .get())
-        .docs
-        .first;
+    DocumentSnapshot memberInfo =
+        (await _storage.collection(membersCollection).doc(memberID).get());
     DocumentSnapshot<Map<String, dynamic>> userInfo = await _storage
         .collection(usersCollection)
         .doc(memberInfo.get(personIDKey))
@@ -53,7 +48,8 @@ class ClassDetailsFirebaseAccessor {
     ClassRole classRole = ClassRole.getRole(memberInfo.get(roleKey));
 
     if (classRole == ClassRole.owner && userRole == UserRole.owner) {
-      List<DocumentReference> members = classInfo.get(membersKey);
+      List<DocumentReference> members =
+          (classInfo.get(membersKey) as List).cast<DocumentReference>();
       bool foundOtherOwner = false;
       for (int i = 0; i < members.length; i++) {
         String currentID = members[i].id;
@@ -76,22 +72,23 @@ class ClassDetailsFirebaseAccessor {
         return;
       }
     }
-    List<DocumentReference> members = classInfo.get(membersKey);
+    List<DocumentReference> members =
+        (classInfo.get(membersKey) as List).cast<DocumentReference>();
     for (int i = 0; i < members.length; i++) {
       if (members[i].id == memberInfo.id) {
         members.removeAt(i);
       }
     }
-    _storage
-        .collection(classesCollection)
-        .doc(classID)
-        .update(classInfo.data()!.cast<String, Object>());
+    Map<String, dynamic> newClassData = Map<String, dynamic>();
+    newClassData[membersKey] = members;
+    _storage.collection(classesCollection).doc(classID).update(newClassData);
 
     Map<String, dynamic> newData = Map();
-    newData.putIfAbsent(roleKey, () => ClassRole.nonMember);
+    newData.putIfAbsent(roleKey, () => ClassRole.nonMember.name);
     _storage.collection(membersCollection).doc(memberInfo.id).update(newData);
 
-    List<DocumentReference> classes = userInfo.get(classesKey);
+    List<DocumentReference> classes =
+        (userInfo.get(classesKey) as List).cast<DocumentReference>();
     for (int i = 0; i < classes.length; i++) {
       if (classes[i].id == classInfo.id) {
         classes.removeAt(i);
@@ -100,7 +97,7 @@ class ClassDetailsFirebaseAccessor {
     _storage
         .collection(usersCollection)
         .doc(userInfo.id)
-        .update(userInfo.data()!.cast<String, Object>());
+        .update({classesKey: classes});
     listener.onSuccess([]);
   }
 
@@ -113,7 +110,7 @@ class ClassDetailsFirebaseAccessor {
           classInfo.get(nameKey),
           classInfo.get(isPrivateKey),
           classInfo.get(descriptionKey),
-          classInfo.get(photoKey),
+          Uint8List.fromList((classInfo.get(photoKey) as List).cast<int>()),
           classInfo.get(codeKey))
     ]);
   }
@@ -142,16 +139,20 @@ class ClassDetailsFirebaseAccessor {
     _storage.collection(classesCollection).doc(classID).update(newData);
   }
 
-    Future<void> getName(String classID, FirebaseListener listener) async 
-    {
-        listener.onSuccess([(await _storage.collection(classesCollection).doc(classID).get()).get(nameKey)]);    
-    }
+  Future<void> getName(String classID, FirebaseListener listener) async {
+    listener.onSuccess([
+      (await _storage.collection(classesCollection).doc(classID).get())
+          .get(nameKey)
+    ]);
+  }
 
-    Future<void> getPhoto(String classID, FirebaseListener listener) async 
-    {
-        listener.onSuccess([(await _storage.collection(classesCollection).doc(classID).get()).get(photoKey)]);    
-    }
-    
+  Future<void> getPhoto(String classID, FirebaseListener listener) async {
+    listener.onSuccess([
+      (await _storage.collection(classesCollection).doc(classID).get())
+          .get(photoKey)
+    ]);
+  }
+
   Future<void> findSelf(
       String userID, String classID, FirebaseListener listener) async {
     QueryDocumentSnapshot member = (await _storage

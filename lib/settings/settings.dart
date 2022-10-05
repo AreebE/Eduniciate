@@ -4,6 +4,7 @@
 // ignore_for_file: no_logic_in_create_state
 
 import 'package:edunciate/font_standards.dart';
+import 'package:edunciate/main.dart';
 import 'package:edunciate/settings/items/settings_item.dart';
 import 'package:edunciate/settings/notification_setter.dart';
 import 'package:edunciate/settings/permissions.dart';
@@ -21,20 +22,23 @@ import '../color_scheme.dart';
 class SettingsPage extends StatefulWidget {
   final CustomColorScheme colorScheme;
   SettingsItem settingsItem;
-  SettingsPage(
+  DisplayWidgetListener widgetListener;
+
+  SettingsPage(this.widgetListener,
       {required this.settingsItem, required this.colorScheme, Key? key})
       : super(key: key);
 
   @override
   State<SettingsPage> createState() =>
-      _SettingsPageState(colorScheme, settingsItem);
+      _SettingsPageState(colorScheme, settingsItem, widgetListener);
 }
 
 class _SettingsPageState extends State<SettingsPage> {
   final CustomColorScheme colorScheme;
   SettingsItem _settingsItem;
+  DisplayWidgetListener widgetListener;
 
-  _SettingsPageState(this.colorScheme, this._settingsItem);
+  _SettingsPageState(this.colorScheme, this._settingsItem, this.widgetListener);
 
   @override
   Widget build(BuildContext context) {
@@ -155,7 +159,8 @@ class _SettingsPageState extends State<SettingsPage> {
         section = TermsOfServiceApp(colorScheme);
         break;
     }
-    Navigator.push(context, MaterialPageRoute(builder: (context) {
+    Navigator.of(widgetListener.getContext())
+        .push(MaterialPageRoute(builder: (context) {
       return section;
     }));
   }

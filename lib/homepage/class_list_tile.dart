@@ -1,26 +1,58 @@
 //Rishitha Ravi
 //Code for displaying people/members in individual class screens
 
-import 'dart:html';
-
+import 'package:dash_chat_2/dash_chat_2.dart';
+import 'package:edunciate/classroom/top_nav_bar.dart';
 import 'package:edunciate/firebaseAccessor/details_firebase.dart';
+import 'package:edunciate/firebaseAccessor/personal_profile_firebase.dart';
+import 'package:edunciate/firebaseAccessor/updates_firebase.dart';
+import 'package:edunciate/firebaseAccessor/users_firebase.dart';
+import 'package:edunciate/homepage/items/class_item.dart';
+import 'package:edunciate/main.dart';
+import 'package:edunciate/user_info_item.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 
+import '../classroom/announcements/announcement_item.dart';
+import '../color_scheme.dart';
+import '../firebaseAccessor/firebase_listener.dart';
 import '../firebaseAccessor/homepage_firebase.dart';
+import '../font_standards.dart';
 
-class ClassList extends StatelessWidget {
+class ClassList extends StatefulWidget {
   late String title;
   late String description;
   String classId;
   String userId;
   UserRole role;
   MemoryImage image;
+  DisplayWidgetListener widgetListener;
 
-  ClassList(this.title, this.classId, this.userId, this.description, this.role, this.image);
+  ClassList(this.title, this.description, this.classId, this.userId, this.role,
+      this.image, this.widgetListener,
+      {Key? key})
+      : super(key: key);
+
+  @override
+  State<ClassList> createState() => _ClassListState(
+      title, classId, userId, description, role, image, widgetListener);
+}
+
+class _ClassListState extends State<ClassList> {
+  late String title;
+  late String description;
+  String classId;
+  String userId;
+  UserRole role;
+  MemoryImage image;
+  DisplayWidgetListener widgetListener;
+
+  _ClassListState(this.title, this.classId, this.userId, this.description,
+      this.role, this.image, this.widgetListener);
 
   @override
   Widget build(BuildContext context) {
+    print("title == " + title);
     return Padding(
         padding: const EdgeInsets.fromLTRB(10.0, 5.0, 10.0, 0.0),
         child: Material(
@@ -28,57 +60,47 @@ class ClassList extends StatelessWidget {
             shadowColor: Colors.grey,
             child: ListTile(
               onTap: (() {
-                HomepageFirebaseAccessor()
-                    .isAMember(userId, classId
-                              FirebaseListener(
-                                  (isMember)
-                                  {
-                                    if (isMember[0])
-                                    {
-                                        openClassPage();
-                                    }
-                                    else 
-                                    {
-                                        HomepageFirebaseAccessor().isClassPrivate(classId, FirebaseListener(
-                                            (willGiveCode)
-                                            {
-                                                if (willGiveCode.isNotEmpty)
-                                                {
-                                                    String code = willGiveCode[0];
-                                                    HomepageFirebaseAccessor()
-                                                        .joinClass(
-                                                            userId,
-                                                            classId,
-                                                            code,
-                                                            role, 
-                                                            FirebaseListener(
-                                                                (values){
-                                                                    openClassPage(values[0]);
-                                                                },
-                                                                (error){
-                                                                    
-                                                                }
-                                                            )
-                                                        );
-                                                }
-                                                else 
-                                                {
-                                                    
-                                                }
-                                            },
-                                            (error)
-                                            {
-                                                
-                                            }
-                                        ));
-                                    }
-                                  },
-                                  (error)
-                                  {
-                                      
-                                  }
-                              )
-                              );
+                print("tapped");
+                HomepageFirebaseAccessor().isAMember(
+                    userId,
+                    classId,
+                    FirebaseListener((isMember) {
+                      if (isMember.isNotEmpty) {
+                        print("is a member");
+                        UsersFirebaseAccessor().getName(
+                            userId,
+                            FirebaseListener((name) {
+                              print("success");
+                              openClassPage(isMember[0], name[0],
+                                  ClassRole.getRole(isMember[1]));
+                            }, (message) {}));
+                      } else {
+                        print("class id = " + classId);
+                        HomepageFirebaseAccessor().isClassPrivate(
+                            classId,
+                            FirebaseListener((willGiveCode) {
+                              if (willGiveCode.isNotEmpty) {
+                                String code = willGiveCode[0];
+                                print("code == " + code);
+                                HomepageFirebaseAccessor().joinClass(
+                                    userId,
+                                    classId,
+                                    code,
+                                    role,
+                                    FirebaseListener((values) {
+                                      print("completed join");
+                                      UsersFirebaseAccessor().getName(
+                                          userId,
+                                          FirebaseListener((name) {
+                                            print("opened class");
+                                            openClassPage(
+                                                values[0], name[0], values[1]);
+                                          }, (message) {}));
+                                    }, (error) {}));
+                              } else {}
+                            }, (error) {}));
+                      }
+                    }, (error) {}));
               }),
               contentPadding: EdgeInsets.fromLTRB(10.0, 10.0, 10.0, 10.0),
               leading: Stack(children: [
@@ -157,32 +179,30 @@ class ClassList extends StatelessWidget {
     };
   }
 
-    void askForCode()
-    {
-        String code = "";
-        showDialog(
+  void askForCode() {
+    String code = "";
+    showDialog(
         context: context,
         builder: (context) {
           return AlertDialog(
             actions: [
               TextButton(
                   onPressed: () {
-                      HomepageFirebaseAccessor()
-                        .joinClass(
-                            userId,
-                            classId,
-                            code,
-                            role, 
-                            FirebaseListener(
-                                (values){
-                                    Navigator.pop(context);
-                                    openClassPage(values[0]);
-                                },
-                                (error){
-                                    print("Need a valid code!");
-                                }
-                            )
-                        );
+                    HomepageFirebaseAccessor().joinClass(
+                        userId,
+                        classId,
+                        code,
+                        role,
+                        FirebaseListener((values) {
+                          UsersFirebaseAccessor().getName(
+                              userId,
+                              FirebaseListener((name) {
+                                Navigator.pop(context);
+                                openClassPage(values[0], values[1], name[0]);
+                              }, (message) {}));
+                        }, (error) {
+                          print("Need a valid code!");
+                        }));
                   },
                   child: Text("Confirm"))
             ],
@@ -214,16 +234,28 @@ class ClassList extends StatelessWidget {
             ),
           );
         });
-    }
-    
-    void openClassPage(String memberID)
-    {
-         DetailsFirebaseAccessor()
-             .getName(classId, FirebaseListener((name) {
-                
-             }, (message) {}));
-    }
-    
+  }
+
+  void openClassPage(String memberID, String username, ClassRole memberRole) {
+    UpdatesFirebaseAccessor().getAnnouncements(
+        classId,
+        FirebaseListener((announcements) {
+          List<ChatMessage> messages = [];
+          for (int i = 0; i < announcements.length; i++) {
+            messages.insert(0,
+                (announcements.elementAt(i) as AnnouncementItem).toMessage());
+          }
+          Navigator.push(widgetListener.getContext(),
+              MaterialPageRoute(builder: (context) {
+            return MaterialApp(
+              home: Scaffold(
+                  body: ClassPageContainer(classId, title, userId, memberRole,
+                      memberID, username, messages)),
+            );
+          }));
+        }, (message) {}));
+  }
+
   Widget buildProfileIcon({
     required Color color,
   }) =>

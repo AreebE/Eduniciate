@@ -1,6 +1,9 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:edunciate/classroom/discussion/chatUserModels.dart';
 import 'package:edunciate/classroom/discussion/conversationlist.dart';
 import 'package:edunciate/classroom/discussion/individualMessagesScreen.dart';
+import 'package:edunciate/discussion_item.dart';
+import 'package:edunciate/main.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'dart:collection';
@@ -11,43 +14,29 @@ import 'package:flutter/material.dart';
 //source: https://www.freecodecamp.org/news/build-a-chat-app-ui-with-flutter/
 
 class ChatPage extends StatefulWidget {
+  Map<String, Timestamp> lastResponses;
+  List<DiscussionItem> items;
+  String memberID;
+  String userID;
+  DisplayWidgetListener widgetListener;
+
+  ChatPage(this.items, this.lastResponses, this.memberID, this.userID,
+      this.widgetListener);
+
   @override
-  _ChatPageState createState() => _ChatPageState();
+  _ChatPageState createState() => _ChatPageState(
+      items, lastResponses, memberID, userID, this.widgetListener);
 }
 
 class _ChatPageState extends State<ChatPage> {
-  List<ChatUsers> chatUsers = [
-    ChatUsers(
-        name: "Jane Russel", lastmessageText: "Awesome Setup", time: "Now"),
-    ChatUsers(
-        name: "Glady's Murphy",
-        lastmessageText: "That's Great",
-        time: "Yesterday"),
-    ChatUsers(
-        name: "Jorge Henry",
-        lastmessageText: "Hey where are you?",
-        time: "31 Mar"),
-    ChatUsers(
-        name: "Philip Fox",
-        lastmessageText: "Busy! Call me in 20 mins",
-        time: "28 Mar"),
-    ChatUsers(
-        name: "Debra Hawkins",
-        lastmessageText: "Thankyou, It's awesome",
-        time: "23 Mar"),
-    ChatUsers(
-        name: "Jacob Pena",
-        lastmessageText: "will update you in evening",
-        time: "17 Mar"),
-    ChatUsers(
-        name: "Andrey Jones",
-        lastmessageText: "Can you please share the file?",
-        time: "24 Feb"),
-    ChatUsers(
-        name: "John Wick", lastmessageText: "How are you?", time: "18 Feb"),
-    ChatUsers(
-        name: "Jany Wick", lastmessageText: "How are you?", time: "18 Feb"),
-  ];
+  Map<String, Timestamp> lastResponses;
+  List<DiscussionItem> items;
+  String memberID;
+  String userID;
+  DisplayWidgetListener widgetListener;
+
+  _ChatPageState(this.items, this.lastResponses, this.memberID, this.userID,
+      this.widgetListener);
 
   @override
   Widget build(BuildContext context) {
@@ -75,10 +64,10 @@ class _ChatPageState extends State<ChatPage> {
                 }) async {
                   // Call your search API to return a list of items
                   List<ExampleItem> users = [];
-                  for (int i = 0; i < chatUsers.length; i++) {
-                    if (chatUsers[i].name.toString().contains(searchQuery)) {
-                      ExampleItem n = new ExampleItem(
-                          chatUsers[i].name.toString(), chatUsers[i]);
+                  for (int i = 0; i < items.length; i++) {
+                    if (items[i].getName().toString().contains(searchQuery)) {
+                      ExampleItem n =
+                          new ExampleItem(items[i].getName().toString());
                       users.add(n);
                     }
                   }
@@ -95,13 +84,7 @@ class _ChatPageState extends State<ChatPage> {
                       child: Container(
                           height: 40,
                           child: TextButton(
-                              onPressed: () {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) => MessagesScreen()),
-                                );
-                              },
+                              onPressed: () {},
                               child: Text(
                                 item.title,
                                 style: TextStyle(color: Colors.black),
@@ -111,16 +94,25 @@ class _ChatPageState extends State<ChatPage> {
               ),
             ),
             ListView.builder(
-              itemCount: chatUsers.length,
+              itemCount: items.length,
               shrinkWrap: true,
               padding: EdgeInsets.only(top: 16),
               physics: NeverScrollableScrollPhysics(),
               itemBuilder: (context, index) {
                 return ConversationList(
-                  name: chatUsers[index].name,
-                  lastmessageText: chatUsers[index].lastmessageText,
-                  time: chatUsers[index].time,
-                  isMessageRead: (index == 0 || index == 3) ? true : false,
+                  items[index].getDiscussionID(),
+                  userID,
+                  memberID,
+                  widgetListener,
+                  name: items[index].getName(),
+                  time: items[index].getTimeLastUpdated().toDate().toString(),
+                  isMessageRead: items[index]
+                          .getTimeLastUpdated()
+                          .toDate()
+                          .compareTo(
+                              lastResponses[items[index].getDiscussionID()]!
+                                  .toDate()) >
+                      0,
                 );
               },
             ),
@@ -133,7 +125,8 @@ class _ChatPageState extends State<ChatPage> {
 
 class ExampleItem {
   final String title;
-  final ChatUsers n;
 
-  ExampleItem(this.title, this.n);
+  ExampleItem(
+    this.title,
+  );
 }

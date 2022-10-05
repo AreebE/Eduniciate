@@ -25,10 +25,10 @@ class _ClassAlternatorState extends State<ClassAlternator>
 
   @override
   Widget build(BuildContext context) {
-    Widget body = (state == ClassState.joinAndCreate)
-        ? JoinAndCreateScreen(this)
-        : ClassPageContainer("", ClassRole.member);
-    return body;
+    // Widget body = (state == ClassState.joinAndCreate)
+    // ? JoinAndCreateScreen(this)
+    // : ClassPageContainer("", ClassRole.member);
+    return JoinAndCreateScreen(this);
   }
 
   @override

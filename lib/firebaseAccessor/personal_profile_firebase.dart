@@ -10,6 +10,10 @@ class PersonalProfileFirebaseAccessor {
   PersonalProfileFirebaseAccessor() {
     _storage = FirebaseFirestore.instance;
   }
+
+  static const String membersCollection = "Members";
+  static const String personIDKey = "personID";
+
   static const String usersCollection = "Users";
   static const String bioKey = "bio";
   static const String emailKey = "email";
@@ -64,6 +68,13 @@ class PersonalProfileFirebaseAccessor {
     returnValues[workHoursArrayKey] = ranges;
 
     listener.onSuccess(returnValues);
+  }
+
+  Future<void> getUserInfoFromMember(
+      String memberID, FirebaseListener listener) async {
+    DocumentSnapshot memberSnapshot =
+        await _storage.collection(membersCollection).doc(memberID).get();
+    getUserInfo(memberSnapshot.get(personIDKey), listener);
   }
 
   void updateBio(String id, String newBio) {

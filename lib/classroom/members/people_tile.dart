@@ -1,16 +1,49 @@
 //Rishitha Ravi
 //Code for displaying people/members in individual class screens
 
+import 'dart:typed_data';
+
+import 'package:edunciate/firebaseAccessor/firebase_listener.dart';
+import 'package:edunciate/firebaseAccessor/members_firebase.dart';
+import 'package:edunciate/firebaseAccessor/personal_profile_firebase.dart';
+import 'package:edunciate/firebaseAccessor/users_firebase.dart';
+import 'package:edunciate/homepage/items/class_item.dart';
+import 'package:edunciate/main.dart';
+import 'package:edunciate/personal_profile/ineditable_profile_page.dart';
+import 'package:edunciate/user_info_item.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 
 //Code for the listings of people
-class PeopleTile extends StatelessWidget {
+
+class PeopleTile extends StatefulWidget {
   late String title;
   final bool isOwner;
-  Color color;
+  MemoryImage image;
+  String thisMemberID;
+  ClassRole userRole;
+  DisplayWidgetListener widgetListener;
 
-  PeopleTile(this.title, this.isOwner, this.color);
+  PeopleTile(this.title, this.isOwner, this.image, this.userRole,
+      this.thisMemberID, this.widgetListener,
+      {Key? key})
+      : super(key: key);
+
+  @override
+  State<PeopleTile> createState() => _PeopleTileState(
+      title, isOwner, image, userRole, thisMemberID, widgetListener);
+}
+
+class _PeopleTileState extends State<PeopleTile> {
+  late String title;
+  bool isOwner;
+  MemoryImage image;
+  String thisMemberID;
+  ClassRole userRole;
+  DisplayWidgetListener widgetListener;
+
+  _PeopleTileState(this.title, this.isOwner, this.image, this.userRole,
+      this.thisMemberID, this.widgetListener);
 
   @override
   Widget build(BuildContext context) {
@@ -19,8 +52,8 @@ class PeopleTile extends StatelessWidget {
       child: ListTile(
           leading: Stack(
             children: [
-              CircleAvatar(
-                backgroundColor: color,
+              Image(
+                image: image,
               ),
               if (isOwner)
                 Positioned(
@@ -30,6 +63,32 @@ class PeopleTile extends StatelessWidget {
                 )
             ],
           ),
+          onTap: (() {
+            PersonalProfileFirebaseAccessor().getUserInfoFromMember(
+                thisMemberID,
+                FirebaseListener((values) {
+                  UserInfoItem user = UserInfoItem(
+                      id: values[PersonalProfileFirebaseAccessor.idArrayKey],
+                      imageBytes: Uint8List.fromList(values[
+                          PersonalProfileFirebaseAccessor.photoArrayKey]),
+                      name:
+                          values[PersonalProfileFirebaseAccessor.nameArrayKey],
+                      pronouns: values[
+                          PersonalProfileFirebaseAccessor.pronounsArrayKey],
+                      email:
+                          values[PersonalProfileFirebaseAccessor.emailArrayKey],
+                      about:
+                          values[PersonalProfileFirebaseAccessor.bioArrayKey]);
+                  Navigator.push(widgetListener.getContext(),
+                      MaterialPageRoute(builder: (context) {
+                    return MaterialApp(
+                      home: Scaffold(
+                        body: IneditableProfilePage(user),
+                      ),
+                    );
+                  }));
+                }, (message) {}));
+          }),
           title: Text(title,
               textDirection: TextDirection.ltr,
               style: TextStyle(
@@ -59,7 +118,6 @@ class PeopleTile extends StatelessWidget {
       items: [
         PopupMenuItem<String>(child: const Text('Promote'), value: '1'),
         PopupMenuItem<String>(child: const Text('Remove'), value: '2'),
-        PopupMenuItem<String>(child: const Text('Message'), value: '3'),
       ],
       elevation: 8.0,
     );
@@ -67,15 +125,23 @@ class PeopleTile extends StatelessWidget {
     (String itemSelected) {
       // ignore: unnecessary_null_comparison
       if (itemSelected == null) return;
-      if (itemSelected == "1") {
+      if (itemSelected == "1" && userRole == ClassRole.owner) {
         showDialog(
             context: context,
             builder: (_) => AlertDialog(
                 title: Text("Promote"),
-                content:
-                    Text("Are you sure you want to promote to student owner?"),
+                content: Text(isOwner
+                    ? "Do you want to demote this member?"
+                    : "Do you want to promote this member?"),
                 actions: [
-                  IconButton(onPressed: () {}, icon: Icon(Icons.check)),
+                  IconButton(
+                      onPressed: () {
+                        MembersFirebaseAccessor().updateRole(thisMemberID,
+                            isOwner ? ClassRole.member : ClassRole.owner);
+                        isOwner = !isOwner;
+                        setState(() {});
+                      },
+                      icon: Icon(Icons.check)),
                   IconButton(onPressed: () {}, icon: Icon(Icons.exit_to_app)),
                 ],
                 elevation: 24.0),

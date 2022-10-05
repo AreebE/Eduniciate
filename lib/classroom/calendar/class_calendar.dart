@@ -1,8 +1,13 @@
 import 'package:edunciate/calendar/events_list.dart';
+import 'package:edunciate/firebaseAccessor/calendar_firebase.dart';
+import 'package:edunciate/main.dart';
 import 'package:flutter/material.dart';
 import 'package:calendar_view/calendar_view.dart';
 
+import '../../calendar/custom_calendar_event_data.dart';
 import '../../calendar/firebase_event.dart';
+import '../../color_scheme.dart';
+import '../../font_standards.dart';
 
 DateTime get _now => DateTime.now();
 
@@ -13,12 +18,14 @@ void main() {
 }
 
 class ClassCalendarPage extends StatelessWidget {
-    String classID;
-    String className;
-    MemoryImage classPhoto;
+  String classID;
+  String className;
+  MemoryImage classPhoto;
   List<CustomCalendarEventData> _events;
+  DisplayWidgetListener widgetListener;
 
-  ClassCalendarPage(this._events, this.classPhoto, this.classID, this.className);
+  ClassCalendarPage(this._events, this.classPhoto, this.classID, this.className,
+      this.widgetListener);
 
   final event = CalendarEventData(
     title: "Regionals",
@@ -37,7 +44,7 @@ class ClassCalendarPage extends StatelessWidget {
     ));
 
     return Scaffold(
-      body: MonthPage(_events, classID, className, classPhoto),
+      body: MonthPage(classID, className, classPhoto, _events, widgetListener),
     );
   }
 }
@@ -128,12 +135,20 @@ class WeekPage extends StatelessWidget {
 }
 
 class MonthPage extends StatefulWidget {
+  String classID;
+  String className;
+  MemoryImage classPhoto;
   List<CustomCalendarEventData> _events;
+  DisplayWidgetListener widgetListener;
 
-  MonthPage(this._events, {Key? key}) : super(key: key);
+  MonthPage(this.classID, this.className, this.classPhoto, this._events,
+      this.widgetListener,
+      {Key? key})
+      : super(key: key);
 
   @override
-  State<MonthPage> createState() => _MonthPageState(_events);
+  State<MonthPage> createState() =>
+      _MonthPageState(_events, classID, className, classPhoto, widgetListener);
 }
 
 class _MonthPageState extends State<MonthPage> {
@@ -142,13 +157,15 @@ class _MonthPageState extends State<MonthPage> {
   int selectedDay = DateTime.now().day;
 
   List<CustomCalendarEventData> _allEvents;
-      String classID;
-    String className;
-    MemoryImage classPhoto;
-    
+  String classID;
+  String className;
+  MemoryImage classPhoto;
+  DisplayWidgetListener widgetListener;
+
   late List<CustomCalendarEventData> _currentEvents;
 
-  _MonthPageState(this._allEvents, this.classID, this.className, this.classPhoto) {
+  _MonthPageState(this._allEvents, this.classID, this.className,
+      this.classPhoto, this.widgetListener) {
     _currentEvents = [];
   }
 
@@ -199,64 +216,63 @@ class _MonthPageState extends State<MonthPage> {
             ]),
             floatingActionButton: FloatingActionButton(
               onPressed: () {
-                  showDatePicker(
-                                context: context,
-                                initialDate: DateTime.now(),
-                                firstDate: DateTime.now(),
-                                lastDate: DateTime(2050))
-                      .then((date) {
-                                            String details = "";
+                showDatePicker(
+                        context: context,
+                        initialDate: DateTime.now(),
+                        firstDate: DateTime.now(),
+                        lastDate: DateTime(2050))
+                    .then((date) {
+                  String details = "";
 
                   showDialog(
-        context: context,
-        builder: (context) {
-          return AlertDialog(
-            actions: [
-              TextButton(
-                  onPressed: () {
-                    Navigator.pop(context);
-                  },
-                  child: Text("Confirm"))
-            ],
-            content: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Text(
-                  "Now, add your event details.",
-                  style: FontStandards.getTextStyle(
-                      CustomColorScheme.defaultColors,
-                      Style.normHeader,
-                      FontSize.medium),
-                ),
-                SizedBox(
-                  height: 25,
-                ),
-                TextField(
-                  onChanged: ((value) {
-                    details = value;
-                  }),
-                  decoration: InputDecoration(
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                  ),
-                  maxLines: 1,
-                ),
-              ],
-            ),
-          );
-        }).then((value) {
-            FirebaseEvent fe = FirebaseEvent(details, date.dayOfMonth, date.month, date.year,
-                                 className, classPhoto.bytes);
-            _allEvents.add(fe);
-            CalendarFirebaseAccessor()
-                .addEvent(
-                    FirebaseEvent(details, date.dayOfMonth, date.month, date.year,
-                                 className, classPhoto.bytes)
-                );
-            setState(() {});
-        });
-                      });
+                      context: context,
+                      builder: (context) {
+                        return AlertDialog(
+                          actions: [
+                            TextButton(
+                                onPressed: () {
+                                  Navigator.pop(context);
+                                },
+                                child: Text("Confirm"))
+                          ],
+                          content: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Text(
+                                "Now, add your event details.",
+                                style: FontStandards.getTextStyle(
+                                    CustomColorScheme.defaultColors,
+                                    Style.normHeader,
+                                    FontSize.medium),
+                              ),
+                              SizedBox(
+                                height: 25,
+                              ),
+                              TextField(
+                                onChanged: ((value) {
+                                  details = value;
+                                }),
+                                decoration: InputDecoration(
+                                  border: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(12),
+                                  ),
+                                ),
+                                maxLines: 1,
+                              ),
+                            ],
+                          ),
+                        );
+                      }).then((value) {
+                    FirebaseEvent fe = FirebaseEvent(details, date!.day,
+                        date.month, date.year, className, classPhoto.bytes);
+                    _allEvents.add(fe.toCustomCalendarEvent());
+                    CalendarFirebaseAccessor().addEvent(
+                        classID,
+                        FirebaseEvent(details, date!.day, date.month, date.year,
+                            className, classPhoto.bytes));
+                    setState(() {});
+                  });
+                });
                 // monthView.controller!.add(CalendarEventData(
                 //   title: "Regionals",
                 //   date: DateTime(2022, 10, 10),

@@ -2,61 +2,73 @@
 //Code for the Settings tab of individual class screen
 // ignore_for_file: prefer_const_constructors, prefer_const_constructors_in_immutables, library_private_types_in_public_api, sort_child_properties_last, prefer_interpolation_to_compose_strings, use_key_in_widget_constructors, must_be_immutable
 
+import 'package:edunciate/firebaseAccessor/details_firebase.dart';
+import 'package:edunciate/firebaseAccessor/firebase_listener.dart';
+import 'package:edunciate/homepage/items/class_item.dart';
+
 import '../members/title_block.dart';
 import '../top_nav_bar.dart';
 import 'package:flutter/material.dart';
 
 void main() {
-  runApp(DetailsPage());
+  // runApp(DetailsPage());
 }
 
 class DetailsPage extends StatefulWidget {
-  String className = 'Class Name';
-  String organization = 'Organization';
+  String className;
+  String classDesc;
+  String classID;
+  String classCode;
+  String memberID;
+  MemoryImage photo;
+  ClassRole classRole;
 
-  DetailsPage({Key? key}) : super(key: key);
+  DetailsPage(this.className, this.classDesc, this.classID, this.classCode,
+      this.photo, this.memberID, this.classRole,
+      {Key? key})
+      : super(key: key);
 
   @override
-  _DetailsPageState createState() => _DetailsPageState();
+  _DetailsPageState createState() => _DetailsPageState(classID, classDesc,
+      className, classCode, photo, this.memberID, classRole);
 }
 
 class _DetailsPageState extends State<DetailsPage> {
   //define variables here
   String bullet = "•";
-    String classID;
+  String classID;
   String classDesc = "";
-  String className = "";  
-    String organization = "";
+  String className = "";
+  String classCode;
+  String organization = "";
+  String memberID;
+  ClassRole role;
+  MemoryImage photo;
 
-    _DetailsPageState(this.classID, this.classDesc, this.className)
-    final _textController1 = TextEditingController();
+  _DetailsPageState(this.classID, this.classDesc, this.className,
+      this.classCode, this.photo, this.memberID, this.role);
+  final _textController1 = TextEditingController();
   final _textController2 = TextEditingController();
 
   void submit1() {
-    Navigator.of(context).pop();
     setState(() {
       className = _textController1.text;
-        ClassDetailsFirebaseAccessor()
-        .updateName(classID, className);
-
+      ClassDetailsFirebaseAccessor().updateName(classID, className);
     });
     _textController1.clear();
   }
 
   void submit2() {
-    Navigator.of(context).pop();
     setState(() {
-      classInfo = _textController2.text;
-        ClassDetailsFirebaseAccessor()
-            .updateDesc(classID, classInfo);
+      classDesc = _textController2.text;
+      ClassDetailsFirebaseAccessor().updateDesc(classID, classDesc);
     });
     _textController2.clear();
   }
 
   void submit3() {
-    Navigator.of(context).pop();
     setState(() {
-      organization = _DropdownState().selectedValue;
+      // organization = _DropdownState().selectedValue;
     });
   }
 
@@ -105,7 +117,7 @@ class _DetailsPageState extends State<DetailsPage> {
                   controller: _textController2,
                   style: TextStyle(
                     color: Color.fromARGB(255, 0, 0, 0),
-                     //fontWeight: FontWeight.bold,
+                    //fontWeight: FontWeight.bold,
                     fontFamily: 'Lato',
                     fontSize: 16.0,
                   ),
@@ -132,7 +144,7 @@ class _DetailsPageState extends State<DetailsPage> {
       context: context,
       builder: (context) => AlertDialog(
               title: AppTitle('Code', 20.0),
-              content: Text(classCode, ),
+              content: Text(classCode),
               actions: [
                 TextButton(
                   child: AppTitle("Finished Viewing", 10.0),
@@ -145,14 +157,11 @@ class _DetailsPageState extends State<DetailsPage> {
     return ListView(
       children: [
         Padding(
-          padding: EdgeInsets.all(10.0),
-          child: Align(
+            padding: EdgeInsets.all(10.0),
+            child: Align(
               alignment: Alignment.topCenter,
-              child: CircleAvatar(
-                backgroundColor: Colors.purple,
-                radius: 50,
-              )),
-        ),
+              child: Image(image: photo),
+            )),
         TitleBlock("Class Information", 10.0, 10.0),
         SingleChildScrollView(
           scrollDirection: Axis.horizontal,
@@ -172,7 +181,9 @@ class _DetailsPageState extends State<DetailsPage> {
                             fontSize: 15.0,
                           )),
                       onPressed: () {
-                        openDialog3();
+                        if (role == ClassRole.owner) {
+                          openDialog3();
+                        }
                       })),
 
               //Changes Class Name
@@ -189,7 +200,9 @@ class _DetailsPageState extends State<DetailsPage> {
                             fontSize: 15.0,
                           )),
                       onPressed: () {
-                        openDialog1();
+                        if (role == ClassRole.owner) {
+                          openDialog1();
+                        }
                       })),
               //Changes Class Description
               Container(
@@ -205,23 +218,25 @@ class _DetailsPageState extends State<DetailsPage> {
                             fontSize: 15.0,
                           )),
                       onPressed: () {
-                        openDialog2();
+                        if (role == ClassRole.owner) {
+                          openDialog2();
+                        }
                       })),
             ],
           ),
         ),
 
-        Container(
-            alignment: Alignment.center,
-            padding: EdgeInsets.all(10.0),
-            margin: EdgeInsets.all(10.0),
-            child: Text(classInfo,
-                style: TextStyle(
-                  color: Color.fromARGB(255, 58, 27, 103),
-                  fontWeight: FontWeight.normal,
-                  fontFamily: 'Lato',
-                  fontSize: 15.0,
-                ))),
+        // Container(
+        //     alignment: Alignment.center,
+        //     padding: EdgeInsets.all(10.0),
+        //     margin: EdgeInsets.all(10.0),
+        //     child: Text(classInfo,
+        //         style: TextStyle(
+        //           color: Color.fromARGB(255, 58, 27, 103),
+        //           fontWeight: FontWeight.normal,
+        //           fontFamily: 'Lato',
+        //           fontSize: 15.0,
+        //         ))),
         TitleBlock("Class Owners", 10.0, 0.0),
 
         TitleBlock("Class Resources", 10.0, 10.0),
@@ -246,47 +261,54 @@ class _DetailsPageState extends State<DetailsPage> {
                       fontFamily: 'Lato',
                       fontSize: 15.0,
                     )),
-                onPressed: () {}))
+                onPressed: () {
+                  ClassDetailsFirebaseAccessor().leaveClass(
+                      memberID,
+                      classID,
+                      FirebaseListener((values) {
+                        Navigator.pop(context);
+                      }, (message) {}));
+                }))
       ],
     );
   }
 }
 
 //Dropdown Menu for Organization
-class Dropdown extends StatefulWidget {
-  @override
-  _DropdownState createState() => _DropdownState();
-}
+// class Dropdown extends StatefulWidget {
+//   @override
+//   _DropdownState createState() => _DropdownState();
+// }
 
-//Dropdown for Settings page
-class _DropdownState extends State<Dropdown> {
-  List<String> listitems = ["North Creek HS", "Bothell HS", "Woodinville HS"];
-  String selectedValue = "North Creek HS";
+// //Dropdown for Settings page
+// class _DropdownState extends State<Dropdown> {
+//   List<String> listitems = ["North Creek HS", "Bothell HS", "Woodinville HS"];
+//   String selectedValue = "North Creek HS";
 
-  @override
-  Widget build(BuildContext context) {
-    return DropdownButton(
-      value: selectedValue,
-      hint: Text("Select School",
-          style: TextStyle(
-            color: Color.fromARGB(255, 58, 27, 103),
-            fontWeight: FontWeight.normal,
-            fontFamily: 'Lato',
-            fontSize: 10.0,
-          )),
-      icon: Icon(Icons.keyboard_arrow_down_rounded),
-      onChanged: (value) {
-        setState(() {
-          selectedValue = value.toString();
-          TopNavBar.Organization = value.toString();
-        });
-      },
-      items: listitems.map((itemone) {
-        return DropdownMenuItem(value: itemone, child: Text(itemone));
-      }).toList(),
-    );
-  }
-}
+//   @override
+//   Widget build(BuildContext context) {
+//     return DropdownButton(
+//       value: selectedValue,
+//       hint: Text("Select School",
+//           style: TextStyle(
+//             color: Color.fromARGB(255, 58, 27, 103),
+//             fontWeight: FontWeight.normal,
+//             fontFamily: 'Lato',
+//             fontSize: 10.0,
+//           )),
+//       icon: Icon(Icons.keyboard_arrow_down_rounded),
+//       onChanged: (value) {
+//         setState(() {
+//           selectedValue = value.toString();
+//           TopNavBar.Organization = value.toString();
+//         });
+//       },
+//       items: listitems.map((itemone) {
+//         return DropdownMenuItem(value: itemone, child: Text(itemone));
+//       }).toList(),
+//     );
+//   }
+// }
 
 //Purple Text Titles
 class AppTitle extends StatelessWidget {
